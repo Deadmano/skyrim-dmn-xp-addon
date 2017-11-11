@@ -19,6 +19,7 @@ ScriptName DMN_SXPAPlayerAlias Extends ReferenceAlias
 Addon Config script to run on each save game load.
 }
 
+Import DMN_SXPAFunctions
 Import Debug
 Import Utility
 
@@ -43,8 +44,10 @@ Event OnUpdate()
 	Bool bContinueMonitoring = DMN_SXPAActiveMonitoring.GetValue() As Int
 ; If a SXPA tracked player stat was changed,
 ; then update the SXPA values and reward XP.
-	If (DMN_SXPAEH.checkPlayerStats())
-		DMN_SXPAEH.updatePlayerStats()
+	If (checkPlayerStats(DMN_SXPAEH.gStatValue, DMN_SXPAEH.sStatName))
+		;DMN_SXPAEH.updatePlayerStats()
+		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
+		; DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
 	EndIf
 ; If monitoring has not been turned off we will register for another OnUpdate()
 ; cycle for 1 second. This will continue looping until the monitoring variable
@@ -53,31 +56,3 @@ Event OnUpdate()
 		RegisterForSingleUpdate(1.0)
 	EndIf
 EndEvent
-
-; Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
-;Uses: Nirnroots Found.
-	; Wait(0.1)
-	; If (!akSourceContainer)
-	;This item was picked up from the world or added by console.
-		; DMN_SXPAEH.checkPlayerStats()
-		;Debug.Trace("Player received " + aiItemCount + "x " + akBaseItem + " from the world or via console.")
-	  ; Else
-	;This item was received from another source such as container/inventory.
-		; DMN_SXPAEH.checkPlayerStats()
-		;Debug.Trace("Player received " + aiItemCount + "x " + akBaseItem + " from another another source.")
-	; EndIf
-; EndEvent
-
-; Event OnUpdate()
-;Uses: Books Read.
-	; Notification("OnUpdate Activated")
-	; If (IsInMenuMode())
-		; Notification("We are in a menu!")
-	;The player is in a menu, such as inventory or book menu.
-		; DMN_SXPAEH.checkPlayerStats()
-	; Else
-	;Nothing interesting happened, so let's wait for another update in 1 second and try again.
-		; Notification("Registering for a single update...")
-		; RegisterForSingleUpdate(1.0)
-	; EndIf
-; EndEvent
