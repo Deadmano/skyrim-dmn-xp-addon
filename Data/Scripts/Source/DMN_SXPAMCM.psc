@@ -95,7 +95,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Switch To Active Tracking]
 				DMN_SXPAEH.iPassiveMonitoring = 0
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
-				DMN_SXPAEH.updatePlayerStats(True) ; Update all existing tracked stats.
+			; Update all existing tracked stats.
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Switched to active (always monitoring) tracking.")
@@ -108,7 +109,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Turn On Active Tracking]
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
-				DMN_SXPAEH.updatePlayerStats(True) ; Update all existing tracked stats.
+			; Update all existing tracked stats.
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Active (always monitoring) tracking has been enabled.")
@@ -432,20 +434,20 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			Notification("Skyrim XP Addon: Maximum base XP reward set to " + maxXP + "XP.")
 		EndIf
 		If (fMultiplierLocationsDiscovered > 0)
-			DMN_SXPAEH.iXPModifiers[0] = fMultiplierLocationsDiscovered
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatNames[0] + " XP multiplier set to " + fMultiplierLocationsDiscovered + ".")
+			DMN_SXPAEH.fXPModifier[0] = fMultiplierLocationsDiscovered
+			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[0] + " XP multiplier set to " + fMultiplierLocationsDiscovered + ".")
 		EndIf
 		If (fMultiplierStandingStonesFound > 0)
-			DMN_SXPAEH.iXPModifiers[1] = fMultiplierStandingStonesFound
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatNames[1] + " XP multiplier set to " + fMultiplierStandingStonesFound + ".")
+			DMN_SXPAEH.fXPModifier[1] = fMultiplierStandingStonesFound
+			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[1] + " XP multiplier set to " + fMultiplierStandingStonesFound + ".")
 		EndIf
 		If (fMultiplierNirnrootsFound > 0)
-			DMN_SXPAEH.iXPModifiers[2] = fMultiplierNirnrootsFound
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatNames[2] + " XP multiplier set to " + fMultiplierNirnrootsFound + ".")
+			DMN_SXPAEH.fXPModifier[2] = fMultiplierNirnrootsFound
+			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[2] + " XP multiplier set to " + fMultiplierNirnrootsFound + ".")
 		EndIf
 		If (fMultiplierBooksRead > 0)
-			DMN_SXPAEH.iXPModifiers[3] = fMultiplierBooksRead
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatNames[3] + " XP multiplier set to " + fMultiplierBooksRead + ".")
+			DMN_SXPAEH.fXPModifier[3] = fMultiplierBooksRead
+			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[3] + " XP multiplier set to " + fMultiplierBooksRead + ".")
 		EndIf
 	EndWhile
 ; We are now ready to configure other mod options.
