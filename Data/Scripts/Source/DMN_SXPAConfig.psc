@@ -66,7 +66,7 @@ Function preMaintenance()
 	If (DMN_SXPAsVersionInstalled)
 	; Update all existing stats and assign random XP values for each of them
 	; on every game load, if Skyrims XP Addon has already been installed.
-		DMN_SXPAEH.updatePlayerStats(True)
+		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
 	EndIf
 	DMN_SXPAPA.waitForStatChange()
 EndFunction
@@ -194,7 +194,7 @@ EndFunction
 
 Function configurationDefaults()
 ; Update all existing stats and assign random XP values for each of them.
-	DMN_SXPAEH.updatePlayerStats(True)
+	updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 	
 ; Add (or update) the mod configurator to the player inventory silently.
 	giveConfigurator(DMN_SXPAConfigurator)
