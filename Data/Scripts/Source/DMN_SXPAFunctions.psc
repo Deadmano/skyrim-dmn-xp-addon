@@ -60,13 +60,17 @@ Function spendXP(GlobalVariable gTotalXP, String sSkill, Int iAmount) Global
 EndFunction
 
 Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPModifier, Int iIndex) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("\n")
+	DMN_SXPALog("Started getRandomXPValue Function]")
 ; Part 1: Getting a random XP value between the min and max XP variables.
 	Int iMinXP = gMinXP.GetValue() as Int
 	Int iMaxXP = gMaxXP.GetValue() as Int
 	Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-	Trace("Min XP: " + iMinXP)
-	Trace("Max XP: " + iMaxXP)
-	Trace("Random XP (Min~Max * Modifier): " + fRandomXPValue)
+	DMN_SXPALog("Min XP: " + iMinXP)
+	DMN_SXPALog("Max XP: " + iMaxXP)
+	DMN_SXPALog("Random XP (Min~Max * Modifier): " + fRandomXPValue)
 ; Part 2: Getting the total random XP value based on the player level and formula below.
 	Int iPlayerLevel = GetPlayer().GetLevel()
 	Float fPlayerLevelOffset = iPlayerLevel - 1
@@ -75,16 +79,21 @@ Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Floa
 	Int iRandomXPValue = round(fFinalRandomXPValue)
 	; String sPrettyXP = prettyPrintXP(fFinalRandomXPValue)
 	; Notification("Skyrim XP Addon: Pretty XP Display - " + sPrettyXP)
-	Trace("Player Level: " + iPlayerLevel)
-	Trace("Player Level Offset: " + fPlayerLevelOffset)
-	Trace("Power Of Value: " + fPlayerLevelOffsetSquared)
-	Trace("Final Random XP (Float): " + fFinalRandomXPValue)
-	; Trace("Pretty Print XP Value: " + sPrettyXP)
-	Trace("Final Random XP (Int): " + iRandomXPValue + "\n\n")
+	DMN_SXPALog("Player Level: " + iPlayerLevel)
+	DMN_SXPALog("Player Level Offset: " + fPlayerLevelOffset)
+	DMN_SXPALog("Power Of Value: " + fPlayerLevelOffsetSquared)
+	DMN_SXPALog("Final Random XP (Float): " + fFinalRandomXPValue)
+	; DMN_SXPALog("Pretty Print XP Value: " + sPrettyXP)
+	DMN_SXPALog("Final Random XP (Int): " + iRandomXPValue + "\n\n")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended getRandomXPValue Function]\n")
 	Return iRandomXPValue
 EndFunction
 
 Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog("\n")
 	DMN_SXPALog("Started setRAndomXPValue Function]")
 	If (bIsUpdate || iUpdateCount > 1)
@@ -119,6 +128,8 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 		DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".")
 		Notification(sNotificationMessage[iIndex] + " +" + iRandomXP + "XP!")
 	EndIf
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("setRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog("[Ended setRAndomXPValue Function]\n")
 EndFunction
 
@@ -139,8 +150,6 @@ Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalV
 			Else
 				setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage)
 			EndIf
-		; Remove below when releasing final version.
-			Notification(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!")
 			DMN_SXPALog(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n")
 		EndIf
 		iIndex += 1
@@ -165,6 +174,8 @@ Bool Function checkPlayerStats(GlobalVariable[] gStatValue, String[] sStatName) 
 		EndIf
 		iIndex += 1
 	EndWhile
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.")
 	Return False
 EndFunction
 
@@ -212,15 +223,3 @@ String Function prettyPrintXP(Float fXP) Global
 	Trace("sPrettyXP Value: " + sPrettyXP + "\n\n")
 	Return sPrettyXP
 EndFunction
-
-;  2,147,483,647 max integer size
-
-
-; 1671064 = 1,671,064
-; 1671064 * 
-
-; 1563 / 1000 = 1.563
-
-;(1 - Player Level) ^2 + 25 / 100 * Event Multiplier * Random XP Value
-
-
