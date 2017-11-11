@@ -31,15 +31,15 @@ GlobalVariable Property DMN_SXPAExperiencePoints Auto
 GlobalVariable Property DMN_SXPAExperienceMin Auto
 GlobalVariable Property DMN_SXPAExperienceMax Auto
 
-Float[] Property iXPModifiers Auto
+Float[] Property fXPModifier Auto
 {The list of XP modifiers that affect the XP given per stat progression.}
-String[] Property sSkills Auto
+String[] Property sSkill Auto
 {The list of all player skills that we are able to spend XP on improving.}
-String[] Property sStatNames Auto
+String[] Property sStatName Auto
 {The list of all player stat names that we are tracking.}
-String[] Property sNotificationMessages Auto
+String[] Property sNotificationMessage Auto
 {The list of notification messages shown to the player when a stat is updated.}
-GlobalVariable[] Property gStatValues Auto
+GlobalVariable[] Property gStatValue Auto
 {The list of all player stat values that we are tracking.}
 
 Int Property iPassiveMonitoring Auto Conditional
@@ -60,107 +60,67 @@ Function stopTracking()
 	UnregisterForTrackedStatsEvent()
 EndFunction
 
-Int Function getRandomXPValue(Int iIndex)
-	Int iMinXP = DMN_SXPAExperienceMin.GetValue() as Int
-	Int iMaxXP = DMN_SXPAExperienceMax.GetValue() as Int
-	Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (iXPModifiers[iIndex])
-	Int iRandomXPValue = round(fRandomXPValue)
-	Return iRandomXPValue
-EndFunction
+; Int Function getRandomXPValue(Int iIndex)
+	; Int iMinXP = DMN_SXPAExperienceMin.GetValue() as Int
+	; Int iMaxXP = DMN_SXPAExperienceMax.GetValue() as Int
+	; Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
+	; Int iRandomXPValue = round(fRandomXPValue)
+	; Return iRandomXPValue
+; EndFunction
 
-Function setRandomXPValue(Int iIndex, Int iUpdateCount = 0, Bool bIsUpdate = False)
-	DMN_SXPALog("\n")
-	DMN_SXPALog("Started setRAndomXPValue Function]")
-	If (bIsUpdate || iUpdateCount > 1)
-		DMN_SXPALog("An update was queued to assign XP values to existing stats!")
-		DMN_SXPALog("Beginning update for: " + sStatNames[iIndex] + " (x" + iUpdateCount + ") now.")
-		Int i = 0
-		Int j = iUpdateCount
-		Int iRandomXP
-		While (i < iUpdateCount)
-			Int k = getRandomXPValue(iIndex)
-			iRandomXP += k
-			DMN_SXPALog("Value " + (i+1) + " XP: " + k + ".")
-			i += 1
-		EndWhile
-		Int iNewXP = DMN_SXPAExperiencePoints.GetValue() as Int + iRandomXP
-		DMN_SXPALog("Previous XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
-		DMN_SXPAExperiencePoints.SetValue(iNewXP)
-		DMN_SXPALog("XP Assigned: " + iRandomXP + ".")
-		DMN_SXPALog("Current XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
-		If (bIsUpdate)
-			Notification("Skyrim XP Addon: Previously detected \"" + sStatNames[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXP + "XP combined!")
-		Else
-			Notification(sNotificationMessages[iIndex] + " (x" + iUpdateCount + ") +" + iRandomXP + "XP combined!")
-		EndIf
-	Else
-		DMN_SXPALog("Assigning random XP for: " + sStatNames[iIndex] + " now.")
-		Int iRandomXP = getRandomXPValue(iIndex)
-		Int iNewXP = DMN_SXPAExperiencePoints.GetValue() as Int + iRandomXP
-		DMN_SXPALog("Previous XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
-		DMN_SXPAExperiencePoints.SetValue(iNewXP)
-		DMN_SXPALog("XP Assigned: " + iRandomXP + ".")
-		DMN_SXPALog("Current XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
-		Notification(sNotificationMessages[iIndex] + " +" + iRandomXP + "XP!")
-	EndIf
-	DMN_SXPALog("[Ended setRAndomXPValue Function]\n")
-EndFunction
+; Function setRandomXPValue(Int iIndex, Int iUpdateCount = 0, Bool bIsUpdate = False)
+	; DMN_SXPALog("\n")
+	; DMN_SXPALog("Started setRAndomXPValue Function]")
+	; If (bIsUpdate || iUpdateCount > 1)
+		; DMN_SXPALog("An update was queued to assign XP values to existing stats!")
+		; DMN_SXPALog("Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
+		; Int i = 0
+		; Int j = iUpdateCount
+		; Int iRandomXP
+		; While (i < iUpdateCount)
+			; Int k = getRandomXPValue(iIndex)
+			; Int k = getRandomXPValue(DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, fXPModifier, iIndex)
+			; iRandomXP += k
+			; DMN_SXPALog("Value " + (i+1) + " XP: " + k + ".")
+			; i += 1
+		; EndWhile
+		; Int iNewXP = DMN_SXPAExperiencePoints.GetValue() as Int + iRandomXP
+		; DMN_SXPALog("Previous XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
+		; DMN_SXPAExperiencePoints.SetValue(iNewXP)
+		; DMN_SXPALog("XP Assigned: " + iRandomXP + ".")
+		; DMN_SXPALog("Current XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
+		; If (bIsUpdate)
+			; Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXP + "XP combined!")
+		; Else
+			; Notification(sNotificationMessage[iIndex] + " (x" + iUpdateCount + ") +" + iRandomXP + "XP combined!")
+		; EndIf
+	; Else
+		; DMN_SXPALog("Assigning random XP for: " + sStatName[iIndex] + " now.")
+		; Int iRandomXP = getRandomXPValue(DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, fXPModifier, iIndex)
+		; Int iRandomXP = getRandomXPValue(iIndex)
+		; Int iNewXP = DMN_SXPAExperiencePoints.GetValue() as Int + iRandomXP
+		; DMN_SXPALog("Previous XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
+		; DMN_SXPAExperiencePoints.SetValue(iNewXP)
+		; DMN_SXPALog("XP Assigned: " + iRandomXP + ".")
+		; DMN_SXPALog("Current XP: " + DMN_SXPAExperiencePoints.GetValue() as Int + ".")
+		; Notification(sNotificationMessage[iIndex] + " +" + iRandomXP + "XP!")
+	; EndIf
+	; DMN_SXPALog("[Ended setRAndomXPValue Function]\n")
+; EndFunction
 
 Event OnTrackedStatsEvent(String sStatName, Int iStatValue)
-	Int i = 0
-	While (i < sStatNames.Length)
-		Int iSavedStatValue = gStatValues[i].GetValue() as Int
-		If (sStatName == sStatNames[i] && iStatValue > iSavedStatValue)
-			gStatValues[i].SetValue(iStatValue)
-			setRandomXPValue(i)
+	Int iIndex = 0
+	While (iIndex < sStatName.Length)
+		Int iSavedStatValue = gStatValue[iIndex].GetValue() as Int
+		If (sStatName == sStatName[iIndex] && iStatValue > iSavedStatValue)
+			gStatValue[iIndex].SetValue(iStatValue)
+			setRandomXPValue(DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, fXPModifier, iIndex, sStatName, sNotificationMessage)
 			;updatePlayerStats()
 		EndIf
-		i += 1
+		iIndex += 1
 	EndWhile
 EndEvent
 
-Bool Function checkPlayerStats()
-; Function checks all SXPA tracked stats, and if any differ from SXPA
-; stored values then it will return True else it will return False.
-	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
-	Float fStop ; Log the time the function stopped running.
-	Int i = 0
-	While (i < sStatNames.Length)
-		Int iSavedStatValue = gStatValues[i].GetValue() as Int
-		Int iStatValue = QueryStat(sStatNames[i])
-		If (iStatValue > iSavedStatValue)
-			fStop = GetCurrentRealTime()
-			DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.")
-			Return True
-		EndIf
-		i += 1
-	EndWhile
-	Return False
-EndFunction
 
-Function updatePlayerStats(Bool bUpdateStats = False)
-	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
-	Float fStop ; Log the time the function stopped running.
-	Int i = 0
-	While (i < sStatNames.Length)
-		Int iSavedStatValue = gStatValues[i].GetValue() as Int
-		Int iStatValue = QueryStat(sStatNames[i])
-		Int j = iStatValue - iSavedStatValue
-		If (iStatValue > iSavedStatValue)
-			gStatValues[i].SetValue(iStatValue)
-			If (bUpdateStats)
-				setRandomXPValue(i, j, True)
-			ElseIf (j > 1)
-				setRandomXPValue(i, j)
-			Else
-				setRandomXPValue(i)
-			EndIf
-		; Remove below when releasing final version.
-			Notification(sStatNames[i] + " was not part of the OnTrackedStatsEvent Event!")
-			DMN_SXPALog(sStatNames[i] + " was not part of the OnTrackedStatsEvent Event!\n")
-		EndIf
-		i += 1
-	EndWhile
-	fStop = GetCurrentRealTime()
-	DMN_SXPALog("updatePlayerStats() function took " + (fStop - fStart) + " seconds to complete.")
-EndFunction
+
+
