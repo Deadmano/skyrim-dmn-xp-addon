@@ -24,7 +24,7 @@ ScriptName DMN_SXPAEventHandler Extends Quest Conditional
 Import Debug
 Import Game
 Import Utility
-Import DMN_DeadmaniacFunctions
+Import DMN_DeadmaniacFunctionsSXPA
 Import DMN_SXPAFunctions
 
 GlobalVariable Property DMN_SXPAExperiencePoints Auto

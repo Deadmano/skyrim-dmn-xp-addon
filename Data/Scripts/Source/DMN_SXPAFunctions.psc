@@ -22,7 +22,7 @@ Import Debug
 Import Game
 Import Math
 Import Utility
-Import DMN_DeadmaniacFunctions
+Import DMN_DeadmaniacFunctionsSXPA
 
 String Function DMN_ModLogName() Global
 	String logName = "DMN_SkyrimXPAddon"

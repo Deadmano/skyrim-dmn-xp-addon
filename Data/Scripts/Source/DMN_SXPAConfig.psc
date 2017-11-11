@@ -20,7 +20,7 @@ ScriptName DMN_SXPAConfig Extends Quest
 ; Version: 1.0.0
 ;===============
 
-Import DMN_DeadmaniacFunctions
+Import DMN_DeadmaniacFunctionsSXPA
 Import DMN_SXPAFunctions
 Import Debug
 Import Game
