@@ -17,7 +17,7 @@ ScriptName DMN_SXPAConfig Extends Quest
 
 {Skyrim XP Addon - Configuration Script by Deadmano.}
 ;==============================================
-; Version: 1.0.0
+; Version: 1.1.0
 ;===============
 
 Import DMN_DeadmaniacFunctionsSXPA
@@ -60,20 +60,18 @@ String DMN_SXPAsVersionRunning
 Event OnInit()
 	preMaintenance() ; Function to run before the main script maintenance.
     Maintenance() ; Function to handle script maintenance.
+	postMaintenance() ; Function to run after the main script maintenance.
 EndEvent
 
 Function preMaintenance()
 	If (DMN_SXPAsVersionInstalled)
-	; Update all existing stats and assign random XP values for each of them
-	; on every game load, if Skyrims XP Addon has already been installed.
-		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
+		; None for now.
 	EndIf
-	DMN_SXPAPA.waitForStatChange()
 EndFunction
  
 Function Maintenance()
 ; The latest (current) version of Skyrim XP Addon. Update this to the version number.
-	parseSXPAVersion("1", "0", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
+	parseSXPAVersion("1", "1", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
 ; ---------------- UPDATE! ^^^^^^^^^^^
 
 	If (DMN_SXPADebug.GetValue() == 1)
@@ -142,6 +140,9 @@ Function installSXPA()
 	Notification("Skyrim XP Addon: Installation and configuration in progress.")
 	Notification("Skyrim XP Addon: Please do not quit or save the game until this process is complete.")
 	
+; Check for any existing XP activities the player may have done, and if any are found, reward the player with XP.
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+	
 ; Set the default configuration settings.
 	configurationDefaults()
 	
@@ -173,7 +174,14 @@ Function updateSXPA()
 	; // BEGIN UPDATE FOR CURRENT SCRIPT VERSION
 	;-------------------------------------------
 	
-	; To come.
+; BEGIN v1.0.0 FIXES/PATCHES
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "1", "0"))
+	; Clear the player's stored SXPA experience value to resolve the error in XP calculations that resulted in inflated results.
+		DMN_SXPAEH.DMN_SXPAExperiencePoints.SetValue(0)
+	; Call the function to re-check all XP activities and re-assign XP values based on the corrected calculations.
+		rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+	EndIf
+; END v1.0.0 FIXES/PATCHES
 
 	; // END UPDATE FOR CURRENT SCRIPT VERSION
 	;-------------------------------------------
@@ -195,8 +203,18 @@ EndFunction
 Function configurationDefaults()
 ; Update all existing stats and assign random XP values for each of them.
 	updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+	DMN_SXPAPA.waitForStatChange()
 	
 ; Add (or update) the mod configurator to the player inventory silently.
 	giveConfigurator(DMN_SXPAConfigurator)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
+EndFunction
+
+Function postMaintenance()
+	If (DMN_SXPAsVersionInstalled)
+	; Update all existing stats and assign random XP values for each of them
+	; on every game load, if Skyrim XP Addon has already been installed.
+		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
+		DMN_SXPAPA.waitForStatChange()
+	EndIf
 EndFunction
