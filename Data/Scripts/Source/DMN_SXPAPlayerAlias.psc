@@ -31,6 +31,7 @@ DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 Event OnPlayerLoadGame()
 	DMN_SXPAC.preMaintenance()
 	DMN_SXPAC.Maintenance()
+	DMN_SXPAC.postMaintenance()
 EndEvent
 
 Function waitForStatChange()
@@ -45,9 +46,7 @@ Event OnUpdate()
 ; If a SXPA tracked player stat was changed,
 ; then update the SXPA values and reward XP.
 	If (checkPlayerStats(DMN_SXPAEH.gStatValue, DMN_SXPAEH.sStatName))
-		;DMN_SXPAEH.updatePlayerStats()
 		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
-		; DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
 	EndIf
 ; If monitoring has not been turned off we will register for another OnUpdate()
 ; cycle for 1 second. This will continue looping until the monitoring variable
