@@ -63,7 +63,7 @@ Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Floa
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog("\n")
-	DMN_SXPALog("Started getRandomXPValue Function]")
+	DMN_SXPALog("[Started getRandomXPValue Function]")
 ; Part 1: Getting a random XP value between the min and max XP variables.
 	Int iMinXP = gMinXP.GetValue() as Int
 	Int iMaxXP = gMaxXP.GetValue() as Int
@@ -75,7 +75,7 @@ Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Floa
 	Int iPlayerLevel = GetPlayer().GetLevel()
 	Float fPlayerLevelOffset = iPlayerLevel - 1
 	Float fPlayerLevelOffsetSquared = pow(fPlayerLevelOffset, 2.0)
-	Float fFinalRandomXPValue = (fPlayerLevelOffsetSquared + 25.00) / 100 * fXPModifier[iIndex] * fRandomXPValue
+	Float fFinalRandomXPValue = (fPlayerLevelOffsetSquared + 25.00) / 100 * fRandomXPValue
 	Int iRandomXPValue = round(fFinalRandomXPValue)
 	; String sPrettyXP = prettyPrintXP(fFinalRandomXPValue)
 	; Notification("Skyrim XP Addon: Pretty XP Display - " + sPrettyXP)
@@ -84,10 +84,10 @@ Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Floa
 	DMN_SXPALog("Power Of Value: " + fPlayerLevelOffsetSquared)
 	DMN_SXPALog("Final Random XP (Float): " + fFinalRandomXPValue)
 	; DMN_SXPALog("Pretty Print XP Value: " + sPrettyXP)
-	DMN_SXPALog("Final Random XP (Int): " + iRandomXPValue + "\n\n")
+	DMN_SXPALog("Final Random XP (Int): " + iRandomXPValue + "\n")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
-	DMN_SXPALog("[Ended getRandomXPValue Function]\n")
+	DMN_SXPALog("[Ended getRandomXPValue Function]\n\n")
 	Return iRandomXPValue
 EndFunction
 
@@ -95,7 +95,7 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog("\n")
-	DMN_SXPALog("Started setRAndomXPValue Function]")
+	DMN_SXPALog("[Started setRandomXPValue Function]\n")
 	If (bIsUpdate || iUpdateCount > 1)
 		DMN_SXPALog("An update was queued to assign XP values to existing stats!")
 		DMN_SXPALog("Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
@@ -105,7 +105,7 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 		While (i < iUpdateCount)
 			Int k = getRandomXPValue(gMinXP, gMaxXP, fXPModifier, iIndex)
 			iRandomXP += k
-			DMN_SXPALog("Value " + (i+1) + " XP: " + k + ".")
+			DMN_SXPALog(sStatName[iIndex] + " " + "(" + (i+1) + "/" + iUpdateCount + ")" + " XP: " + k + ".")
 			i += 1
 		EndWhile
 		Int iNewXP = gXP.GetValue() as Int + iRandomXP
@@ -130,7 +130,74 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("setRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
-	DMN_SXPALog("[Ended setRAndomXPValue Function]\n")
+	DMN_SXPALog("[Ended setRandomXPValue Function]\n\n")
+EndFunction
+
+Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable[] gStatValue, GlobalVariable gXP, Float[] fXPModifier, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("\n")
+	DMN_SXPALog("[Started rewardExistingXPActivities Function]\n")
+; Part 1: Getting the player level, calculating the offset and then squaring it.
+	Int iPlayerLevel = GetPlayer().GetLevel()
+	Float fPlayerLevelOffset = iPlayerLevel - 1
+	Float fPlayerLevelOffsetSquared = pow(fPlayerLevelOffset, 2.0)
+	DMN_SXPALog("Player Level: " + iPlayerLevel)
+	DMN_SXPALog("Player Level Offset: " + fPlayerLevelOffset)
+	DMN_SXPALog("Power Of Value: " + fPlayerLevelOffsetSquared + "\n\n")
+; Part 2: Looping through each XP activity and seeing if any of the values are greater than our stored values, if they are, update them.
+	DMN_SXPALog("An update was queued to assign XP values to existing stats!\n\n")
+	Int iIndex = 0
+	While (iIndex < sStatName.Length)
+		Int iSavedStatValue = gStatValue[iIndex].GetValue() as Int
+		Int iStatValue = QueryStat(sStatName[iIndex])
+		Int iUpdateCount = iStatValue - iSavedStatValue
+		If (iStatValue > iSavedStatValue)
+			gStatValue[iIndex].SetValue(iStatValue)
+		; Part 3: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity modifier.
+			Int iMinXP = gMinXP.GetValue() as Int
+			Int iMaxXP = gMaxXP.GetValue() as Int
+			Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
+			DMN_SXPALog("Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
+			DMN_SXPALog("Min XP: " + iMinXP)
+			DMN_SXPALog("Max XP: " + iMaxXP)
+			DMN_SXPALog("Random XP (Min~Max * Modifier): " + fRandomXPValue)
+		; Part 4: Estimating the amount of times the XP activity was performed at previous levels.
+			Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
+			Float fActivityCount20Percent = iUpdateCount * 0.20 ; Example Input: 250 = 250 * 0.25 = 62.5. 25%.
+			Float fActivityCount70Percent = iUpdateCount * 0.70 ; Example Input: 250 = 250 * 0.60 = 150. 60%.
+		; Part 5: Calculating the amount of XP earned for the XP activity at the level thresholds.
+			Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent
+			Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount20Percent
+			Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount70Percent
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount10Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel + ": " + fRandomXPValueFull + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount20Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 2 + ": " + fRandomXPValueHalf + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount70Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 3 + ": " + fRandomXPValueThird + ".")
+		; Part 6: Calculating the total amount of XP earned for the XP activity.
+			Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird
+			Int iRandomXPValue = round(fFinalRandomXPValue)
+			DMN_SXPALog("Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
+			DMN_SXPALog("Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
+		; Part 6: Adding the total amount of XP earned for the XP activity to the total experience points.
+			Int iNewXP = gXP.GetValue() as Int + iRandomXPValue
+			DMN_SXPALog("Previous XP: " + gXP.GetValue() as Int + ".")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog("XP Assigned: " + iRandomXPValue + ".")
+			DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".\n\n")
+			If (iUpdateCount > 1)
+				Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
+			Else
+				Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
+			EndIf
+		EndIf
+		iIndex += 1
+	EndWhile
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("rewardExistingXPActivities() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended rewardExistingXPActivities Function]\n\n")
 EndFunction
 
 Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable[] gStatValue, GlobalVariable gXP, Float[] fXPModifier, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
@@ -174,8 +241,6 @@ Bool Function checkPlayerStats(GlobalVariable[] gStatValue, String[] sStatName) 
 		EndIf
 		iIndex += 1
 	EndWhile
-	fStop = GetCurrentRealTime()
-	DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.")
 	Return False
 EndFunction
 
