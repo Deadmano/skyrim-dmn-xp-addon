@@ -33,7 +33,13 @@ GlobalVariable Property DMN_SXPAExperienceMax Auto
 
 Float[] Property fXPModifier Auto
 {The list of XP modifiers that affect the XP given per stat progression.}
-String[] Property sSkill Auto
+Float[] Property fSkillModifier Auto
+{The list of skill modifiers that affect the XP cost per skill level.}
+Int[] Property iSkillXP Auto
+{The list of converted XP values for each stat.}
+Int[] Property iSkillXPSpent Auto
+{The list of XP spent on each stat.}
+String[] Property sSkillName Auto
 {The list of all player skills that we are able to spend XP on improving.}
 String[] Property sStatName Auto
 {The list of all player stat names that we are tracking.}
