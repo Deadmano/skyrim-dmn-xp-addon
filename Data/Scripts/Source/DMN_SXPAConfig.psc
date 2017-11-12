@@ -50,9 +50,14 @@ String DMN_SXPAsVersionRunning
 ; BEGIN Update Related Variables and Properties
 ;==============================================
 ;
+; BEGIN v1.1.0
+;-------------
 
-; To come.
+Message Property DMN_SXPAUpdateAnnouncement_v1_1_0 Auto
+{The message that is shown to the player for the update to version 1.1.0. Auto-Fill.}
 
+; END v1.1.0
+;-------------
 ;
 ; END Update Related Variables and Properties
 ;==============================================
@@ -182,6 +187,25 @@ Function updateSXPA()
 		rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 	EndIf
 ; END v1.0.0 FIXES/PATCHES
+
+	; // BEGIN VERSION SPECIFIC ANNOUNCEMENT MESSAGES
+	;------------------------------------------------
+	
+	Int updateCount = 0
+	; Change this to the latest update announcement message.
+	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v1_1_0
+
+; v1.1.0
+;-------
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "1", "0") && \
+		DMN_SXPAiVersionRunning >= 1100)
+		Wait(3.0)
+		DMN_SXPAUpdateAnnouncement_v1_1_0.Show()
+		updateCount += 1
+	EndIf	
+	
+	; // END VERSION SPECIFIC ANNOUNCEMENT MESSAGES
+	;------------------------------------------------
 
 	; // END UPDATE FOR CURRENT SCRIPT VERSION
 	;-------------------------------------------
