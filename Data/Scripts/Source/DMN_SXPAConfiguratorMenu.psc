@@ -36,6 +36,9 @@ Message Property DMN_SXPAConfigMenuXPMinMaxRewardMin Auto
 Message Property DMN_SXPAConfigMenuXPMultiplier Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierValues Auto
 Message Property DMN_SXPAConfigMenuSpendXP Auto
+Message Property DMN_SXPAConfigMenuSpendXPCombat Auto
+Message Property DMN_SXPAConfigMenuSpendXPMagic Auto
+Message Property DMN_SXPAConfigMenuSpendXPStealth Auto
 Message Property DMN_SXPAConfigMenuSpendXPAmount Auto
 
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
@@ -179,6 +182,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [Return to Configure Multipliers]
 					iMenu = 4
 				EndIf
+				If (fMultiplierLocationsDiscovered > 0)
+					DMN_SXPAEH.fXPModifier[0] = fMultiplierLocationsDiscovered
+					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[0] + " XP multiplier set to " + fMultiplierLocationsDiscovered + ".")
+				EndIf
 			ElseIf (iButton == 1)
 			; [Standing Stones Found]
 				iButton = DMN_SXPAConfigMenuXPMultiplierValues.Show()
@@ -203,6 +210,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				ElseIf (iButton == 9)
 				; [Return to Configure Multipliers]
 					iMenu = 4
+				EndIf
+				If (fMultiplierStandingStonesFound > 0)
+					DMN_SXPAEH.fXPModifier[1] = fMultiplierStandingStonesFound
+					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[1] + " XP multiplier set to " + fMultiplierStandingStonesFound + ".")
 				EndIf
 			ElseIf (iButton == 2)
 			; [Nirnroots Found]
@@ -229,6 +240,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [Return to Configure Multipliers]
 					iMenu = 4
 				EndIf
+				If (fMultiplierNirnrootsFound > 0)
+					DMN_SXPAEH.fXPModifier[2] = fMultiplierNirnrootsFound
+					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[2] + " XP multiplier set to " + fMultiplierNirnrootsFound + ".")
+				EndIf
 			ElseIf (iButton == 3)
 			; [Books Read]
 				iButton = DMN_SXPAConfigMenuXPMultiplierValues.Show()
@@ -253,6 +268,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				ElseIf (iButton == 9)
 				; [Return to Configure Multipliers]
 					iMenu = 4
+				EndIf
+				If (fMultiplierBooksRead > 0)
+					DMN_SXPAEH.fXPModifier[3] = fMultiplierBooksRead
+					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[3] + " XP multiplier set to " + fMultiplierBooksRead + ".")
 				EndIf
 			ElseIf (iButton == 4)
 			; [Return to XP Settings]
@@ -294,6 +313,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Configure Min/Max XP]
 				iMenu = 3
 			EndIf
+			If (minXP > 0)
+				DMN_SXPAExperienceMin.SetValue(minXP)
+				Notification("Skyrim XP Addon: Minimum base XP reward set to " + minXP + "XP.")
+			EndIf
 	; Show the Maximum Base XP Reward menu.
 	; -------------------------------------
 		ElseIf (iMenu == 6)
@@ -330,13 +353,171 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Configure Min/Max XP]
 				iMenu = 3
 			EndIf
-	; Show the Spend XP Reward menu.
+			If (maxXP > 0)
+				DMN_SXPAExperienceMax.SetValue(maxXP)
+				Notification("Skyrim XP Addon: Maximum base XP reward set to " + maxXP + "XP.")
+			EndIf
+	; Show the Spend XP menu.
 	; -------------------------------------
 		ElseIf (iMenu == 7)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			iButton = DMN_SXPAConfigMenuSpendXP.Show(i)
+			If (iButton == 0)
+			; [Combat]
+				iMenu = 8
+			ElseIf (iButton == 1)
+			; [Magic]
+				iMenu = 9
+			ElseIf (iButton == 2)
+			; [Stealth]
+				iMenu = 10
+			ElseIf (iButton == 3)
+			; [Return To Main Menu]
+				iMenu = 0
+			EndIf
+	; Show the Spend XP - Combat menu.
+	; -------------------------------------
+		ElseIf (iMenu == 8)
+			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
 			String sSkill
 			Int iAmount
-			iButton = DMN_SXPAConfigMenuSpendXP.Show(i)
+			iButton = DMN_SXPAConfigMenuSpendXPCombat.Show(i)
+			If (iButton == 0)
+			; [Archery]
+				sSkill = "Marksman"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Combat]
+					iMenu = 8
+				EndIf
+			ElseIf (iButton == 1)
+			; [Block]
+				sSkill = "Block"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Combat]
+					iMenu = 8
+				EndIf
+			ElseIf (iButton == 2)
+			; [Heavy Armor]
+				sSkill = "HeavyArmor"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Combat]
+					iMenu = 8
+				EndIf
+			ElseIf (iButton == 3)
+			; [One-Handed]
+				sSkill = "OneHanded"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Combat]
+					iMenu = 8
+				EndIf
+			ElseIf (iButton == 4)
+			; [Smithing]
+				sSkill = "Smithing"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Combat]
+					iMenu = 8
+				EndIf
+			ElseIf (iButton == 5)
+			; [Two-Handed]
+				sSkill = "TwoHanded"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Combat]
+					iMenu = 8
+				EndIf
+			ElseIf (iButton == 6)
+			; [Return to Spend XP]
+				iMenu = 7
+			EndIf
+			If (sSkill && iAmount > 0)
+				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				sSkill = ""
+				iAmount = 0
+			EndIf
+	; Show the Spend XP - Magic menu.
+	; -------------------------------------
+		ElseIf (iMenu == 9)
+			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			String sSkill
+			Int iAmount
+			iButton = DMN_SXPAConfigMenuSpendXPMagic.Show(i)
 			If (iButton == 0)
 			; [Alteration]
 				sSkill = "Alteration"
@@ -354,8 +535,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [5000XP]
 					iAmount = 5000
 				ElseIf (iButton == 4)
-				; [Return to Spend XP Reward]
-					iMenu = 7
+					iMenu = 9
+				; [Return to Spend XP - Magic]
 				EndIf
 			ElseIf (iButton == 1)
 			; [Conjuration]
@@ -374,8 +555,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [5000XP]
 					iAmount = 5000
 				ElseIf (iButton == 4)
-				; [Return to Spend XP Reward]
-					iMenu = 7
+				; [Return to Spend XP - Magic]
+					iMenu = 9
 				EndIf
 			ElseIf (iButton == 2)
 			; [Destruction]
@@ -394,10 +575,30 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [5000XP]
 					iAmount = 5000
 				ElseIf (iButton == 4)
-				; [Return to Spend XP Reward]
-					iMenu = 7
+				; [Return to Spend XP - Magic]
+					iMenu = 9
 				EndIf
 			ElseIf (iButton == 3)
+			; [Enchanting]
+				sSkill = "Enchanting"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Magic]
+					iMenu = 9
+				EndIf
+			ElseIf (iButton == 4)
 			; [Illusion]
 				sSkill = "Illusion"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
@@ -414,40 +615,174 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [5000XP]
 					iAmount = 5000
 				ElseIf (iButton == 4)
-				; [Return to Spend XP Reward]
-					iMenu = 7
+				; [Return to Spend XP - Magic]
+					iMenu = 9
 				EndIf
-			ElseIf (iButton == 4)
-			; [Return to Main Config]
-				iMenu = 0
+			ElseIf (iButton == 5)
+			; [Restoration]
+				sSkill = "Restoration"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Magic]
+					iMenu = 9
+				EndIf
+			ElseIf (iButton == 6)
+			; [Return to Spend XP]
+				iMenu = 7
 			EndIf
 			If (sSkill && iAmount > 0)
-			spendXP(DMN_SXPAExperiencePoints, sSkill, iAmount)
+				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				sSkill = ""
+				iAmount = 0
 			EndIf
-		EndIf
-		If (minXP > 0)
-			DMN_SXPAExperienceMin.SetValue(minXP)
-			Notification("Skyrim XP Addon: Minimum base XP reward set to " + minXP + "XP.")
-		EndIf
-		If (maxXP > 0)
-			DMN_SXPAExperienceMax.SetValue(maxXP)
-			Notification("Skyrim XP Addon: Maximum base XP reward set to " + maxXP + "XP.")
-		EndIf
-		If (fMultiplierLocationsDiscovered > 0)
-			DMN_SXPAEH.fXPModifier[0] = fMultiplierLocationsDiscovered
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[0] + " XP multiplier set to " + fMultiplierLocationsDiscovered + ".")
-		EndIf
-		If (fMultiplierStandingStonesFound > 0)
-			DMN_SXPAEH.fXPModifier[1] = fMultiplierStandingStonesFound
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[1] + " XP multiplier set to " + fMultiplierStandingStonesFound + ".")
-		EndIf
-		If (fMultiplierNirnrootsFound > 0)
-			DMN_SXPAEH.fXPModifier[2] = fMultiplierNirnrootsFound
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[2] + " XP multiplier set to " + fMultiplierNirnrootsFound + ".")
-		EndIf
-		If (fMultiplierBooksRead > 0)
-			DMN_SXPAEH.fXPModifier[3] = fMultiplierBooksRead
-			Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[3] + " XP multiplier set to " + fMultiplierBooksRead + ".")
+	; Show the Spend XP - Stealth menu.
+	; -------------------------------------
+		ElseIf (iMenu == 10)
+			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			String sSkill
+			Int iAmount
+			iButton = DMN_SXPAConfigMenuSpendXPStealth.Show(i)
+			If (iButton == 0)
+			; [Alchemy]
+				sSkill = "Alchemy"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Stealth]
+					iMenu = 10
+				EndIf
+			ElseIf (iButton == 1)
+			; [Light Armor]
+				sSkill = "LightArmor"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Stealth]
+					iMenu = 10
+				EndIf
+			ElseIf (iButton == 2)
+			; [Lockpicking]
+				sSkill = "Lockpicking"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Stealth]
+					iMenu = 10
+				EndIf
+			ElseIf (iButton == 3)
+			; [Pickpocket]
+				sSkill = "Pickpocket"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Stealth]
+					iMenu = 10
+				EndIf
+			ElseIf (iButton == 4)
+			; [Sneak]
+				sSkill = "Sneak"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Stealth]
+					iMenu = 10
+				EndIf
+			ElseIf (iButton == 5)
+			; [Speech]
+				sSkill = "Speechcraft"
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				If (iButton == 0)
+				; [100XP]
+					iAmount = 100
+				ElseIf (iButton == 1)
+				; [500XP]
+					iAmount = 500
+				ElseIf (iButton == 2)
+				; [1000XP]
+					iAmount = 1000
+				ElseIf (iButton == 3)
+				; [5000XP]
+					iAmount = 5000
+				ElseIf (iButton == 4)
+				; [Return to Spend XP - Stealth]
+					iMenu = 10
+				EndIf
+			ElseIf (iButton == 6)
+			; [Return to Spend XP]
+				iMenu = 7
+			EndIf
+			If (sSkill && iAmount > 0)
+				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				sSkill = ""
+				iAmount = 0
+			EndIf
 		EndIf
 	EndWhile
 ; We are now ready to configure other mod options.
