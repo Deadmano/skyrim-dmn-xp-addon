@@ -232,21 +232,33 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 			DMN_SXPALog("Max XP: " + iMaxXP)
 			DMN_SXPALog("Random XP (Min~Max * Modifier): " + fRandomXPValue)
 		; Part 4: Estimating the amount of times the XP activity was performed at previous levels.
-			Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
-			Float fActivityCount20Percent = iUpdateCount * 0.20 ; Example Input: 250 = 250 * 0.25 = 62.5. 25%.
-			Float fActivityCount70Percent = iUpdateCount * 0.70 ; Example Input: 250 = 250 * 0.60 = 150. 60%.
+			Float fActivityCount1Percent = iUpdateCount * 0.01 ; Example Input: 250 = 250 * 0.01 = 2.5. 1%.
+			Float fActivityCount4Percent = iUpdateCount * 0.04 ; Example Input: 250 = 250 * 0.04 = 10. 4%.
+			Float fActivityCount5Percent = iUpdateCount * 0.05 ; Example Input: 250 = 250 * 0.05 = 12.5. 5%.
+			Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.10 = 25. 10%.
+			Float fActivityCount15Percent = iUpdateCount * 0.15 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
+			Float fActivityCount65Percent = iUpdateCount * 0.65 ; Example Input: 250 = 250 * 0.65 = 162.5. 65%.
 		; Part 5: Calculating the amount of XP earned for the XP activity at the level thresholds.
-			Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent
-			Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount20Percent
-			Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount70Percent
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount10Percent + ".")
+			Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount1Percent ; Squared.
+			Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount4Percent ; 2 Squared.
+			Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount5Percent ; 3 Squared.
+			Float fRandomXPValueFourth = ((fPlayerLevelOffsetSquared / 16) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent ; 4 Squared.
+			Float fRandomXPValueFifth = ((fPlayerLevelOffsetSquared / 25) + 25.00) / 100 * fRandomXPValue * fActivityCount15Percent ; 5 Squared.
+			Float fRandomXPValueSixth = ((fPlayerLevelOffsetSquared / 36) + 25.00) / 100 * fRandomXPValue * fActivityCount65Percent ; 6 Squared.
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount1Percent + ".")
 			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel + ": " + fRandomXPValueFull + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount20Percent + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount4Percent + ".")
 			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 2 + ": " + fRandomXPValueHalf + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount70Percent + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount5Percent + ".")
 			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 3 + ": " + fRandomXPValueThird + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 4 + ": " + fActivityCount10Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 4 + ": " + fRandomXPValueFourth + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 5 + ": " + fActivityCount15Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 5 + ": " + fRandomXPValueFifth + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 6 + ": " + fActivityCount65Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 6 + ": " + fRandomXPValueSixth + ".")
 		; Part 6: Calculating the total amount of XP earned for the XP activity.
-			Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird
+			Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird + fRandomXPValueFourth + fRandomXPValueFifth + fRandomXPValueSixth
 			Int iRandomXPValue = round(fFinalRandomXPValue)
 			DMN_SXPALog("Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
 			DMN_SXPALog("Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
