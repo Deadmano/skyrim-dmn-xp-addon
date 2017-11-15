@@ -49,7 +49,7 @@ Function giveConfigurator(Book configurator) Global
 	EndIf
 EndFunction
 
-Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, String[] sSkillName, String sSkill, Int iAmount) Global
+Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount) Global
 	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started spendXP Function]\n")
 	Int iCurrentXP = gTotalXP.GetValue() as Int
@@ -89,7 +89,8 @@ Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP
 		Float fSkillCost = fSkillModifier[iIndex] * 2 * fSkillLevelOffsetPOW + iSkillImproveOffset
 		Int iSkillCost = round(fSkillCost)
 		iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
-		iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iSkillCost
+		iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
+		iSkillXPSpentEffective[iIndex] = iSkillXPSpentEffective[iIndex] + iEffectiveXP
 	If (iSkillXP[iIndex] >= iSkillCost)
 			iSkillXP[iIndex] = iSkillXP[iIndex] - iSkillCost
 	; Revert the earlier skill name changes so that specific skill names with spaces
@@ -268,6 +269,28 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 	DMN_SXPALog("[Ended rewardExistingXPActivities Function]\n\n")
 EndFunction
 
+Function resetStatValues(GlobalVariable[] gStatValue, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("\n")
+	DMN_SXPALog("[Started resetStatValues Function]\n")
+	Int iIndex = 0
+	While (iIndex < gStatValue.Length)
+		Int iStatValue = gStatValue[iIndex].GetValue() as Int
+	; Set the tracked XP activity value to 0 if it isn't already 0.
+		If (iStatValue > 0)
+			DMN_SXPALog(sStatName[iIndex] + ": " + iStatValue + ".")
+			gStatValue[iIndex].SetValue(0)
+			iStatValue = gStatValue[iIndex].GetValue() as Int
+			DMN_SXPALog("Set " + sStatName[iIndex] + " to " + iStatValue + ".")
+		EndIf
+		iIndex += 1
+	EndWhile
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("resetStatValues() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended resetStatValues Function]\n\n")
+EndFunction
+
 Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable[] gStatValue, GlobalVariable gXP, Float[] fXPModifier, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
@@ -310,6 +333,26 @@ Bool Function checkPlayerStats(GlobalVariable[] gStatValue, String[] sStatName) 
 		iIndex += 1
 	EndWhile
 	Return False
+EndFunction
+
+Function resetArrayDataInt(Int[] iArray) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("\n")
+	DMN_SXPALog("[Started resetArrayDataInt Function]\n")
+	DMN_SXPALog("Previous full array value: " + iArray + ".")
+	Int iArrayLength = iArray.Length
+	Int iIndex = 0
+	While (iIndex < iArrayLength)
+	DMN_SXPALog("Array index " + iIndex + " previous value: " + iArray[iIndex] + ".")
+		iArray[iIndex] = 0
+	DMN_SXPALog("Array index " + iIndex + " new value: " + iArray[iIndex] + ".")
+		iIndex += 1
+	EndWhile
+	DMN_SXPALog("New full array value: " + iArray + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("resetArrayDataInt() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
 String Function prettyPrintXP(Float fXP) Global
