@@ -92,6 +92,11 @@ Function preMaintenance()
 		bActiveMonitoringEnabled = True
 		DMN_SXPALog("Disabling XP activity active tracking temporarily...")
 		DMN_SXPAActiveMonitoring.SetValue(0)
+		If (DMN_SXPAActiveMonitoring.GetValue() == 0)
+			DMN_SXPALog("XP activity active tracking was disabled.")
+		Else
+			DMN_SXPALog("WARNING: XP activity active tracking was NOT disabled!")
+		EndIf
 	EndIf
 EndFunction
  
@@ -219,6 +224,16 @@ Function updateSXPA()
 	EndIf
 ; END v1.1.0 FIXES/PATCHES
 
+; BEGIN NON-SPECIFIC VERSION UPDATES
+;-----------------------------------
+
+; Calls a function that checks for existing XP activities and rewards balanced XP taking into account when the player may have started up until their current level.
+; This is required after the Event Handler quest is reset to uncover and reward the newly added XP activities.
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+
+;-----------------------------------
+; END NON-SPECIFIC VERSION UPDATES
+
 	; // BEGIN VERSION SPECIFIC ANNOUNCEMENT MESSAGES
 	;------------------------------------------------
 	
@@ -233,8 +248,7 @@ Function updateSXPA()
 		Wait(3.0)
 		DMN_SXPAUpdateAnnouncement_v1_1_0.Show()
 		updateCount += 1
-	EndIf	
-	
+	EndIf
 ; v1.2.0
 ;-------
 	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "2", "0") && \
@@ -242,7 +256,7 @@ Function updateSXPA()
 		Wait(3.0)
 		DMN_SXPAUpdateAnnouncement_v1_2_0.Show()
 		updateCount += 1
-	EndIf	
+	EndIf
 
 	; // END VERSION SPECIFIC ANNOUNCEMENT MESSAGES
 	;------------------------------------------------
@@ -273,9 +287,14 @@ EndFunction
 Function postMaintenance()
 ; Re-enable XP activity active tracking if active tracking was already enabled prior.
 	If (bActiveMonitoringEnabled)
+		bActiveMonitoringEnabled = None
 		DMN_SXPALog("Re-enabling XP activity active tracking.")
 		DMN_SXPAActiveMonitoring.SetValue(1)
-		bActiveMonitoringEnabled = None
+		If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+			DMN_SXPALog("XP activity active tracking was enabled.")
+		Else
+			DMN_SXPALog("WARNING: XP activity active tracking was NOT enabled!")
+		EndIf
 	; Register for XP activity active tracking once more.
 		DMN_SXPAPA.waitForStatChange()
 	Else
