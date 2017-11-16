@@ -17,7 +17,7 @@ ScriptName DMN_SXPAConfig Extends Quest
 
 {Skyrim XP Addon - Configuration Script by Deadmano.}
 ;==============================================
-; Version: 1.1.0
+; Version: 1.2.0
 ;===============
 
 Import DMN_DeadmaniacFunctionsSXPA
@@ -27,6 +27,7 @@ Import Game
 Import Utility
 
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
+DMN_SXPAEventHandlerData Property DMN_SXPAEHD Auto
 DMN_SXPAPlayerAlias Property DMN_SXPAPA Auto
 
 Book Property DMN_SXPAConfigurator Auto
@@ -58,6 +59,21 @@ Message Property DMN_SXPAUpdateAnnouncement_v1_1_0 Auto
 
 ; END v1.1.0
 ;-------------
+
+; BEGIN v1.2.0
+;-------------
+
+Bool bActiveMonitoringEnabled
+; The variable that handles checking for the active monitoring state.
+
+GlobalVariable Property DMN_SXPAActiveMonitoring Auto
+{Handles active (always on) XP activity tracking. Auto-Fill.}
+
+Message Property DMN_SXPAUpdateAnnouncement_v1_2_0 Auto
+{The message that is shown to the player for the update to version 1.2.0. Auto-Fill.}
+
+; END v1.2.0
+;-------------
 ;
 ; END Update Related Variables and Properties
 ;==============================================
@@ -69,14 +85,24 @@ Event OnInit()
 EndEvent
 
 Function preMaintenance()
-	If (DMN_SXPAsVersionInstalled)
-		; None for now.
+	; Disable XP activity active tracking whilst updates are running to avoid any issues if
+	; active tracking was already enabled and not disabled by the user.
+	Int DMN_SXPAActiveMonitoringState = DMN_SXPAActiveMonitoring.GetValue() As Int
+	If (DMN_SXPAActiveMonitoringState == 1)
+		bActiveMonitoringEnabled = True
+		DMN_SXPALog("Disabling XP activity active tracking temporarily...")
+		DMN_SXPAActiveMonitoring.SetValue(0)
+		If (DMN_SXPAActiveMonitoring.GetValue() == 0)
+			DMN_SXPALog("XP activity active tracking was disabled.")
+		Else
+			DMN_SXPALog("WARNING: XP activity active tracking was NOT disabled!")
+		EndIf
 	EndIf
 EndFunction
  
 Function Maintenance()
 ; The latest (current) version of Skyrim XP Addon. Update this to the version number.
-	parseSXPAVersion("1", "1", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
+	parseSXPAVersion("1", "2", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
 ; ---------------- UPDATE! ^^^^^^^^^^^
 
 	If (DMN_SXPADebug.GetValue() == 1)
@@ -183,17 +209,37 @@ Function updateSXPA()
 	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "1", "0"))
 	; Clear the player's stored SXPA experience value to resolve the error in XP calculations that resulted in inflated results.
 		DMN_SXPAEH.DMN_SXPAExperiencePoints.SetValue(0)
+		resetStatValues(DMN_SXPAEH.gStatValue, DMN_SXPAEH.sStatName)
 	; Call the function to re-check all XP activities and re-assign XP values based on the corrected calculations.
 		rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 	EndIf
 ; END v1.0.0 FIXES/PATCHES
+
+; BEGIN v1.1.0 FIXES/PATCHES
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "2", "0"))
+	; Backup user data then reset the Event Handler quest so the new properties/variables are accessible.
+		DMN_SXPAEHD.updateEventHandlerData()
+	; Reset the XP Spent variable due to inaccurate calculations since v1.0.0.
+		resetArrayDataInt(DMN_SXPAEH.iSkillXPSpent)
+	EndIf
+; END v1.1.0 FIXES/PATCHES
+
+; BEGIN NON-SPECIFIC VERSION UPDATES
+;-----------------------------------
+
+; Calls a function that checks for existing XP activities and rewards balanced XP taking into account when the player may have started up until their current level.
+; This is required after the Event Handler quest is reset to uncover and reward the newly added XP activities.
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+
+;-----------------------------------
+; END NON-SPECIFIC VERSION UPDATES
 
 	; // BEGIN VERSION SPECIFIC ANNOUNCEMENT MESSAGES
 	;------------------------------------------------
 	
 	Int updateCount = 0
 	; Change this to the latest update announcement message.
-	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v1_1_0
+	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v1_2_0
 
 ; v1.1.0
 ;-------
@@ -202,8 +248,16 @@ Function updateSXPA()
 		Wait(3.0)
 		DMN_SXPAUpdateAnnouncement_v1_1_0.Show()
 		updateCount += 1
-	EndIf	
-	
+	EndIf
+; v1.2.0
+;-------
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "2", "0") && \
+		DMN_SXPAiVersionRunning >= 1200)
+		Wait(3.0)
+		DMN_SXPAUpdateAnnouncement_v1_2_0.Show()
+		updateCount += 1
+	EndIf
+
 	; // END VERSION SPECIFIC ANNOUNCEMENT MESSAGES
 	;------------------------------------------------
 
@@ -225,20 +279,27 @@ Function updateSXPA()
 EndFunction
 
 Function configurationDefaults()
-; Update all existing stats and assign random XP values for each of them.
-	updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
-	DMN_SXPAPA.waitForStatChange()
-	
 ; Add (or update) the mod configurator to the player inventory silently.
 	giveConfigurator(DMN_SXPAConfigurator)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
 EndFunction
 
 Function postMaintenance()
-	If (DMN_SXPAsVersionInstalled)
-	; Update all existing stats and assign random XP values for each of them
-	; on every game load, if Skyrim XP Addon has already been installed.
-		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
+; Re-enable XP activity active tracking if active tracking was already enabled prior.
+	If (bActiveMonitoringEnabled)
+		bActiveMonitoringEnabled = None
+		DMN_SXPALog("Re-enabling XP activity active tracking.")
+		DMN_SXPAActiveMonitoring.SetValue(1)
+		If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+			DMN_SXPALog("XP activity active tracking was enabled.")
+		Else
+			DMN_SXPALog("WARNING: XP activity active tracking was NOT enabled!")
+		EndIf
+	; Register for XP activity active tracking once more.
 		DMN_SXPAPA.waitForStatChange()
+	Else
+	; Since XP activity active tracking is disabled, call a manual update.
+	; Update all existing stats and assign random XP values for each of them.
+		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 	EndIf
 EndFunction

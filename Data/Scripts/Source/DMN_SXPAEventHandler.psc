@@ -38,7 +38,9 @@ Float[] Property fSkillModifier Auto
 Int[] Property iSkillXP Auto
 {The list of converted XP values for each stat.}
 Int[] Property iSkillXPSpent Auto
-{The list of XP spent on each stat.}
+{The list of total generic XP spent on each skill.}
+Int[] Property iSkillXPSpentEffective Auto
+{The list of total effective skill XP spent on each skill.}
 String[] Property sSkillName Auto
 {The list of all player skills that we are able to spend XP on improving.}
 String[] Property sStatName Auto
@@ -49,10 +51,6 @@ GlobalVariable[] Property gStatValue Auto
 {The list of all player stat values that we are tracking.}
 
 Int Property iPassiveMonitoring Auto Conditional
-
-Event OnInit()
-	startTracking()
-EndEvent
 
 Function startTracking()
 ; Register to start tracking player game stat changes.

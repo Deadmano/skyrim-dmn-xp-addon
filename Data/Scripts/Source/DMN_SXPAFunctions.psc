@@ -49,7 +49,7 @@ Function giveConfigurator(Book configurator) Global
 	EndIf
 EndFunction
 
-Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, String[] sSkillName, String sSkill, Int iAmount) Global
+Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount) Global
 	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started spendXP Function]\n")
 	Int iCurrentXP = gTotalXP.GetValue() as Int
@@ -89,7 +89,8 @@ Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP
 		Float fSkillCost = fSkillModifier[iIndex] * 2 * fSkillLevelOffsetPOW + iSkillImproveOffset
 		Int iSkillCost = round(fSkillCost)
 		iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
-		iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iSkillCost
+		iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
+		iSkillXPSpentEffective[iIndex] = iSkillXPSpentEffective[iIndex] + iEffectiveXP
 	If (iSkillXP[iIndex] >= iSkillCost)
 			iSkillXP[iIndex] = iSkillXP[iIndex] - iSkillCost
 	; Revert the earlier skill name changes so that specific skill names with spaces
@@ -231,21 +232,33 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 			DMN_SXPALog("Max XP: " + iMaxXP)
 			DMN_SXPALog("Random XP (Min~Max * Modifier): " + fRandomXPValue)
 		; Part 4: Estimating the amount of times the XP activity was performed at previous levels.
-			Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
-			Float fActivityCount20Percent = iUpdateCount * 0.20 ; Example Input: 250 = 250 * 0.25 = 62.5. 25%.
-			Float fActivityCount70Percent = iUpdateCount * 0.70 ; Example Input: 250 = 250 * 0.60 = 150. 60%.
+			Float fActivityCount1Percent = iUpdateCount * 0.01 ; Example Input: 250 = 250 * 0.01 = 2.5. 1%.
+			Float fActivityCount4Percent = iUpdateCount * 0.04 ; Example Input: 250 = 250 * 0.04 = 10. 4%.
+			Float fActivityCount5Percent = iUpdateCount * 0.05 ; Example Input: 250 = 250 * 0.05 = 12.5. 5%.
+			Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.10 = 25. 10%.
+			Float fActivityCount15Percent = iUpdateCount * 0.15 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
+			Float fActivityCount65Percent = iUpdateCount * 0.65 ; Example Input: 250 = 250 * 0.65 = 162.5. 65%.
 		; Part 5: Calculating the amount of XP earned for the XP activity at the level thresholds.
-			Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent
-			Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount20Percent
-			Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount70Percent
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount10Percent + ".")
+			Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount1Percent ; Squared.
+			Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount4Percent ; 2 Squared.
+			Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount5Percent ; 3 Squared.
+			Float fRandomXPValueFourth = ((fPlayerLevelOffsetSquared / 16) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent ; 4 Squared.
+			Float fRandomXPValueFifth = ((fPlayerLevelOffsetSquared / 25) + 25.00) / 100 * fRandomXPValue * fActivityCount15Percent ; 5 Squared.
+			Float fRandomXPValueSixth = ((fPlayerLevelOffsetSquared / 36) + 25.00) / 100 * fRandomXPValue * fActivityCount65Percent ; 6 Squared.
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount1Percent + ".")
 			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel + ": " + fRandomXPValueFull + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount20Percent + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount4Percent + ".")
 			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 2 + ": " + fRandomXPValueHalf + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount70Percent + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount5Percent + ".")
 			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 3 + ": " + fRandomXPValueThird + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 4 + ": " + fActivityCount10Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 4 + ": " + fRandomXPValueFourth + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 5 + ": " + fActivityCount15Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 5 + ": " + fRandomXPValueFifth + ".")
+			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 6 + ": " + fActivityCount65Percent + ".")
+			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 6 + ": " + fRandomXPValueSixth + ".")
 		; Part 6: Calculating the total amount of XP earned for the XP activity.
-			Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird
+			Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird + fRandomXPValueFourth + fRandomXPValueFifth + fRandomXPValueSixth
 			Int iRandomXPValue = round(fFinalRandomXPValue)
 			DMN_SXPALog("Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
 			DMN_SXPALog("Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
@@ -266,6 +279,28 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("rewardExistingXPActivities() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog("[Ended rewardExistingXPActivities Function]\n\n")
+EndFunction
+
+Function resetStatValues(GlobalVariable[] gStatValue, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("\n")
+	DMN_SXPALog("[Started resetStatValues Function]\n")
+	Int iIndex = 0
+	While (iIndex < gStatValue.Length)
+		Int iStatValue = gStatValue[iIndex].GetValue() as Int
+	; Set the tracked XP activity value to 0 if it isn't already 0.
+		If (iStatValue > 0)
+			DMN_SXPALog(sStatName[iIndex] + ": " + iStatValue + ".")
+			gStatValue[iIndex].SetValue(0)
+			iStatValue = gStatValue[iIndex].GetValue() as Int
+			DMN_SXPALog("Set " + sStatName[iIndex] + " to " + iStatValue + ".")
+		EndIf
+		iIndex += 1
+	EndWhile
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("resetStatValues() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended resetStatValues Function]\n\n")
 EndFunction
 
 Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable[] gStatValue, GlobalVariable gXP, Float[] fXPModifier, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
@@ -310,6 +345,26 @@ Bool Function checkPlayerStats(GlobalVariable[] gStatValue, String[] sStatName) 
 		iIndex += 1
 	EndWhile
 	Return False
+EndFunction
+
+Function resetArrayDataInt(Int[] iArray) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("\n")
+	DMN_SXPALog("[Started resetArrayDataInt Function]\n")
+	DMN_SXPALog("Previous full array value: " + iArray + ".")
+	Int iArrayLength = iArray.Length
+	Int iIndex = 0
+	While (iIndex < iArrayLength)
+	DMN_SXPALog("Array index " + iIndex + " previous value: " + iArray[iIndex] + ".")
+		iArray[iIndex] = 0
+	DMN_SXPALog("Array index " + iIndex + " new value: " + iArray[iIndex] + ".")
+		iIndex += 1
+	EndWhile
+	DMN_SXPALog("New full array value: " + iArray + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("resetArrayDataInt() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
 String Function prettyPrintXP(Float fXP) Global

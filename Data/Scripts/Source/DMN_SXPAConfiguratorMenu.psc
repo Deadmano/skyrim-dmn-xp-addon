@@ -507,7 +507,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iMenu = 7
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -643,7 +643,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iMenu = 7
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -779,7 +779,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iMenu = 7
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf

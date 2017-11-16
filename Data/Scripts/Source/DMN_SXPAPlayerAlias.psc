@@ -43,15 +43,15 @@ EndFunction
 Event OnUpdate()
 ; The variable that holds the monitor state. 1 = on, 0 = off.
 	Bool bContinueMonitoring = DMN_SXPAActiveMonitoring.GetValue() As Int
-; If a SXPA tracked player stat was changed,
-; then update the SXPA values and reward XP.
-	If (checkPlayerStats(DMN_SXPAEH.gStatValue, DMN_SXPAEH.sStatName))
-		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
-	EndIf
 ; If monitoring has not been turned off we will register for another OnUpdate()
 ; cycle for 1 second. This will continue looping until the monitoring variable
 ; is switched to 0 (off) either by another script, or by player request.
 	If (bContinueMonitoring == 1)
+; If a SXPA tracked player stat was changed,
+; then update the SXPA values and reward XP.
+		If (checkPlayerStats(DMN_SXPAEH.gStatValue, DMN_SXPAEH.sStatName))
+			updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
+		EndIf
 		RegisterForSingleUpdate(1.0)
 	EndIf
 EndEvent
