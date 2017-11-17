@@ -31,16 +31,18 @@ GlobalVariable Property DMN_SXPAExperiencePoints Auto
 GlobalVariable Property DMN_SXPAExperienceMin Auto
 GlobalVariable Property DMN_SXPAExperienceMax Auto
 
-Float[] Property fXPModifier Auto
-{The list of XP modifiers that affect the XP given per stat progression.}
 Float[] Property fSkillModifier Auto
 {The list of skill modifiers that affect the XP cost per skill level.}
+Float[] Property fXPModifier Auto
+{The list of XP modifiers that affect the XP given per stat progression.}
 Int[] Property iSkillXP Auto
 {The list of converted XP values for each stat.}
 Int[] Property iSkillXPSpent Auto
 {The list of total generic XP spent on each skill.}
 Int[] Property iSkillXPSpentEffective Auto
 {The list of total effective skill XP spent on each skill.}
+Int[] Property iTrackedStatCount Auto
+{The list of all player stat values that we are tracking.}
 String[] Property sSkillName Auto
 {The list of all player skills that we are able to spend XP on improving.}
 String[] Property sStatName Auto
@@ -67,11 +69,10 @@ EndFunction
 Event OnTrackedStatsEvent(String sStatName, Int iStatValue)
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iSavedStatValue = gStatValue[iIndex].GetValue() as Int
-		If (sStatName == sStatName[iIndex] && iStatValue > iSavedStatValue)
-			gStatValue[iIndex].SetValue(iStatValue)
-			If (checkPlayerStats(gStatValue, sStatName))
-				updatePlayerStats(DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, gStatValue, DMN_SXPAExperiencePoints, fXPModifier, sStatName, sNotificationMessage)
+		If (sStatName == sStatName[iIndex] && iStatValue > iTrackedStatCount[iIndex])
+			iTrackedStatCount[iIndex] = iStatValue
+			If (checkPlayerStats(iTrackedStatCount, sStatName))
+				updatePlayerStats(DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, fXPModifier, iTrackedStatCount, sStatName, sNotificationMessage)
 			EndIf
 		EndIf
 		iIndex += 1
