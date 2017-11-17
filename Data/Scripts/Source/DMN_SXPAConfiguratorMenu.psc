@@ -99,7 +99,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				DMN_SXPAEH.iPassiveMonitoring = 0
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Switched to active (always monitoring) tracking.")
@@ -113,7 +113,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Turn On Active Tracking]
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.gStatValue, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Active (always monitoring) tracking has been enabled.")
