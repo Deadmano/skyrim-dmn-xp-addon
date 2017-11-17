@@ -50,7 +50,6 @@ Function giveConfigurator(Book configurator) Global
 EndFunction
 
 Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount) Global
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started spendXP Function]\n")
 	Int iCurrentXP = gTotalXP.GetValue() as Int
 	Float fSkillLevel = GetPlayer().GetActorValue(sSkill)
@@ -86,7 +85,8 @@ Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP
 	Int iIndex = sSkillName.Find(sSkill) as Int
 	Float fEffectiveXP = (iAmount * fSkillModifier[iIndex]) / 2
 	Int iEffectiveXP = round(fEffectiveXP)
-		Float fSkillCost = fSkillModifier[iIndex] * 2 * fSkillLevelOffsetPOW + iSkillImproveOffset
+		;Float fSkillCost = fSkillModifier[iIndex] * 2 * fSkillLevelOffsetPOW + iSkillImproveOffset
+		Float fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
 		Int iSkillCost = round(fSkillCost)
 		iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
 		iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
@@ -131,7 +131,6 @@ EndFunction
 Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPModifier, Int iIndex) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started getRandomXPValue Function]")
 ; Part 1: Getting a random XP value between the min and max XP variables.
 	Int iMinXP = gMinXP.GetValue() as Int
@@ -156,14 +155,13 @@ Int Function getRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, Floa
 	DMN_SXPALog("Final Random XP (Int): " + iRandomXPValue + "\n")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
-	DMN_SXPALog("[Ended getRandomXPValue Function]\n\n")
+	DMN_SXPALog("[Ended getRandomXPValue Function]")
 	Return iRandomXPValue
 EndFunction
 
 Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started setRandomXPValue Function]\n")
 	If (bIsUpdate || iUpdateCount > 1)
 		DMN_SXPALog("An update was queued to assign XP values to existing stats!")
@@ -202,10 +200,9 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 	DMN_SXPALog("[Ended setRandomXPValue Function]\n\n")
 EndFunction
 
-Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable[] gStatValue, GlobalVariable gXP, Float[] fXPModifier, String[] sStatName) Global
+Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started rewardExistingXPActivities Function]\n")
 ; Part 1: Getting the player level, calculating the offset and then squaring it.
 	Int iPlayerLevel = GetPlayer().GetLevel()
@@ -218,11 +215,10 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 	DMN_SXPALog("An update was queued to assign XP values to existing stats!\n\n")
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iSavedStatValue = gStatValue[iIndex].GetValue() as Int
 		Int iStatValue = QueryStat(sStatName[iIndex])
-		Int iUpdateCount = iStatValue - iSavedStatValue
-		If (iStatValue > iSavedStatValue)
-			gStatValue[iIndex].SetValue(iStatValue)
+		Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
+		If (iStatValue > iTrackedStatCount[iIndex])
+			iTrackedStatCount[iIndex] = iStatValue
 		; Part 3: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity modifier.
 			Int iMinXP = gMinXP.GetValue() as Int
 			Int iMaxXP = gMaxXP.GetValue() as Int
@@ -267,7 +263,8 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 			DMN_SXPALog("Previous XP: " + gXP.GetValue() as Int + ".")
 			gXP.SetValue(iNewXP)
 			DMN_SXPALog("XP Assigned: " + iRandomXPValue + ".")
-			DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".\n\n")
+			DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".")
+			DMN_SXPALog("Completed update for: " + sStatName[iIndex] + ".\n\n")
 			If (iUpdateCount > 1)
 				Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
 			Else
@@ -281,20 +278,17 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 	DMN_SXPALog("[Ended rewardExistingXPActivities Function]\n\n")
 EndFunction
 
-Function resetStatValues(GlobalVariable[] gStatValue, String[] sStatName) Global
+Function resetStatValues(Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started resetStatValues Function]\n")
 	Int iIndex = 0
-	While (iIndex < gStatValue.Length)
-		Int iStatValue = gStatValue[iIndex].GetValue() as Int
+	While (iIndex < iTrackedStatCount.Length)
 	; Set the tracked XP activity value to 0 if it isn't already 0.
-		If (iStatValue > 0)
-			DMN_SXPALog(sStatName[iIndex] + ": " + iStatValue + ".")
-			gStatValue[iIndex].SetValue(0)
-			iStatValue = gStatValue[iIndex].GetValue() as Int
-			DMN_SXPALog("Set " + sStatName[iIndex] + " to " + iStatValue + ".")
+		If (iTrackedStatCount[iIndex] > 0)
+			DMN_SXPALog(sStatName[iIndex] + ": " + iTrackedStatCount[iIndex] + ".")
+			iTrackedStatCount[iIndex] = 0
+			DMN_SXPALog("Set " + sStatName[iIndex] + " to " + iTrackedStatCount[iIndex] + ".")
 		EndIf
 		iIndex += 1
 	EndWhile
@@ -303,16 +297,16 @@ Function resetStatValues(GlobalVariable[] gStatValue, String[] sStatName) Global
 	DMN_SXPALog("[Ended resetStatValues Function]\n\n")
 EndFunction
 
-Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable[] gStatValue, GlobalVariable gXP, Float[] fXPModifier, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
+Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("[Started updatePlayerStats Function]\n")
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iSavedStatValue = gStatValue[iIndex].GetValue() as Int
 		Int iStatValue = QueryStat(sStatName[iIndex])
-		Int iUpdateCount = iStatValue - iSavedStatValue
-		If (iStatValue > iSavedStatValue)
-			gStatValue[iIndex].SetValue(iStatValue)
+		Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
+		If (iStatValue > iTrackedStatCount[iIndex])
+			iTrackedStatCount[iIndex] = iStatValue
 			If (bUpdateStats)
 				setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
 			ElseIf (iUpdateCount > 1)
@@ -320,26 +314,49 @@ Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalV
 			Else
 				setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage)
 			EndIf
-			DMN_SXPALog(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n")
+			DMN_SXPALog(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n\n")
 		EndIf
 		iIndex += 1
 	EndWhile
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("updatePlayerStats() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended updatePlayerStats Function]\n\n")
 EndFunction
 
-Bool Function checkPlayerStats(GlobalVariable[] gStatValue, String[] sStatName) Global
+Function updatePlayerStatsCount(Int iIndexStart, Int iIndexEnd, Int[] iTrackedStatCount, String[] sStatName) Global
+; Function that takes the starting and ending positions of an array
+; and sets each value to the corresponding tracked stat count.
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("[Started updatePlayerStatsCount Function]\n")
+	Int iIndex = iIndexStart
+	DMN_SXPALog("Starting array position: " + iIndex + ".")
+	DMN_SXPALog("Ending array position: " + iIndexEnd + ".")
+	While (iIndex <= iIndexEnd)
+		Int iStatValue = QueryStat(sStatName[iIndex])
+		DMN_SXPALog(sStatName[iIndex] + " previous count: " + iTrackedStatCount[iIndex]  + ".")
+		If (iStatValue > iTrackedStatCount[iIndex])
+			iTrackedStatCount[iIndex] = iStatValue
+		EndIf
+		DMN_SXPALog(sStatName[iIndex] + " new count: " + iTrackedStatCount[iIndex]  + ".")
+		iIndex += 1
+	EndWhile
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("updatePlayerStatsCount() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended updatePlayerStatsCount Function]\n\n")
+EndFunction
+
+Bool Function checkPlayerStats(Int[] iTrackedStatCount, String[] sStatName) Global
 ; Function checks all SXPA tracked stats, and if any differ from SXPA
 ; stored values then it will return True else it will return False.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iSavedStatValue = gStatValue[iIndex].GetValue() as Int
 		Int iStatValue = QueryStat(sStatName[iIndex])
-		If (iStatValue > iSavedStatValue)
+		If (iStatValue > iTrackedStatCount[iIndex])
 			fStop = GetCurrentRealTime()
-			DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.")
+			DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.\n\n")
 			Return True
 		EndIf
 		iIndex += 1
@@ -350,7 +367,6 @@ EndFunction
 Function resetArrayDataInt(Int[] iArray) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started resetArrayDataInt Function]\n")
 	DMN_SXPALog("Previous full array value: " + iArray + ".")
 	Int iArrayLength = iArray.Length
