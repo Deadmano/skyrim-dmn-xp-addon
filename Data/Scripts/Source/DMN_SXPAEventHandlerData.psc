@@ -26,10 +26,6 @@ Import DMN_SXPAFunctions
 
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 
-;GlobalVariable Property DMN_SXPAExperiencePoints Auto
-;GlobalVariable Property DMN_SXPAExperienceMin Auto
-;GlobalVariable Property DMN_SXPAExperienceMax Auto
-
 Quest Property DMN_SXPAEventHandlerHelper Auto
 {The Event Handler Helper quest. Auto-Fill.}
 
@@ -43,6 +39,8 @@ Int[] Property iSkillXP Auto Hidden
 Int[] Property iSkillXPSpent Auto Hidden
 ; The list of total effective skill XP spent on each skill.
 Int[] Property iSkillXPSpentEffective Auto Hidden
+; The list of all player stat values that we are tracking.
+Int[] Property iTrackedStatCount Auto Hidden
 ; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
 Int Property iPassiveMonitoring Auto Hidden
 
@@ -57,7 +55,6 @@ EndFunction
 Function copyEventHandlerData()
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started copyEventHandlerData Function]\n")
 	String sError = "Skyrim XP Addon \n\nERROR! SXPA could not complete user data migration. Please report this on the SXPA page."
 	Int iInfiniteLoopBreak = 0
@@ -151,6 +148,16 @@ Function copyEventHandlerData()
 				DMN_SXPALog("WARNING: iSkillXPSpentEffective is empty!")
 				DMN_SXPALog("iSkillXPSpentEffective array: " + iSkillXPSpentEffective)
 			EndIf
+			iTrackedStatCount = New Int[128]
+			iTrackedStatCount = DMN_SXPAEH.iTrackedStatCount
+			DMN_SXPALog("Copying iTrackedStatCount array now...")
+			If (iTrackedStatCount)
+				DMN_SXPALog("Copied iTrackedStatCount.")
+				DMN_SXPALog("iTrackedStatCount array: " + iTrackedStatCount)
+			Else
+				DMN_SXPALog("WARNING: iTrackedStatCount is empty!")
+				DMN_SXPALog("iTrackedStatCount array: " + iTrackedStatCount)
+			EndIf
 			DMN_SXPALog("SUCCESS: Completed array copy process.")
 			DMN_SXPALog("Copying passive monitoring state...")
 			iPassiveMonitoring = DMN_SXPAEH.iPassiveMonitoring
@@ -166,7 +173,6 @@ EndFunction
 Function restoreEventHandlerData()
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("\n")
 	DMN_SXPALog("[Started restoreEventHandlerData Function]\n")
 	String sError = "Skyrim XP Addon \n\nERROR! SXPA could not complete user data migration. Please report this on the SXPA page."
 	Int iInfiniteLoopBreak = 0
@@ -261,6 +267,19 @@ Function restoreEventHandlerData()
 			Else
 				DMN_SXPALog("WARNING: iSkillXPSpentEffective is empty!")
 				DMN_SXPALog("iSkillXPSpentEffective array: " + DMN_SXPAEH.iSkillXPSpentEffective)
+			EndIf
+			iIndex = 0
+			While (iIndex < iTrackedStatCount.Length)
+				DMN_SXPAEH.iTrackedStatCount[iIndex] = iTrackedStatCount[iIndex]
+				iIndex += 1
+			EndWhile
+			DMN_SXPALog("Restoring iTrackedStatCount array now...")
+			If (DMN_SXPAEH.iTrackedStatCount)
+				DMN_SXPALog("Restored iTrackedStatCount.")
+				DMN_SXPALog("iTrackedStatCount array: " + DMN_SXPAEH.iTrackedStatCount)
+			Else
+				DMN_SXPALog("WARNING: iTrackedStatCount is empty!")
+				DMN_SXPALog("iTrackedStatCount array: " + DMN_SXPAEH.iTrackedStatCount)
 			EndIf
 			iIndex = 0
 			DMN_SXPALog("SUCCESS: Completed array restore process.")
