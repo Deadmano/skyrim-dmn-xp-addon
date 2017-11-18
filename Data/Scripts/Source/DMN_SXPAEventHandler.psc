@@ -51,8 +51,6 @@ String[] Property sStatName Auto
 {The list of all player stat names that we are tracking.}
 String[] Property sNotificationMessage Auto
 {The list of notification messages shown to the player when a stat is updated.}
-GlobalVariable[] Property gStatValue Auto
-{The list of all player stat values that we are tracking.}
 
 Int Property iPassiveMonitoring Auto Conditional
 
