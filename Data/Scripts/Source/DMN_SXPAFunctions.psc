@@ -200,7 +200,7 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 	DMN_SXPALog("[Ended setRandomXPValue Function]\n\n")
 EndFunction
 
-Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
+Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog("[Started rewardExistingXPActivities Function]\n")
@@ -215,60 +215,62 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 	DMN_SXPALog("An update was queued to assign XP values to existing stats!\n\n")
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iStatValue = QueryStat(sStatName[iIndex])
-		Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
-		If (iStatValue > iTrackedStatCount[iIndex])
-			iTrackedStatCount[iIndex] = iStatValue
-		; Part 3: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity modifier.
-			Int iMinXP = gMinXP.GetValue() as Int
-			Int iMaxXP = gMaxXP.GetValue() as Int
-			Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-			DMN_SXPALog("Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
-			DMN_SXPALog("Min XP: " + iMinXP)
-			DMN_SXPALog("Max XP: " + iMaxXP)
-			DMN_SXPALog("Random XP (Min~Max * Modifier): " + fRandomXPValue)
-		; Part 4: Estimating the amount of times the XP activity was performed at previous levels.
-			Float fActivityCount1Percent = iUpdateCount * 0.01 ; Example Input: 250 = 250 * 0.01 = 2.5. 1%.
-			Float fActivityCount4Percent = iUpdateCount * 0.04 ; Example Input: 250 = 250 * 0.04 = 10. 4%.
-			Float fActivityCount5Percent = iUpdateCount * 0.05 ; Example Input: 250 = 250 * 0.05 = 12.5. 5%.
-			Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.10 = 25. 10%.
-			Float fActivityCount15Percent = iUpdateCount * 0.15 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
-			Float fActivityCount65Percent = iUpdateCount * 0.65 ; Example Input: 250 = 250 * 0.65 = 162.5. 65%.
-		; Part 5: Calculating the amount of XP earned for the XP activity at the level thresholds.
-			Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount1Percent ; Squared.
-			Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount4Percent ; 2 Squared.
-			Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount5Percent ; 3 Squared.
-			Float fRandomXPValueFourth = ((fPlayerLevelOffsetSquared / 16) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent ; 4 Squared.
-			Float fRandomXPValueFifth = ((fPlayerLevelOffsetSquared / 25) + 25.00) / 100 * fRandomXPValue * fActivityCount15Percent ; 5 Squared.
-			Float fRandomXPValueSixth = ((fPlayerLevelOffsetSquared / 36) + 25.00) / 100 * fRandomXPValue * fActivityCount65Percent ; 6 Squared.
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount1Percent + ".")
-			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel + ": " + fRandomXPValueFull + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount4Percent + ".")
-			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 2 + ": " + fRandomXPValueHalf + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount5Percent + ".")
-			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 3 + ": " + fRandomXPValueThird + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 4 + ": " + fActivityCount10Percent + ".")
-			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 4 + ": " + fRandomXPValueFourth + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 5 + ": " + fActivityCount15Percent + ".")
-			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 5 + ": " + fRandomXPValueFifth + ".")
-			DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 6 + ": " + fActivityCount65Percent + ".")
-			DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 6 + ": " + fRandomXPValueSixth + ".")
-		; Part 6: Calculating the total amount of XP earned for the XP activity.
-			Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird + fRandomXPValueFourth + fRandomXPValueFifth + fRandomXPValueSixth
-			Int iRandomXPValue = round(fFinalRandomXPValue)
-			DMN_SXPALog("Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
-			DMN_SXPALog("Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
-		; Part 6: Adding the total amount of XP earned for the XP activity to the total experience points.
-			Int iNewXP = gXP.GetValue() as Int + iRandomXPValue
-			DMN_SXPALog("Previous XP: " + gXP.GetValue() as Int + ".")
-			gXP.SetValue(iNewXP)
-			DMN_SXPALog("XP Assigned: " + iRandomXPValue + ".")
-			DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".")
-			DMN_SXPALog("Completed update for: " + sStatName[iIndex] + ".\n\n")
-			If (iUpdateCount > 1)
-				Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
-			Else
-				Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
+		If (bXPActivityState[iIndex])
+			Int iStatValue = QueryStat(sStatName[iIndex])
+			Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
+			If (iStatValue > iTrackedStatCount[iIndex])
+				iTrackedStatCount[iIndex] = iStatValue
+			; Part 3: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity modifier.
+				Int iMinXP = gMinXP.GetValue() as Int
+				Int iMaxXP = gMaxXP.GetValue() as Int
+				Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
+				DMN_SXPALog("Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
+				DMN_SXPALog("Min XP: " + iMinXP)
+				DMN_SXPALog("Max XP: " + iMaxXP)
+				DMN_SXPALog("Random XP (Min~Max * Modifier): " + fRandomXPValue)
+			; Part 4: Estimating the amount of times the XP activity was performed at previous levels.
+				Float fActivityCount1Percent = iUpdateCount * 0.01 ; Example Input: 250 = 250 * 0.01 = 2.5. 1%.
+				Float fActivityCount4Percent = iUpdateCount * 0.04 ; Example Input: 250 = 250 * 0.04 = 10. 4%.
+				Float fActivityCount5Percent = iUpdateCount * 0.05 ; Example Input: 250 = 250 * 0.05 = 12.5. 5%.
+				Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.10 = 25. 10%.
+				Float fActivityCount15Percent = iUpdateCount * 0.15 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
+				Float fActivityCount65Percent = iUpdateCount * 0.65 ; Example Input: 250 = 250 * 0.65 = 162.5. 65%.
+			; Part 5: Calculating the amount of XP earned for the XP activity at the level thresholds.
+				Float fRandomXPValueFull = ((fPlayerLevelOffsetSquared) + 25.00) / 100 * fRandomXPValue * fActivityCount1Percent ; Squared.
+				Float fRandomXPValueHalf = ((fPlayerLevelOffsetSquared / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount4Percent ; 2 Squared.
+				Float fRandomXPValueThird = ((fPlayerLevelOffsetSquared / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount5Percent ; 3 Squared.
+				Float fRandomXPValueFourth = ((fPlayerLevelOffsetSquared / 16) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent ; 4 Squared.
+				Float fRandomXPValueFifth = ((fPlayerLevelOffsetSquared / 25) + 25.00) / 100 * fRandomXPValue * fActivityCount15Percent ; 5 Squared.
+				Float fRandomXPValueSixth = ((fPlayerLevelOffsetSquared / 36) + 25.00) / 100 * fRandomXPValue * fActivityCount65Percent ; 6 Squared.
+				DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount1Percent + ".")
+				DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel + ": " + fRandomXPValueFull + ".")
+				DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount4Percent + ".")
+				DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 2 + ": " + fRandomXPValueHalf + ".")
+				DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount5Percent + ".")
+				DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 3 + ": " + fRandomXPValueThird + ".")
+				DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 4 + ": " + fActivityCount10Percent + ".")
+				DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 4 + ": " + fRandomXPValueFourth + ".")
+				DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 5 + ": " + fActivityCount15Percent + ".")
+				DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 5 + ": " + fRandomXPValueFifth + ".")
+				DMN_SXPALog("Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 6 + ": " + fActivityCount65Percent + ".")
+				DMN_SXPALog("Amount of XP gained for " + sStatName[iIndex] + "(x" + iUpdateCount + ")" + " at level " + iPlayerLevel / 6 + ": " + fRandomXPValueSixth + ".")
+			; Part 6: Calculating the total amount of XP earned for the XP activity.
+				Float fFinalRandomXPValue = fRandomXPValueFull + fRandomXPValueHalf + fRandomXPValueThird + fRandomXPValueFourth + fRandomXPValueFifth + fRandomXPValueSixth
+				Int iRandomXPValue = round(fFinalRandomXPValue)
+				DMN_SXPALog("Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
+				DMN_SXPALog("Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
+			; Part 6: Adding the total amount of XP earned for the XP activity to the total experience points.
+				Int iNewXP = gXP.GetValue() as Int + iRandomXPValue
+				DMN_SXPALog("Previous XP: " + gXP.GetValue() as Int + ".")
+				gXP.SetValue(iNewXP)
+				DMN_SXPALog("XP Assigned: " + iRandomXPValue + ".")
+				DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".")
+				DMN_SXPALog("Completed update for: " + sStatName[iIndex] + ".\n\n")
+				If (iUpdateCount > 1)
+					Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
+				Else
+					Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
+				EndIf
 			EndIf
 		EndIf
 		iIndex += 1
@@ -303,11 +305,11 @@ Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalV
 	DMN_SXPALog("[Started updatePlayerStats Function]\n")
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iStatValue = QueryStat(sStatName[iIndex])
-		Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
-		If (iStatValue > iTrackedStatCount[iIndex])
-			iTrackedStatCount[iIndex] = iStatValue
-			If (bXPActivityState[iIndex])
+		If (bXPActivityState[iIndex])
+			Int iStatValue = QueryStat(sStatName[iIndex])
+			Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
+			If (iStatValue > iTrackedStatCount[iIndex])
+				iTrackedStatCount[iIndex] = iStatValue
 				If (bUpdateStats)
 					setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
 				ElseIf (iUpdateCount > 1)
@@ -315,8 +317,8 @@ Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalV
 				Else
 					setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage)
 				EndIf
+				DMN_SXPALog(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n\n")
 			EndIf
-			DMN_SXPALog(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n\n")
 		EndIf
 		iIndex += 1
 	EndWhile
@@ -325,7 +327,7 @@ Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalV
 	DMN_SXPALog("[Ended updatePlayerStats Function]\n\n")
 EndFunction
 
-Function updatePlayerStatsCount(Int iIndexStart, Int iIndexEnd, Int[] iTrackedStatCount, String[] sStatName) Global
+Function updatePlayerStatsCount(Bool[] bXPActivityState, Int iIndexStart, Int iIndexEnd, Int[] iTrackedStatCount, String[] sStatName) Global
 ; Function that takes the starting and ending positions of an array
 ; and sets each value to the corresponding tracked stat count.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
@@ -335,12 +337,14 @@ Function updatePlayerStatsCount(Int iIndexStart, Int iIndexEnd, Int[] iTrackedSt
 	DMN_SXPALog("Starting array position: " + iIndex + ".")
 	DMN_SXPALog("Ending array position: " + iIndexEnd + ".")
 	While (iIndex <= iIndexEnd)
-		Int iStatValue = QueryStat(sStatName[iIndex])
-		DMN_SXPALog(sStatName[iIndex] + " previous count: " + iTrackedStatCount[iIndex]  + ".")
-		If (iStatValue > iTrackedStatCount[iIndex])
-			iTrackedStatCount[iIndex] = iStatValue
+		If (bXPActivityState[iIndex])
+			Int iStatValue = QueryStat(sStatName[iIndex])
+			DMN_SXPALog(sStatName[iIndex] + " previous count: " + iTrackedStatCount[iIndex]  + ".")
+			If (iStatValue > iTrackedStatCount[iIndex])
+				iTrackedStatCount[iIndex] = iStatValue
+			EndIf
+			DMN_SXPALog(sStatName[iIndex] + " new count: " + iTrackedStatCount[iIndex]  + ".")
 		EndIf
-		DMN_SXPALog(sStatName[iIndex] + " new count: " + iTrackedStatCount[iIndex]  + ".")
 		iIndex += 1
 	EndWhile
 	fStop = GetCurrentRealTime()
@@ -348,18 +352,20 @@ Function updatePlayerStatsCount(Int iIndexStart, Int iIndexEnd, Int[] iTrackedSt
 	DMN_SXPALog("[Ended updatePlayerStatsCount Function]\n\n")
 EndFunction
 
-Bool Function checkPlayerStats(Int[] iTrackedStatCount, String[] sStatName) Global
+Bool Function checkPlayerStats(Bool[] bXPActivityState, Int[] iTrackedStatCount, String[] sStatName) Global
 ; Function checks all SXPA tracked stats, and if any differ from SXPA
 ; stored values then it will return True else it will return False.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	Int iIndex = 0
 	While (iIndex < sStatName.Length)
-		Int iStatValue = QueryStat(sStatName[iIndex])
-		If (iStatValue > iTrackedStatCount[iIndex])
-			fStop = GetCurrentRealTime()
-			DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.\n\n")
-			Return True
+		If (bXPActivityState[iIndex])
+			Int iStatValue = QueryStat(sStatName[iIndex])
+			If (iStatValue > iTrackedStatCount[iIndex])
+				fStop = GetCurrentRealTime()
+				DMN_SXPALog("checkPlayerStats() function took " + (fStop - fStart) + " seconds to complete.\n\n")
+				Return True
+			EndIf
 		EndIf
 		iIndex += 1
 	EndWhile

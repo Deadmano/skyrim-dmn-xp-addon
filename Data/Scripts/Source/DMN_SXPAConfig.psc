@@ -173,7 +173,7 @@ Function installSXPA()
 	Notification("Skyrim XP Addon: Please do not quit or save the game until this process is complete.")
 	
 ; Check for any existing XP activities the player may have done, and if any are found, reward the player with XP.
-	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 	
 ; Set the default configuration settings.
 	configurationDefaults()
@@ -237,7 +237,7 @@ Function updateSXPA()
 	; out the Global Variable array from v1.0.0 - v1.2.0 and not gain XP for existing SXPA-processed stats.
 	; 0 = Locations Discovered, 1 = Standing Stones Found, 2 = Nirnroots Found, 3 = Books Read.
 	; 4 = Ingredients Harvested, 5 = Wings Plucked, 6 = Persuasions, 7 = Intimidations.
-		updatePlayerStatsCount(0, 7, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+		updatePlayerStatsCount(DMN_SXPAEH.bXPActivityState, 0, 7, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 	EndIf
 ; END v1.2.0 FIXES/PATCHES
 
@@ -246,7 +246,7 @@ Function updateSXPA()
 
 ; Calls a function that checks for existing XP activities and rewards balanced XP taking into account when the player may have started up until their current level.
 ; This is required after the Event Handler quest is reset to uncover and reward the newly added XP activities.
-	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 
 ;-----------------------------------
 ; END NON-SPECIFIC VERSION UPDATES
