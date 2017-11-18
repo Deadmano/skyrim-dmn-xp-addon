@@ -297,7 +297,7 @@ Function resetStatValues(Int[] iTrackedStatCount, String[] sStatName) Global
 	DMN_SXPALog("[Ended resetStatValues Function]\n\n")
 EndFunction
 
-Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
+Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog("[Started updatePlayerStats Function]\n")
@@ -307,12 +307,14 @@ Function updatePlayerStats(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalV
 		Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
 		If (iStatValue > iTrackedStatCount[iIndex])
 			iTrackedStatCount[iIndex] = iStatValue
-			If (bUpdateStats)
-				setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
-			ElseIf (iUpdateCount > 1)
-				setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount)
-			Else
-				setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage)
+			If (bXPActivityState[iIndex])
+				If (bUpdateStats)
+					setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
+				ElseIf (iUpdateCount > 1)
+					setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount)
+				Else
+					setRandomXPValue(gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage)
+				EndIf
 			EndIf
 			DMN_SXPALog(sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n\n")
 		EndIf
