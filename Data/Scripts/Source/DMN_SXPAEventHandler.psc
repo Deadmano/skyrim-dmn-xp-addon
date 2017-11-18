@@ -31,6 +31,8 @@ GlobalVariable Property DMN_SXPAExperiencePoints Auto
 GlobalVariable Property DMN_SXPAExperienceMin Auto
 GlobalVariable Property DMN_SXPAExperienceMax Auto
 
+Bool[] Property bXPActivityState Auto
+{Affects whether or not the XP activity will be tracked and give XP or not.}
 Float[] Property fSkillModifier Auto
 {The list of skill modifiers that affect the XP cost per skill level.}
 Float[] Property fXPModifier Auto

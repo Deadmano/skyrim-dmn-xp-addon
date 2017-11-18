@@ -383,6 +383,34 @@ Function resetArrayDataInt(Int[] iArray) Global
 	DMN_SXPALog("[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
+Bool Function getXPActivityState(Bool[] bXPActivityState, Int iXPActivityIndex, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("[Started getXPActivityState Function]")
+	Bool bState = bXPActivityState[iXPActivityIndex]
+	DMN_SXPALog(sStatName[iXPActivityIndex] + " XP gain is set to " + bState + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("getXPActivityState() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended getXPActivityState Function]\n\n")
+	Return bState
+EndFunction
+
+Function setXPActivityState(Bool[] bXPActivityState, Int iXPActivityIndex, Bool bEnabled, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("[Started setXPActivityState Function]")
+	bXPActivityState[iXPActivityIndex] = bEnabled
+	DMN_SXPALog("Set " + sStatName[iXPActivityIndex] + " XP gain to " + bEnabled + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("setXPActivityState() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended setXPActivityState Function]\n\n")
+EndFunction
+
+Int Function getXPActivityIndex(String sXPActivityName, String[] sStatName) Global
+	Int iIndex = sStatName.Find(sXPActivityName)
+	Return iIndex
+EndFunction
+
 String Function prettyPrintXP(Float fXP) Global
 	Float fMillionsDivider
 	Int iMillions
