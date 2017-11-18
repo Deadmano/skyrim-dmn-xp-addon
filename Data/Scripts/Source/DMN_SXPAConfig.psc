@@ -17,7 +17,7 @@ ScriptName DMN_SXPAConfig Extends Quest
 
 {Skyrim XP Addon - Configuration Script by Deadmano.}
 ;==============================================
-; Version: 1.3.0
+; Version: 2.0.0
 ;===============
 
 Import DMN_DeadmaniacFunctionsSXPA
@@ -103,7 +103,7 @@ EndFunction
  
 Function Maintenance()
 ; The latest (current) version of Skyrim XP Addon. Update this to the version number.
-	parseSXPAVersion("1", "3", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
+	parseSXPAVersion("2", "0", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
 ; ---------------- UPDATE! ^^^^^^^^^^^
 
 	If (DMN_SXPADebug.GetValue() == 1)
@@ -298,6 +298,7 @@ EndFunction
 Function configurationDefaults()
 ; Add (or update) the mod configurator to the player inventory silently.
 	giveConfigurator(DMN_SXPAConfigurator)
+	setXPActivityStateDefaults(DMN_SXPAEH.bXPActivityState)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
 EndFunction
 

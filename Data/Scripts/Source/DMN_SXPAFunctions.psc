@@ -411,6 +411,53 @@ Int Function getXPActivityIndex(String sXPActivityName, String[] sStatName) Glob
 	Return iIndex
 EndFunction
 
+Function setXPActivityStateDefaults(Bool[] bXPActivityState) Global
+; Function that takes the starting and ending positions of an array
+; and sets each value to the corresponding tracked stat count.
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("[Started setXPActivityStateDefaults Function]")
+	bXPActivityState[0] = True ; Locations Discovered.
+	bXPActivityState[1] = True ; Standing Stones Found
+	bXPActivityState[2] = True ; Nirnroots Found
+	bXPActivityState[3] = True ; Books Read
+	bXPActivityState[4] = True ; Ingredients Harvested
+	bXPActivityState[5] = True ; Wings Plucked
+	bXPActivityState[6] = True ; Persuasions
+	bXPActivityState[7] = True ; Intimidations
+	bXPActivityState[8] = False ; Misc Objectives Completed
+	bXPActivityState[9] = True ; Main Quests Completed
+	bXPActivityState[10] = True ; Side Quests Completed
+	bXPActivityState[11] = True ; The Companions Quests Completed
+	bXPActivityState[12] = True ; College of Winterhold Quests Completed
+	bXPActivityState[13] = True ; Thieves' Guild Quests Completed
+	bXPActivityState[14] = True ; The Dark Brotherhood Quests Completed
+	bXPActivityState[15] = True ; Civil War Quests Completed
+	bXPActivityState[16] = True ; Daedric Quests Completed
+	bXPActivityState[17] = True ; Questlines Completed
+	bXPActivityState[18] = False ; People Killed
+	bXPActivityState[19] = False ; Animals Killed
+	bXPActivityState[20] = False ; Creatures Killed
+	bXPActivityState[21] = False ; Undead Killed
+	bXPActivityState[22] = False ; Daedra Killed
+	bXPActivityState[23] = False ; Automatons Killed
+	bXPActivityState[24] = False ; Dragon Souls Collected
+	bXPActivityState[25] = False ; Words Of Power Learned
+	bXPActivityState[26] = False ; Words Of Power Unlocked
+	bXPActivityState[27] = False ; Shouts Mastered
+	bXPActivityState[28] = False ; Souls Trapped
+	bXPActivityState[29] = False ; Magic Items Made
+	bXPActivityState[30] = False ; Weapons Improved
+	bXPActivityState[31] = False ; Weapons Made
+	bXPActivityState[32] = False ; Armor Improved
+	bXPActivityState[33] = False ; Armor Made
+	bXPActivityState[34] = False ; Potions Mixed
+	bXPActivityState[35] = False ; Poisons Mixed
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("setXPActivityStateDefaults() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended setXPActivityStateDefaults Function]\n\n")
+EndFunction
+
 String Function prettyPrintXP(Float fXP) Global
 	Float fMillionsDivider
 	Int iMillions
