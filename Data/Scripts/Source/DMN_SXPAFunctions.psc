@@ -50,7 +50,7 @@ Function giveConfigurator(Book configurator) Global
 EndFunction
 
 Function spendXP(GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount) Global
-	DMN_SXPALog("[Started spendXP Function]\n")
+	DMN_SXPALog("[Started spendXP Function]")
 	Int iCurrentXP = gTotalXP.GetValue() as Int
 	Float fSkillLevel = GetPlayer().GetActorValue(sSkill)
 	Float fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
@@ -162,18 +162,35 @@ EndFunction
 Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("[Started setRandomXPValue Function]\n")
+	DMN_SXPALog("[Started setRandomXPValue Function]")
 	If (bIsUpdate || iUpdateCount > 1)
+		If (iUpdateCount > 500)
+			Notification("Skyrim XP Addon: Allocating XP for existing " + sStatName[iIndex] + " (x" + iUpdateCount + ") now. This will be a while...")
+		ElseIf (iUpdateCount > 50)
+			Notification("Skyrim XP Addon: Allocating XP for existing " + sStatName[iIndex] + " (x" + iUpdateCount + ") now. This may take a while...")
+		ElseIf (iUpdateCount > 10)
+			Notification("Skyrim XP Addon: Allocating XP for existing " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
+		EndIf
 		DMN_SXPALog("An update was queued to assign XP values to existing stats!")
 		DMN_SXPALog("Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
+		Float fFunctionRunDuration
 		Int i = 0
 		Int j = iUpdateCount
+		Int iFunctionRuns
 		Int iRandomXP
 		While (i < iUpdateCount)
+			Float fRunStart = GetCurrentRealTime()
 			Int k = getRandomXPValue(gMinXP, gMaxXP, fXPModifier, iIndex)
 			iRandomXP += k
 			DMN_SXPALog(sStatName[iIndex] + " " + "(" + (i+1) + "/" + iUpdateCount + ")" + " XP: " + k + ".")
 			i += 1
+			Float fRunStop = GetCurrentRealTime()
+			fFunctionRunDuration = fFunctionRunDuration + (fRunStop - fRunStart)
+			iFunctionRuns += 1
+			If (iFunctionRuns == 10)
+				Float fAverageFunctionRunDuration = fFunctionRunDuration / 10
+				estimateScriptDuration(fAverageFunctionRunDuration, iUpdateCount)
+			EndIf
 		EndWhile
 		Int iNewXP = gXP.GetValue() as Int + iRandomXP
 		DMN_SXPALog("Previous XP: " + gXP.GetValue() as Int + ".")
@@ -203,7 +220,7 @@ EndFunction
 Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("[Started rewardExistingXPActivities Function]\n")
+	DMN_SXPALog("[Started rewardExistingXPActivities Function]")
 ; Part 1: Getting the player level, calculating the offset and then squaring it.
 	Int iPlayerLevel = GetPlayer().GetLevel()
 	Float fPlayerLevelOffset = iPlayerLevel - 1
@@ -283,7 +300,7 @@ EndFunction
 Function resetStatValues(Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("[Started resetStatValues Function]\n")
+	DMN_SXPALog("[Started resetStatValues Function]")
 	Int iIndex = 0
 	While (iIndex < iTrackedStatCount.Length)
 	; Set the tracked XP activity value to 0 if it isn't already 0.
@@ -332,7 +349,7 @@ Function updatePlayerStatsCount(Bool[] bXPActivityState, Int iIndexStart, Int iI
 ; and sets each value to the corresponding tracked stat count.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("[Started updatePlayerStatsCount Function]\n")
+	DMN_SXPALog("[Started updatePlayerStatsCount Function]")
 	Int iIndex = iIndexStart
 	DMN_SXPALog("Starting array position: " + iIndex + ".")
 	DMN_SXPALog("Ending array position: " + iIndexEnd + ".")
@@ -350,6 +367,34 @@ Function updatePlayerStatsCount(Bool[] bXPActivityState, Int iIndexStart, Int iI
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("updatePlayerStatsCount() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog("[Ended updatePlayerStatsCount Function]\n\n")
+EndFunction
+
+Function estimateScriptDuration(Float fAverageFunctionRunDuration, Int iUpdateCount) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog("[Started estimateScriptDuration Function]")
+; Function to try to estimate the time another function may take to complete.
+	Trace("Average Function Run Duration: " + fAverageFunctionRunDuration)
+	Trace("Update Count: " + iUpdateCount)
+	; The expected function run duration, as a float in seconds, plus 10 milliseconds times
+	; the update count. The added 10 milliseconds * update count is to help with deviation
+	; in the function run duration due to the low number of iterations performed.
+	Float fFunctionDuration = fAverageFunctionRunDuration * iUpdateCount - fAverageFunctionRunDuration + (0.01 * iUpdateCount)
+	Trace("Estimated Function Run Duration: " + fFunctionDuration)
+	Int iFunctionDurationMinutes = Floor(fFunctionDuration / 60)
+	Trace("Minutes: " + iFunctionDurationMinutes)
+	Int iFunctionDurationSeconds = round(fFunctionDuration - iFunctionDurationMinutes * 60)
+	Trace("Seconds: " + iFunctionDurationSeconds)
+	If (iFunctionDurationMinutes > 1)
+		Notification("Skyrim XP Addon: Estimated time to completion: " + iFunctionDurationMinutes + " minutes and " + iFunctionDurationSeconds + " seconds.")
+	ElseIf (iFunctionDurationMinutes == 1)
+		Notification("Skyrim XP Addon: Estimated time to completion: " + iFunctionDurationMinutes + " minute and " + iFunctionDurationSeconds + " seconds.")
+	ElseIf (iFunctionDurationMinutes < 1)
+		Notification("Skyrim XP Addon: Estimated time to completion: " + iFunctionDurationSeconds + " seconds.")
+	EndIf
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog("estimateScriptDuration() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog("[Ended estimateScriptDuration Function]\n\n")
 EndFunction
 
 Bool Function checkPlayerStats(Bool[] bXPActivityState, Int[] iTrackedStatCount, String[] sStatName) Global
@@ -375,7 +420,7 @@ EndFunction
 Function resetArrayDataInt(Int[] iArray) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog("[Started resetArrayDataInt Function]\n")
+	DMN_SXPALog("[Started resetArrayDataInt Function]")
 	DMN_SXPALog("Previous full array value: " + iArray + ".")
 	Int iArrayLength = iArray.Length
 	Int iIndex = 0
