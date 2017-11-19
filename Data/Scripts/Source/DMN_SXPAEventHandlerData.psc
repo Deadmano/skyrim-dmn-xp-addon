@@ -29,10 +29,12 @@ DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 Quest Property DMN_SXPAEventHandlerHelper Auto
 {The Event Handler Helper quest. Auto-Fill.}
 
-; The list of XP modifiers that affect the XP given per stat progression.
-Float[] Property fXPModifier Auto Hidden
+; Affects whether or not the XP activity will be tracked and give XP or not.
+Bool[] Property bXPActivityState Auto Hidden
 ; The list of skill modifiers that affect the XP cost per skill level.
 Float[] Property fSkillModifier Auto Hidden
+; The list of XP modifiers that affect the XP given per stat progression.
+Float[] Property fXPModifier Auto Hidden
 ; The list of converted XP values for each stat.
 Int[] Property iSkillXP Auto Hidden
 ; The list of total generic XP spent on each skill.
@@ -98,15 +100,15 @@ Function copyEventHandlerData()
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Started the SXPA Event Handler quest after " + iInfiniteLoopBreak + " tries (" + (iInfiniteLoopBreak * 0.1) + " seconds).")
 			iInfiniteLoopBreak = 0
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Beginning array copy process from the Event Handler quest to Event Handler Helper quest.")
-			fXPModifier = New Float[128]
-			fXPModifier = DMN_SXPAEH.fXPModifier
-			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fXPModifier array now...")
-			If (fXPModifier)
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fXPModifier.")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
+			bXPActivityState = New Bool[128]
+			bXPActivityState = DMN_SXPAEH.bXPActivityState
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying bXPActivityState array now...")
+			If (bXPActivityState)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied bXPActivityState.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "bXPActivityState array: " + bXPActivityState)
 			Else
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: bXPActivityState is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "bXPActivityState array: " + bXPActivityState)
 			EndIf
 			fSkillModifier = New Float[128]
 			fSkillModifier = DMN_SXPAEH.fSkillModifier
@@ -117,6 +119,16 @@ Function copyEventHandlerData()
 			Else
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + fSkillModifier)
+			EndIf
+			fXPModifier = New Float[128]
+			fXPModifier = DMN_SXPAEH.fXPModifier
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fXPModifier array now...")
+			If (fXPModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fXPModifier.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
 			EndIf
 			iSkillXP = New Int[128]
 			iSkillXP = DMN_SXPAEH.iSkillXP
@@ -204,17 +216,17 @@ Function restoreEventHandlerData()
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Beginning array restore process from the Event Handler Helper quest to Event Handler quest.")
 			iInfiniteLoopBreak = 0
 			Int iIndex = 0
-			While (iIndex < fXPModifier.Length)
-				DMN_SXPAEH.fXPModifier[iIndex] = fXPModifier[iIndex]
+			While (iIndex < bXPActivityState.Length)
+				DMN_SXPAEH.bXPActivityState[iIndex] = bXPActivityState[iIndex]
 				iIndex += 1
 			EndWhile
-			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fXPModifier array now...")
-			If (DMN_SXPAEH.fXPModifier)
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fXPModifier.")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring bXPActivityState array now...")
+			If (DMN_SXPAEH.bXPActivityState)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored bXPActivityState.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "bXPActivityState array: " + DMN_SXPAEH.bXPActivityState)
 			Else
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: bXPActivityState is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "bXPActivityState array: " + DMN_SXPAEH.bXPActivityState)
 			EndIf
 			iIndex = 0
 			While (iIndex < fSkillModifier.Length)
@@ -228,6 +240,19 @@ Function restoreEventHandlerData()
 			Else
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + DMN_SXPAEH.fSkillModifier)
+			EndIf
+			iIndex = 0
+			While (iIndex < fXPModifier.Length)
+				DMN_SXPAEH.fXPModifier[iIndex] = fXPModifier[iIndex]
+				iIndex += 1
+			EndWhile
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fXPModifier array now...")
+			If (DMN_SXPAEH.fXPModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fXPModifier.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
 			EndIf
 			iIndex = 0
 			While (iIndex < iSkillXP.Length)
