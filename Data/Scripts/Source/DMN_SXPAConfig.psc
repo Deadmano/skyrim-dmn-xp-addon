@@ -99,6 +99,28 @@ Function preMaintenance()
 			DMN_SXPALog(DMN_SXPADebug, "WARNING: XP activity active tracking was NOT disabled!\n\n")
 		EndIf
 	EndIf
+	; Perform a check for array lengths to ensure they are all the same length as each array
+	; element is necessary for every other array element of the same size. Without every
+	; element in the correct place for each array, things can go seriously wrong such as
+	; calculations or wrong XP activities being enabled/disabled, wrong XP being given, etc.
+	If (DMN_SXPAEH.sStatName)
+		Int iArrayStatName = DMN_SXPAEH.sStatName.Length
+		Int iArraybXPActivityState = DMN_SXPAEH.bXPActivityState.Length
+		Int iArrayfXPModifier = DMN_SXPAEH.fXPModifier.Length
+		Int iArrayiTrackedStatCount = DMN_SXPAEH.iTrackedStatCount.Length
+		Int iArraysNotificationMessage = DMN_SXPAEH.sNotificationMessage.Length
+		DMN_SXPALog(DMN_SXPADebug, "Stat Name Array Length: " + iArrayStatName + ".")
+		DMN_SXPALog(DMN_SXPADebug, "XP Activity State Array Length: " + iArraybXPActivityState + ".")
+		DMN_SXPALog(DMN_SXPADebug, "XP Modifier Array Length: " + iArrayfXPModifier + ".")
+		DMN_SXPALog(DMN_SXPADebug, "Tracked Stat Count Array Length: " + iArrayiTrackedStatCount + ".")
+		DMN_SXPALog(DMN_SXPADebug, "Notification Message Array Length: " + iArraysNotificationMessage + ".")
+		If (iArraybXPActivityState != iArrayStatName || iArrayfXPModifier != iArrayStatName || iArrayiTrackedStatCount != iArrayStatName || iArraysNotificationMessage != iArrayStatName)
+			DMN_SXPALog(DMN_SXPADebug, "ERROR: Array lengths DO NOT match!\n\n")
+			MessageBox("Skyrim XP Addon \n\nERROR! The Array lengths DO NOT match, indicating some kind of major fault has occurred! Please report this on the SXPA page.")
+		Else
+			DMN_SXPALog(DMN_SXPADebug, "SUCCESS: Array lengths match.\n\n")
+		EndIf
+	EndIf
 EndFunction
  
 Function Maintenance()
@@ -222,7 +244,7 @@ Function updateSXPA()
 ; END v1.1.0 FIXES/PATCHES
 
 ; BEGIN v1.2.0 FIXES/PATCHES
-	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "3", "0"))
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("2", "0", "0"))
 	; Backup user data then reset the Event Handler quest so the new properties/variables are accessible.
 		DMN_SXPAEHD.updateEventHandlerData()
 	; Correct certain XP modifier values for balancing purposes.
