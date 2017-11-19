@@ -505,9 +505,9 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 		iIndex += 1
 	EndWhile
 ; Show a notification that combines all previously earned XP and activity count totals and displays it to the player.
-	If (iTotalUpdateCount > 1)
+	If (iTotalXPAllocated > 0 && iTotalUpdateCount > 1)
 		Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity events.")
-	Else
+	ElseIf (iTotalXPAllocated > 0 && iTotalUpdateCount > 0)
 		Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity event.")
 	EndIf
 	fStop = GetCurrentRealTime()
@@ -654,6 +654,74 @@ Function resetArrayDataInt(GlobalVariable gDebug, Int[] iArray) Global
 	DMN_SXPALog(gDebug, "[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
+Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started resetSXPAProgress Function]")
+; Temporarily disable active monitoring if it is on whilst we reset and update player progress.
+	Int DMN_SXPAActiveMonitoringState = gMonitoring.GetValue() As Int
+	Bool bActiveMonitoringEnabled
+	If (DMN_SXPAActiveMonitoringState == 1)
+		bActiveMonitoringEnabled = True
+		DMN_SXPALog(gDebug, "Reset SXPA Progress: Disabling XP activity active tracking temporarily...")
+		gMonitoring.SetValue(0)
+		If (gMonitoring.GetValue() == 0)
+			DMN_SXPALog(gDebug, "Reset SXPA Progress: XP activity active tracking was disabled.\n\n")
+		Else
+			DMN_SXPALog(gDebug, "Reset SXPA Progress: WARNING: XP activity active tracking was NOT disabled!\n\n")
+		EndIf
+	EndIf
+; Wipe the amount of stored SXPA skill XP.
+	resetArrayDataInt(gDebug, iSkillXP)
+; Wipe the amount of generic SXPA XP spent on skills.
+	resetArrayDataInt(gDebug, iSkillXPSpent)
+; Wipe the amount of effective (converted) skill-specific XP spent.
+	resetArrayDataInt(gDebug, iSkillXPSpentEffective)
+; Wipe the count of each tracked XP activity completed.
+	resetArrayDataInt(gDebug, iTrackedStatCount)
+; Wipe the total SXPA experience points gained.
+	gXP.SetValue(0)
+; Update all previously completed XP activities to properly scale and balance to the player level and an average thereof.
+	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPModifier, iTrackedStatCount, sStatName)
+; Once we've completed the update we can re-enable active monitoring, if it was enabled to begin with.
+	If (bActiveMonitoringEnabled)
+		bActiveMonitoringEnabled = None
+		DMN_SXPALog(gDebug, "Reset SXPA Progress: Re-enabling XP activity active tracking.")
+		gMonitoring.SetValue(1)
+		If (gMonitoring.GetValue() == 1)
+			DMN_SXPALog(gDebug, "Reset SXPA Progress: XP activity active tracking was enabled.\n\n")
+		Else
+			DMN_SXPALog(gDebug, "Reset SXPA Progress: WARNING: XP activity active tracking was NOT enabled!\n\n")
+		EndIf
+	EndIf
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "resetSXPAProgress() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended resetSXPAProgress Function]\n\n")
+EndFunction
+
+Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Float[] fSkillModifier, Float[] fXPModifier, Int iPassiveMonitoring) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]")
+; Set the Skill Modifiers to default values.
+	setSkillModifierDefaults(gDebug, fSkillModifier)
+; Set the XP Activity states to default.
+	setXPActivityStateDefaults(gDebug, bXPActivityState)
+; Set the XP Modifiers to default values.
+	setXPModifierDefaults(gDebug, fXPModifier)
+; Set the minimum XP reward to default.
+	gMinXP.SetValue(250) 
+; Set the maximum XP reward to default.
+	gMaxXP.SetValue(1000)
+; Disable passive monitoring.
+	iPassiveMonitoring = 0
+; Enable active (always-on) monitoring.
+	gMonitoring.SetValue(1)
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "setSXPADefaults() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended setSXPADefaults Function]\n\n")
+EndFunction
+
 Bool Function getXPActivityState(GlobalVariable gDebug, Bool[] bXPActivityState, Int iXPActivityIndex, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
@@ -682,13 +750,43 @@ Int Function getXPActivityIndex(String sXPActivityName, String[] sStatName) Glob
 	Return iIndex
 EndFunction
 
+Function setSkillModifierDefaults(GlobalVariable gDebug, Float[] fSkillModifier) Global
+; Resets the default Skill Modifier values.
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started setSkillModifierDefaults Function]")
+	DMN_SXPALog(gDebug, "Skill Modifier previous values: " + fSkillModifier + ".")
+	fSkillModifier[0] = 1.00 ; Archery
+	fSkillModifier[1] = 1.00 ; Block
+	fSkillModifier[2] = 1.00 ; Heavy Armor
+	fSkillModifier[3] = 1.00 ; One-Handed
+	fSkillModifier[4] = 0.125 ; Smithing
+	fSkillModifier[5] = 1.00 ; Two-Handed
+	fSkillModifier[6] = 1.00 ; Alteration
+	fSkillModifier[7] = 1.00 ; Conjuration
+	fSkillModifier[8] = 1.00 ; Destruction
+	fSkillModifier[9] = 0.50 ; Enchanting
+	fSkillModifier[10] = 1.00 ; Illusion
+	fSkillModifier[11] = 1.00 ; Restoration
+	fSkillModifier[12] = 0.80 ; Alchemy
+	fSkillModifier[13] = 1.00 ; Light Armor
+	fSkillModifier[14] = 0.125 ; Lockpicking
+	fSkillModifier[15] = 0.125 ; Pickpocket
+	fSkillModifier[16] = 0.25 ; Sneak
+	fSkillModifier[17] = 1.00 ; Speech
+	DMN_SXPALog(gDebug, "Skill Modifier new values: " + fSkillModifier + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "setSkillModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended setSkillModifierDefaults Function]\n\n")
+EndFunction
+
 Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivityState) Global
-; Function that takes the starting and ending positions of an array
-; and sets each value to the corresponding tracked stat count.
+; Resets the default XP Activity State values.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setXPActivityStateDefaults Function]")
-	bXPActivityState[0] = True ; Locations Discovered.
+	DMN_SXPALog(gDebug, "XP Activity State previous values: " + bXPActivityState + ".")
+	bXPActivityState[0] = True ; Locations Discovered
 	bXPActivityState[1] = True ; Standing Stones Found
 	bXPActivityState[2] = True ; Nirnroots Found
 	bXPActivityState[3] = True ; Books Read
@@ -712,21 +810,76 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	bXPActivityState[21] = False ; Undead Killed
 	bXPActivityState[22] = False ; Daedra Killed
 	bXPActivityState[23] = False ; Automatons Killed
-	bXPActivityState[24] = True ; Dragon Souls Collected
-	bXPActivityState[25] = True ; Words Of Power Learned
-	bXPActivityState[26] = True ; Words Of Power Unlocked
-	bXPActivityState[27] = True ; Shouts Mastered
-	bXPActivityState[28] = False ; Souls Trapped
-	bXPActivityState[29] = False ; Magic Items Made
-	bXPActivityState[30] = False ; Weapons Improved
-	bXPActivityState[31] = False ; Weapons Made
-	bXPActivityState[32] = False ; Armor Improved
-	bXPActivityState[33] = False ; Armor Made
-	bXPActivityState[34] = False ; Potions Mixed
-	bXPActivityState[35] = False ; Poisons Mixed
+	bXPActivityState[24] = False ; Weapons Disarmed
+	bXPActivityState[25] = True ; Brawls Won
+	bXPActivityState[26] = False ; Bunnies Slaughtered
+	bXPActivityState[27] = True ; Dragon Souls Collected
+	bXPActivityState[28] = True ; Words Of Power Learned
+	bXPActivityState[29] = True ; Words Of Power Unlocked
+	bXPActivityState[30] = True ; Shouts Mastered
+	bXPActivityState[31] = False ; Souls Trapped
+	bXPActivityState[32] = False ; Magic Items Made
+	bXPActivityState[33] = False ; Weapons Improved
+	bXPActivityState[34] = False ; Weapons Made
+	bXPActivityState[35] = False ; Armor Improved
+	bXPActivityState[36] = False ; Armor Made
+	bXPActivityState[37] = False ; Potions Mixed
+	bXPActivityState[38] = False ; Poisons Mixed
+	DMN_SXPALog(gDebug, "XP Activity State new values: " + bXPActivityState + ".")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPActivityStateDefaults() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended setXPActivityStateDefaults Function]\n\n")
+EndFunction
+
+Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier) Global
+; Resets the default XP Modifier values.
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started setXPModifierDefaults Function]")
+	DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
+	fXPModifier[0] = 0.60 ; Locations Discovered
+	fXPModifier[1] = 5.00 ; Standing Stones Found
+	fXPModifier[2] = 0.40 ; Nirnroots Found
+	fXPModifier[3] = 0.40 ; Books Read
+	fXPModifier[4] = 0.15 ; Ingredients Harvested
+	fXPModifier[5] = 0.40 ; Wings Plucked
+	fXPModifier[6] = 0.80 ; Persuasions
+	fXPModifier[7] = 0.80 ; Intimidations
+	fXPModifier[8] = 0.20 ; Misc Objectives Completed
+	fXPModifier[9] = 4.00 ; Main Quests Completed
+	fXPModifier[10] = 3.00 ; Side Quests Completed
+	fXPModifier[11] = 3.00 ; The Companions Quests Completed
+	fXPModifier[12] = 2.00 ; College of Winterhold Quests Completed
+	fXPModifier[13] = 2.00 ; Thieves' Guild Quests Completed
+	fXPModifier[14] = 1.50 ; The Dark Brotherhood Quests Completed
+	fXPModifier[15] = 3.00 ; Civil War Quests Completed
+	fXPModifier[16] = 2.00 ; Daedric Quests Completed
+	fXPModifier[17] = 10.00 ; Questlines Completed
+	fXPModifier[18] = 0.25 ; People Killed
+	fXPModifier[19] = 0.40 ; Animals Killed
+	fXPModifier[20] = 0.40 ; Creatures Killed
+	fXPModifier[21] = 0.30 ; Undead Killed
+	fXPModifier[22] = 0.50 ; Daedra Killed
+	fXPModifier[23] = 0.50 ; Automatons Killed
+	fXPModifier[24] = 0.60 ; Weapons Disarmed
+	fXPModifier[25] = 3.00 ; Brawls Won
+	fXPModifier[26] = 0.40 ; Bunnies Slaughtered
+	fXPModifier[27] = 10.00 ; Dragon Souls Collected
+	fXPModifier[28] = 1.50 ; Words Of Power Learned
+	fXPModifier[29] = 3.00 ; Words Of Power Unlocked
+	fXPModifier[30] = 5.00 ; Shouts Mastered
+	fXPModifier[31] = 0.50 ; Souls Trapped
+	fXPModifier[32] = 0.25 ; Magic Items Made
+	fXPModifier[33] = 0.10 ; Weapons Improved
+	fXPModifier[34] = 0.20 ; Weapons Made
+	fXPModifier[35] = 0.10 ; Armor Improved
+	fXPModifier[36] = 0.20 ; Armor Made
+	fXPModifier[37] = 0.20 ; Potions Mixed
+	fXPModifier[38] = 0.20 ; Poisons Mixed
+	DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "setXPModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended setXPModifierDefaults Function]\n\n")
 EndFunction
 
 String Function prettyPrintXP(Float fXP) Global

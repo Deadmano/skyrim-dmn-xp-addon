@@ -28,14 +28,19 @@ GlobalVariable Property DMN_SXPAExperienceMax Auto
 GlobalVariable Property DMN_SXPAExperiencePoints Auto
 
 Message Property DMN_SXPAConfigMenu Auto
+Message Property DMN_SXPAConfigMenuMiscellaneous Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousDebugSettings Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousResetConfirmation Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousWipeConfirmation Auto
 Message Property DMN_SXPAConfigMenuTracking Auto
 Message Property DMN_SXPAConfigMenuTrackingType Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategories Auto
-Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCombat Auto
+Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCombat01 Auto
+Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCombat02 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCrime Auto
-Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral Auto
+Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesMagic Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02 Auto
@@ -92,6 +97,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [XP Settings]
 				iMenu = 2
 			ElseIf (iButton == 3)
+			; [Miscellaneous]
+				iMenu = 24
+			ElseIf (iButton == 4)
 			; [Exit]
 				bMenu = False
 			EndIf
@@ -773,7 +781,6 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			Int DMN_SXPAActiveMonitoringState = DMN_SXPAActiveMonitoring.GetValue() As Int
 			If (DMN_SXPAActiveMonitoringState == 1)
 				bActiveMonitoringEnabled = True
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "\n")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Disabling XP activity active tracking temporarily...")
 				DMN_SXPAActiveMonitoring.SetValue(0)
 				If (DMN_SXPAActiveMonitoring.GetValue() == 0)
@@ -794,13 +801,13 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iMenu = 16
 			ElseIf (iButton == 3)
 			; [Magic]
-				iMenu = 17
+				iMenu = 18
 			ElseIf (iButton == 4)
 			; [Crafting]
-				iMenu = 18
+				iMenu = 19
 			ElseIf (iButton == 5)
 			; [Crime]
-				iMenu = 20
+				iMenu = 21
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
@@ -869,7 +876,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - General menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 13)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral.Show()
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show()
 			If (iButton == 0)
 			; [Locations Discovered]
 				sXPActivityName = "Locations Discovered"
@@ -1001,10 +1008,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			sXPActivityName = ""
 			iXPActivityIndex = 0
 			EndIf
-	; Show the Tracking Options - Activity - Combat menu.
+	; Show the Tracking Options - Activity - Combat 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 16)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat.Show()
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat01.Show()
 			If (iButton == 0)
 			; [People Killed]
 				sXPActivityName = "People Killed"
@@ -1031,10 +1038,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 5)
-			; [Automatons Killed]
-				sXPActivityName = "Automatons Killed"
-				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			; [>>]
+				iMenu = 17
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
@@ -1050,9 +1055,48 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			sXPActivityName = ""
 			iXPActivityIndex = 0
 			EndIf
-	; Show the Tracking Options - Activity - Magic menu.
+	; Show the Tracking Options - Activity - Combat 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 17)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat02.Show()
+			If (iButton == 0)
+			; [Automatons Killed]
+				sXPActivityName = "Automatons Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 1)
+			; [Weapons Disarmed]
+				sXPActivityName = "Weapons Disarmed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 2)
+			; [Brawls Won]
+				sXPActivityName = "Brawls Won"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 3)
+			; [Bunnies Slaughtered]
+				sXPActivityName = "Bunnies Slaughtered"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 4)
+			; [Return to Tracking Options - Activity - Combat 01]
+				iMenu = 16
+			EndIf
+			If (sXPActivityName && iXPActivityIndex >= 0)
+				If (bXPActivityState)
+					setXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, False, DMN_SXPAEH.sStatName)
+					Notification("Skyrim XP Addon: Toggled " + sXPActivityName + " XP gain to disabled.")
+				Else
+					setXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, True, DMN_SXPAEH.sStatName)
+					Notification("Skyrim XP Addon: Toggled " + sXPActivityName + " XP gain to enabled.")
+				EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			EndIf
+	; Show the Tracking Options - Activity - Magic menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 18)
 			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesMagic.Show()
 			If (iButton == 0)
 			; [Dragon Souls Collected]
@@ -1091,7 +1135,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			EndIf
 	; Show the Tracking Options - Activity - Crafting 01 menu.
 	; ----------------------------------------------------
-		ElseIf (iMenu == 18)
+		ElseIf (iMenu == 19)
 			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01.Show()
 			If (iButton == 0)
 			; [Souls Trapped]
@@ -1125,7 +1169,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 6)
 			; [[>>]]
-				iMenu = 19
+				iMenu = 20
 			ElseIf (iButton == 7)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
@@ -1143,7 +1187,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			EndIf
 	; Show the Tracking Options - Activity - Crafting 02 menu.
 	; ----------------------------------------------------
-		ElseIf (iMenu == 19)
+		ElseIf (iMenu == 20)
 			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02.Show()
 			If (iButton == 0)
 			; [Potions Mixed]
@@ -1172,7 +1216,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity - Crafting 01]
-				iMenu = 18
+				iMenu = 19
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1187,7 +1231,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			EndIf
 	; Show the Tracking Options - Activity - Crime menu.
 	; ----------------------------------------------------
-		ElseIf (iMenu == 20)
+		ElseIf (iMenu == 21)
 			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrime.Show()
 			If (iButton == 0)
 			; [Locks Picked]
@@ -1223,6 +1267,196 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			sXPActivityName = ""
 			iXPActivityIndex = 0
+			EndIf
+	; Show the Tracking Options - Activity - General 02 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 22)
+			;iButton = .Show()
+			If (iButton == 0)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 1)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 2)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 3)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 4)
+			; [>>]
+				iMenu = 23
+			ElseIf (iButton == 5)
+			; [Return to Tracking Options - Activity Categories]
+				iMenu = 11
+			EndIf
+			If (sXPActivityName && iXPActivityIndex >= 0)
+				If (bXPActivityState)
+					setXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, False, DMN_SXPAEH.sStatName)
+					Notification("Skyrim XP Addon: Toggled " + sXPActivityName + " XP gain to disabled.")
+				Else
+					setXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, True, DMN_SXPAEH.sStatName)
+					Notification("Skyrim XP Addon: Toggled " + sXPActivityName + " XP gain to enabled.")
+				EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			EndIf
+	; Show the Tracking Options - Activity - General 03 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 23)
+			;iButton = .Show()
+			If (iButton == 0)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 1)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 2)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 3)
+			; [Placeholder]
+				sXPActivityName = ""
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 4)
+			; [Return to Tracking Options - Activity - General 02]
+				iMenu = 22
+			EndIf
+			If (sXPActivityName && iXPActivityIndex >= 0)
+				If (bXPActivityState)
+					setXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, False, DMN_SXPAEH.sStatName)
+					Notification("Skyrim XP Addon: Toggled " + sXPActivityName + " XP gain to disabled.")
+				Else
+					setXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, True, DMN_SXPAEH.sStatName)
+					Notification("Skyrim XP Addon: Toggled " + sXPActivityName + " XP gain to enabled.")
+				EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			EndIf
+	; Show the Miscellaneous menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 24)
+			iButton = DMN_SXPAConfigMenuMiscellaneous.Show()
+			If (iButton == 0)
+			; [Debug Settings]
+				iMenu = 25
+			ElseIf (iButton == 1)
+			; [Wipe SXPA Player Data]
+				iMenu = 26
+			ElseIf (iButton == 2)
+			; [Reset SXPA Default Values]
+				iMenu = 27
+			ElseIf (iButton == 3)
+			; [Return to Main Config]
+				iMenu = 0
+			EndIf
+	; Show the Miscellaneous - Debug menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 25)
+			iButton = DMN_SXPAConfigMenuMiscellaneousDebugSettings.Show()
+			If (iButton == 0)
+			; [Enable Debugging]
+				DMN_SXPAEH.DMN_SXPADebug.SetValue(1)
+			ElseIf (iButton == 1)
+			; [Disable Debugging]
+				DMN_SXPAEH.DMN_SXPADebug.SetValue(0)
+			ElseIf (iButton == 2)
+			; [Update Player Stats]
+			; Temporarily disable active monitoring if it is on whilst we update existing player XP activities.
+				Int DMN_SXPAActiveMonitoringState = DMN_SXPAActiveMonitoring.GetValue() As Int
+				If (DMN_SXPAActiveMonitoringState == 1)
+					bActiveMonitoringEnabled = True
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Disabling XP activity active tracking temporarily...")
+					DMN_SXPAActiveMonitoring.SetValue(0)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 0)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was disabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT disabled!\n\n")
+					EndIf
+				EndIf
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
+			ElseIf (iButton == 3)
+			; [Return to Miscellaneous]
+				iMenu = 24
+			EndIf
+	; Show the Miscellaneous - Wipe Confirmation menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 26)
+			iButton = DMN_SXPAConfigMenuMiscellaneousWipeConfirmation.Show()
+			If (iButton == 0)
+			; [Wipe My SXPA Data]
+				Notification("Skyrim XP Addon: Wiping player's SXPA data...")
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				Notification("Skyrim XP Addon: SXPA player data has been wiped!")
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				bMenu = False
+			ElseIf (iButton == 1)
+			; [Wipe My SXPA Data And Reset SXPA Values To Default]
+				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
+				bMenu = False
+			ElseIf (iButton == 2)
+			; [Return to Miscellaneous]
+				iMenu = 24
+			EndIf
+	; Show the Miscellaneous - Reset Confirmation menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 27)
+			iButton = DMN_SXPAConfigMenuMiscellaneousResetConfirmation.Show()
+			If (iButton == 0)
+			; [Reset SXPA Values To Default]
+				Notification("Skyrim XP Addon: Restoring SXPA default values...")
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				Notification("Skyrim XP Addon: SXPA default values have been restored!")
+				bMenu = False
+			ElseIf (iButton == 1)
+			; [Reset SXPA Values To Default And Wipe My SXPA Data]
+				Notification("Skyrim XP Addon: Restoring SXPA default values and wiping player's SXPA data...")
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				Notification("Skyrim XP Addon: SXPA default values have been restored and SXPA player data wiped!")
+				bMenu = False
+			ElseIf (iButton == 2)
+			; [Return to Miscellaneous]
+				iMenu = 24
 			EndIf
 		EndIf
 	EndWhile
