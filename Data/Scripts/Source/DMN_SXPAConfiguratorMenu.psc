@@ -1373,12 +1373,19 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			If (iButton == 0)
 			; [Enable Debugging]
 				DMN_SXPAEH.DMN_SXPADebug.SetValue(1)
+				If (DMN_SXPAEH.DMN_SXPADebug.GetValue() As Int == 1)
+					Notification("Skyrim XP Addon: Enabled debugging mode.")
+				EndIf
 			ElseIf (iButton == 1)
 			; [Disable Debugging]
 				DMN_SXPAEH.DMN_SXPADebug.SetValue(0)
+				If (DMN_SXPAEH.DMN_SXPADebug.GetValue() As Int == 0)
+					Notification("Skyrim XP Addon: Disabled debugging mode.")
+				EndIf
 			ElseIf (iButton == 2)
 			; [Update Player Stats]
 			; Temporarily disable active monitoring if it is on whilst we update existing player XP activities.
+				Notification("Skyrim XP Addon: Initiated manual SXPA player stats update.")
 				Int DMN_SXPAActiveMonitoringState = DMN_SXPAActiveMonitoring.GetValue() As Int
 				If (DMN_SXPAActiveMonitoringState == 1)
 					bActiveMonitoringEnabled = True
@@ -1404,6 +1411,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; Register for XP activity active tracking once more.
 					DMN_SXPAPA.waitForStatChange()
 				EndIf
+				Notification("Skyrim XP Addon: Completed manual SXPA player stats update.")
 			ElseIf (iButton == 3)
 			; [Return to Miscellaneous]
 				iMenu = 24
