@@ -217,7 +217,7 @@ Function setRandomXPValue(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVa
 	DMN_SXPALog("[Ended setRandomXPValue Function]\n\n")
 EndFunction
 
-Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
+Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, GlobalVariable gDebug, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog("[Started rewardExistingXPActivities Function]")
@@ -237,6 +237,8 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 ; Part 3: Looping through each XP activity and seeing if any of the values are greater than our stored values, if they are, update them.
 	DMN_SXPALog("An update was queued to assign XP values to existing stats!\n\n")
 	Int iIndex = 0
+	Int iTotalXPAllocated
+	Int iTotalUpdateCount
 	While (iIndex < sStatName.Length)
 		Float fRandomXPValueFull
 		Float fRandomXPValueHalf
@@ -472,6 +474,7 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 			; Part 6: Calculating the total amount of XP earned for the XP activity.
 				Float fFinalRandomXPValue = fRandomXPValueFullTotal + fRandomXPValueHalfTotal + fRandomXPValueThirdTotal + fRandomXPValueFourthTotal + fRandomXPValueFifthTotal + fRandomXPValueSixthTotal
 				Int iRandomXPValue = round(fFinalRandomXPValue)
+
 				DMN_SXPALog("Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
 				DMN_SXPALog("Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
 			; Part 6: Adding the total amount of XP earned for the XP activity to the total experience points.
@@ -482,10 +485,12 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 				DMN_SXPALog("Current XP: " + gXP.GetValue() as Int + ".")
 				DMN_SXPALog("Completed update for: " + sStatName[iIndex] + ".\n\n")
 				If (iUpdateCount > 1)
-					Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
+					debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
 				Else
-					Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
+					debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
 				EndIf
+				iTotalXPAllocated += iRandomXPValue
+				iTotalUpdateCount += iUpdateCount
 				fRandomXPValueFullTotal = 0
 				fRandomXPValueHalfTotal = 0
 				fRandomXPValueThirdTotal = 0
@@ -498,6 +503,11 @@ Function rewardExistingXPActivities(GlobalVariable gMinXP, GlobalVariable gMaxXP
 		EndIf
 		iIndex += 1
 	EndWhile
+	If (iTotalUpdateCount > 1)
+		Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity events.")
+	Else
+		Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity event.")
+	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog("rewardExistingXPActivities() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog("[Ended rewardExistingXPActivities Function]\n\n")

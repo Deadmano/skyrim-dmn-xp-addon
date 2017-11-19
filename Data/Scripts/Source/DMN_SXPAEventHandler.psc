@@ -27,6 +27,8 @@ Import Utility
 Import DMN_DeadmaniacFunctionsSXPA
 Import DMN_SXPAFunctions
 
+GlobalVariable Property DMN_SXPADebug Auto
+{Set to the debug global variable.}
 GlobalVariable Property DMN_SXPAExperiencePoints Auto
 GlobalVariable Property DMN_SXPAExperienceMin Auto
 GlobalVariable Property DMN_SXPAExperienceMax Auto

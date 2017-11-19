@@ -804,7 +804,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
