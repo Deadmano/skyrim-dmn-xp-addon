@@ -73,8 +73,8 @@ Event OnTrackedStatsEvent(String sStatName, Int iStatValue)
 	While (iIndex < sStatName.Length)
 		If (sStatName == sStatName[iIndex] && iStatValue > iTrackedStatCount[iIndex])
 			iTrackedStatCount[iIndex] = iStatValue
-			If (checkPlayerStats(bXPActivityState, iTrackedStatCount, sStatName))
-				updatePlayerStats(DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, bXPActivityState, fXPModifier, iTrackedStatCount, sStatName, sNotificationMessage)
+			If (checkPlayerStats(DMN_SXPADebug, bXPActivityState, iTrackedStatCount, sStatName))
+				updatePlayerStats(DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, bXPActivityState, fXPModifier, iTrackedStatCount, sStatName, sNotificationMessage)
 			EndIf
 		EndIf
 		iIndex += 1

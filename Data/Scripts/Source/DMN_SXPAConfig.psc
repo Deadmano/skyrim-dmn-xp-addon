@@ -90,13 +90,13 @@ Function preMaintenance()
 	Int DMN_SXPAActiveMonitoringState = DMN_SXPAActiveMonitoring.GetValue() As Int
 	If (DMN_SXPAActiveMonitoringState == 1)
 		bActiveMonitoringEnabled = True
-		DMN_SXPALog("\n")
-		DMN_SXPALog("Disabling XP activity active tracking temporarily...")
+		DMN_SXPALog(DMN_SXPADebug, "\n")
+		DMN_SXPALog(DMN_SXPADebug, "Disabling XP activity active tracking temporarily...")
 		DMN_SXPAActiveMonitoring.SetValue(0)
 		If (DMN_SXPAActiveMonitoring.GetValue() == 0)
-			DMN_SXPALog("XP activity active tracking was disabled.\n\n")
+			DMN_SXPALog(DMN_SXPADebug, "XP activity active tracking was disabled.\n\n")
 		Else
-			DMN_SXPALog("WARNING: XP activity active tracking was NOT disabled!\n\n")
+			DMN_SXPALog(DMN_SXPADebug, "WARNING: XP activity active tracking was NOT disabled!\n\n")
 		EndIf
 	EndIf
 EndFunction
@@ -173,7 +173,7 @@ Function installSXPA()
 	Notification("Skyrim XP Addon: Please do not quit or save the game until this process is complete.")
 	
 ; Check for any existing XP activities the player may have done, and if any are found, reward the player with XP.
-	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 	
 ; Set the default configuration settings.
 	configurationDefaults()
@@ -210,14 +210,14 @@ Function updateSXPA()
 	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "1", "0"))
 	; Clear the player's stored SXPA experience value to resolve the error in XP calculations that resulted in inflated results.
 		DMN_SXPAEH.DMN_SXPAExperiencePoints.SetValue(0)
-		resetStatValues(DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+		resetStatValues(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 	EndIf
 ; END v1.0.0 FIXES/PATCHES
 
 ; BEGIN v1.1.0 FIXES/PATCHES
 	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("1", "2", "0"))
 	; Reset the XP Spent variable due to inaccurate calculations since v1.0.0.
-		resetArrayDataInt(DMN_SXPAEH.iSkillXPSpent)
+		resetArrayDataInt(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.iSkillXPSpent)
 	EndIf
 ; END v1.1.0 FIXES/PATCHES
 
@@ -237,7 +237,7 @@ Function updateSXPA()
 	; out the Global Variable array from v1.0.0 - v1.2.0 and not gain XP for existing SXPA-processed stats.
 	; 0 = Locations Discovered, 1 = Standing Stones Found, 2 = Nirnroots Found, 3 = Books Read.
 	; 4 = Ingredients Harvested, 5 = Wings Plucked, 6 = Persuasions, 7 = Intimidations.
-		updatePlayerStatsCount(DMN_SXPAEH.bXPActivityState, 0, 7, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+		updatePlayerStatsCount(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, 0, 7, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 	EndIf
 ; END v1.2.0 FIXES/PATCHES
 
@@ -246,7 +246,7 @@ Function updateSXPA()
 
 ; Calls a function that checks for existing XP activities and rewards balanced XP taking into account when the player may have started up until their current level.
 ; This is required after the Event Handler quest is reset to uncover and reward the newly added XP activities.
-	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 
 ;-----------------------------------
 ; END NON-SPECIFIC VERSION UPDATES
@@ -298,7 +298,7 @@ EndFunction
 Function configurationDefaults()
 ; Add (or update) the mod configurator to the player inventory silently.
 	giveConfigurator(DMN_SXPAConfigurator)
-	setXPActivityStateDefaults(DMN_SXPAEH.bXPActivityState)
+	setXPActivityStateDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
 EndFunction
 
@@ -306,18 +306,18 @@ Function postMaintenance()
 ; Re-enable XP activity active tracking if active tracking was already enabled prior.
 	If (bActiveMonitoringEnabled)
 		bActiveMonitoringEnabled = None
-		DMN_SXPALog("Re-enabling XP activity active tracking.")
+		DMN_SXPALog(DMN_SXPADebug, "Re-enabling XP activity active tracking.")
 		DMN_SXPAActiveMonitoring.SetValue(1)
 		If (DMN_SXPAActiveMonitoring.GetValue() == 1)
-			DMN_SXPALog("XP activity active tracking was enabled.\n\n")
+			DMN_SXPALog(DMN_SXPADebug, "XP activity active tracking was enabled.\n\n")
 		Else
-			DMN_SXPALog("WARNING: XP activity active tracking was NOT enabled!\n\n")
+			DMN_SXPALog(DMN_SXPADebug, "WARNING: XP activity active tracking was NOT enabled!\n\n")
 		EndIf
 	; Register for XP activity active tracking once more.
 		DMN_SXPAPA.waitForStatChange()
 	Else
 	; Since XP activity active tracking is disabled, call a manual update.
 	; Update all existing stats and assign random XP values for each of them.
-		updatePlayerStats(DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+		updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 	EndIf
 EndFunction
