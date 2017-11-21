@@ -101,13 +101,18 @@ Event OnInit()
 EndEvent
 
 Function preMaintenance()
+	Int debugState = DMN_SXPADebug.GetValue() as Int
+	If (debugState == 1)
+	; If debugging is enabled, switch to debug mode.
+		debugMode()
+	EndIf
 	If (!bSuppressDebugState)
-		If (DMN_SXPADebug.GetValue() as Int == 1)
+		If (debugState == 1)
 			Int iChoice = DMN_SXPAMessageDebugEnabled.Show()
 			If (iChoice == 0)
 			; [Disable Debugging]
 				DMN_SXPADebug.SetValue(0)
-				If (DMN_SXPADebug.GetValue() as Int == 0)
+				If (debugState == 0)
 					Notification("Skyrim XP Addon: Successfully disabled debugging mode.")
 				Else
 					Notification("Skyrim XP Addon: Could not disable debugging mode.")
@@ -374,6 +379,11 @@ Function configurationDefaults()
 ; Add (or update) the mod configurator to the player inventory silently.
 	giveConfigurator(DMN_SXPAConfigurator)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
+EndFunction
+
+Function debugMode()
+; Reset the configurator.
+	giveConfigurator(DMN_SXPAConfigurator)
 EndFunction
 
 Function postMaintenance()
