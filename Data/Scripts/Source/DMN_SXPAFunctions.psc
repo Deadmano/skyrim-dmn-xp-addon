@@ -702,7 +702,7 @@ EndFunction
 Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Float[] fSkillModifier, Float[] fXPModifier, Int iPassiveMonitoring) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]")
+	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]\n\n")
 ; Set the Skill Modifiers to default values.
 	setSkillModifierDefaults(gDebug, fSkillModifier)
 ; Set the XP Activity states to default.
@@ -732,6 +732,32 @@ Bool Function getXPActivityState(GlobalVariable gDebug, Bool[] bXPActivityState,
 	DMN_SXPALog(gDebug, "getXPActivityState() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended getXPActivityState Function]\n\n")
 	Return bState
+EndFunction
+
+Int Function getXPActivityStateForMCM(String sXPActivityName, GlobalVariable gDebug, Bool[] bXPActivityState, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started getXPActivityStateForMCM Function]")
+	Int iIndex = sStatName.Find(sXPActivityName)
+	Bool bState = bXPActivityState[iIndex]
+	DMN_SXPALog(gDebug, sStatName[iIndex] + " state is set to " + bState + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "getXPActivityStateForMCM() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended getXPActivityStateForMCM Function]\n\n")
+	Return bState as Int
+EndFunction
+
+Float Function getXPActivityMultiplierForMCM(String sXPActivityName, GlobalVariable gDebug, Float[] fXPModifier, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started getXPActivityMultiplierForMCM Function]")
+	Int iIndex = sStatName.Find(sXPActivityName)
+	Float fMult = fXPModifier[iIndex]
+	DMN_SXPALog(gDebug, sStatName[iIndex] + " multiplier is set to " + fMult + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "getXPActivityMultiplierForMCM() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended getXPActivityMultiplierForMCM Function]\n\n")
+	Return fMult as Float
 EndFunction
 
 Function setXPActivityState(GlobalVariable gDebug, Bool[] bXPActivityState, Int iXPActivityIndex, Bool bEnabled, String[] sStatName) Global
@@ -831,52 +857,65 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	DMN_SXPALog(gDebug, "[Ended setXPActivityStateDefaults Function]\n\n")
 EndFunction
 
-Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier) Global
+Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool bSingleUpdate = False, Int iArrayIndex = 0) Global
 ; Resets the default XP Modifier values.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setXPModifierDefaults Function]")
-	DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
-	fXPModifier[0] = 0.60 ; Locations Discovered
-	fXPModifier[1] = 5.00 ; Standing Stones Found
-	fXPModifier[2] = 0.40 ; Nirnroots Found
-	fXPModifier[3] = 0.40 ; Books Read
-	fXPModifier[4] = 0.15 ; Ingredients Harvested
-	fXPModifier[5] = 0.40 ; Wings Plucked
-	fXPModifier[6] = 0.80 ; Persuasions
-	fXPModifier[7] = 0.80 ; Intimidations
-	fXPModifier[8] = 0.20 ; Misc Objectives Completed
-	fXPModifier[9] = 4.00 ; Main Quests Completed
-	fXPModifier[10] = 3.00 ; Side Quests Completed
-	fXPModifier[11] = 3.00 ; The Companions Quests Completed
-	fXPModifier[12] = 2.00 ; College of Winterhold Quests Completed
-	fXPModifier[13] = 2.00 ; Thieves' Guild Quests Completed
-	fXPModifier[14] = 1.50 ; The Dark Brotherhood Quests Completed
-	fXPModifier[15] = 3.00 ; Civil War Quests Completed
-	fXPModifier[16] = 2.00 ; Daedric Quests Completed
-	fXPModifier[17] = 10.00 ; Questlines Completed
-	fXPModifier[18] = 0.25 ; People Killed
-	fXPModifier[19] = 0.40 ; Animals Killed
-	fXPModifier[20] = 0.40 ; Creatures Killed
-	fXPModifier[21] = 0.30 ; Undead Killed
-	fXPModifier[22] = 0.50 ; Daedra Killed
-	fXPModifier[23] = 0.50 ; Automatons Killed
-	fXPModifier[24] = 0.60 ; Weapons Disarmed
-	fXPModifier[25] = 3.00 ; Brawls Won
-	fXPModifier[26] = 0.40 ; Bunnies Slaughtered
-	fXPModifier[27] = 10.00 ; Dragon Souls Collected
-	fXPModifier[28] = 1.50 ; Words Of Power Learned
-	fXPModifier[29] = 3.00 ; Words Of Power Unlocked
-	fXPModifier[30] = 5.00 ; Shouts Mastered
-	fXPModifier[31] = 0.50 ; Souls Trapped
-	fXPModifier[32] = 0.25 ; Magic Items Made
-	fXPModifier[33] = 0.10 ; Weapons Improved
-	fXPModifier[34] = 0.20 ; Weapons Made
-	fXPModifier[35] = 0.10 ; Armor Improved
-	fXPModifier[36] = 0.20 ; Armor Made
-	fXPModifier[37] = 0.20 ; Potions Mixed
-	fXPModifier[38] = 0.20 ; Poisons Mixed
-	DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+	Float[] fMult = New Float[39]
+	fMult[0] = 0.60 ; Locations Discovered
+	fMult[1] = 5.00 ; Standing Stones Found
+	fMult[2] = 0.40 ; Nirnroots Found
+	fMult[3] = 0.40 ; Books Read
+	fMult[4] = 0.15 ; Ingredients Harvested
+	fMult[5] = 0.40 ; Wings Plucked
+	fMult[6] = 0.80 ; Persuasions
+	fMult[7] = 0.80 ; Intimidations
+	fMult[8] = 0.20 ; Misc Objectives Completed
+	fMult[9] = 4.00 ; Main Quests Completed
+	fMult[10] = 3.00 ; Side Quests Completed
+	fMult[11] = 3.00 ; The Companions Quests Completed
+	fMult[12] = 2.00 ; College of Winterhold Quests Completed
+	fMult[13] = 2.00 ; Thieves' Guild Quests Completed
+	fMult[14] = 1.50 ; The Dark Brotherhood Quests Completed
+	fMult[15] = 3.00 ; Civil War Quests Completed
+	fMult[16] = 2.00 ; Daedric Quests Completed
+	fMult[17] = 10.00 ; Questlines Completed
+	fMult[18] = 0.25 ; People Killed
+	fMult[19] = 0.40 ; Animals Killed
+	fMult[20] = 0.40 ; Creatures Killed
+	fMult[21] = 0.30 ; Undead Killed
+	fMult[22] = 0.50 ; Daedra Killed
+	fMult[23] = 0.50 ; Automatons Killed
+	fMult[24] = 0.60 ; Weapons Disarmed
+	fMult[25] = 3.00 ; Brawls Won
+	fMult[26] = 0.40 ; Bunnies Slaughtered
+	fMult[27] = 10.00 ; Dragon Souls Collected
+	fMult[28] = 1.50 ; Words Of Power Learned
+	fMult[29] = 3.00 ; Words Of Power Unlocked
+	fMult[30] = 5.00 ; Shouts Mastered
+	fMult[31] = 0.50 ; Souls Trapped
+	fMult[32] = 0.25 ; Magic Items Made
+	fMult[33] = 0.10 ; Weapons Improved
+	fMult[34] = 0.20 ; Weapons Made
+	fMult[35] = 0.10 ; Armor Improved
+	fMult[36] = 0.20 ; Armor Made
+	fMult[37] = 0.20 ; Potions Mixed
+	fMult[38] = 0.20 ; Poisons Mixed
+	If (!bSingleUpdate)
+		DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
+		Int iIndex = 0
+		While (iIndex < fMult.Length)
+			fXPModifier[iIndex] = fMult[iIndex]
+			iIndex += 1
+		EndWhile
+		DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+	ElseIf (bSingleUpdate)
+	; If called for a single update, set the value as passed in.
+		DMN_SXPALog(gDebug, "Previous array value: " + fXPModifier[iArrayIndex] + ".")
+		fXPModifier[iArrayIndex] = fMult[iArrayIndex]
+		DMN_SXPALog(gDebug, "Set array value to default: " + fXPModifier[iArrayIndex] + ".")
+	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended setXPModifierDefaults Function]\n\n")

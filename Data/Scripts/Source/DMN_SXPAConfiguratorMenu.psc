@@ -194,9 +194,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 40)
+			Float i01 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i05 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Locations Discovered]
 				sXPActivityName = "Locations Discovered"
@@ -456,9 +461,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Quests 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 43)
+			Float i01 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i05 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Misc Objectives]
 				sXPActivityName = "Misc Objectives Completed"
@@ -621,9 +631,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Quests 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 44)
+			Float i01 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i05 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Thieves Guild Quests]
 				sXPActivityName = "Thieves' Guild Quests Completed"
@@ -783,9 +798,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Combat 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 45)
+			Float i01 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i05 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat01.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [People Killed]
 				sXPActivityName = "People Killed"
@@ -948,9 +968,13 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Combat 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 46)
+			Float i01 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat02.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat02.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Automatons Killed]
 				sXPActivityName = "Automatons Killed"
@@ -1082,9 +1106,13 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Magic menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 47)
+			Float i01 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesMagic.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesMagic.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Dragon Souls Collected]
 				sXPActivityName = "Dragon Souls Collected"
@@ -1216,9 +1244,15 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Crafting 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 48)
+			Float i01 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i05 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i06 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting01.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting01.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
 			; [Souls Trapped]
 				sXPActivityName = "Souls Trapped"
@@ -1409,9 +1443,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Crafting 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 49)
+			Float i01 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i05 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting02.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting02.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Potions Mixed]
 				sXPActivityName = "Potions Mixed"
@@ -1571,9 +1610,13 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Crime menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 50)
+			Float i01 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i02 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i03 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i04 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrime.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrime.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Locks Picked]
 				sXPActivityName = "Locks Picked"
@@ -2310,7 +2353,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - General 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 13)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show()
+			Int i01 = getXPActivityStateForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Locations Discovered]
 				sXPActivityName = "Locations Discovered"
@@ -2354,7 +2402,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Quests 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 14)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01.Show()
+			Int i01 = getXPActivityStateForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Misc Objectives]
 				sXPActivityName = "Misc Objectives Completed"
@@ -2401,7 +2454,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Quests 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 15)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02.Show()
+			Int i01 = getXPActivityStateForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Thieves Guild Quests]
 				sXPActivityName = "Thieves' Guild Quests Completed"
@@ -2445,7 +2503,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Combat 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 16)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat01.Show()
+			Int i01 = getXPActivityStateForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [People Killed]
 				sXPActivityName = "People Killed"
@@ -2492,7 +2555,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Combat 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 17)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat02.Show()
+			Int i01 = getXPActivityStateForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat02.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Automatons Killed]
 				sXPActivityName = "Automatons Killed"
@@ -2531,7 +2598,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Magic menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 18)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesMagic.Show()
+			Int i01 = getXPActivityStateForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesMagic.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Dragon Souls Collected]
 				sXPActivityName = "Dragon Souls Collected"
@@ -2570,7 +2641,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Crafting 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 19)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01.Show()
+		; Get the states of the XP activities to display in the menu shown to the player.
+			Int i01 = getXPActivityStateForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i06 = getXPActivityStateForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
 			; [Souls Trapped]
 				sXPActivityName = "Souls Trapped"
@@ -2625,7 +2703,13 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Crafting 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 20)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02.Show()
+		; Get the states of the XP activities to display in the menu shown to the player.
+			Int i01 = getXPActivityStateForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Potions Mixed]
 				sXPActivityName = "Potions Mixed"
@@ -2672,7 +2756,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Crime menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 21)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrime.Show()
+			Int i01 = getXPActivityStateForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrime.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Locks Picked]
 				sXPActivityName = "Locks Picked"
