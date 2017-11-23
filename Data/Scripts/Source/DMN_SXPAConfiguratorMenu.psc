@@ -13,12 +13,12 @@
 ; You should have received a copy of the GNU General Public License
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ScriptName DMN_SXPAConfiguratorMenu Extends ObjectReference
+ScriptName DMN_SXPAConfiguratorMenu Extends Quest
 
 {Temporary mod configuration script pre-MCM.}
 
-Import Game
 Import Debug
+Import Game
 Import Utility
 Import DMN_SXPAFunctions
 
@@ -68,15 +68,6 @@ Message Property DMN_SXPAConfigMenuSpendXPAmount Auto
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 DMN_SXPAPlayerAlias Property DMN_SXPAPA Auto
 
-Event OnRead()
-; Disable all other menus temporarily leaving only the message box to show.
-	DisablePlayerControls(False, False, False, False, False, True)
-; Undo the above change.
-	EnablePlayerControls(False, False, False, False, False, True)
-; Fire up the configuration function.
-	configureMod()
-EndEvent
-
 Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 ; Stop further config menu activation until we finish processing this request.
 	GotoState("configuring")
@@ -101,7 +92,6 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 		fMultOption[5] = 3.00
 		fMultOption[6] = 6.00
 		fMultOption[7] = 10.00
-		
 	; Prevent any possible issues with recycling the iButton.
 		If (iButton == -1)
 	; Show the Main Config menu.
@@ -1847,126 +1837,220 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; -------------------------------------
 		ElseIf (iMenu == 8)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
 			String sSkill
 			Int iAmount
 			iButton = DMN_SXPAConfigMenuSpendXPCombat.Show(i)
 			If (iButton == 0)
 			; [Archery]
 				sSkill = "Marksman"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 1)
 			; [Block]
 				sSkill = "Block"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 2)
 			; [Heavy Armor]
 				sSkill = "HeavyArmor"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 3)
 			; [One-Handed]
 				sSkill = "OneHanded"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 4)
 			; [Smithing]
 				sSkill = "Smithing"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 6)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 5)
 			; [Two-Handed]
 				sSkill = "TwoHanded"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf

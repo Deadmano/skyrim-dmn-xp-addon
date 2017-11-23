@@ -30,8 +30,10 @@ DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 DMN_SXPAEventHandlerData Property DMN_SXPAEHD Auto
 DMN_SXPAPlayerAlias Property DMN_SXPAPA Auto
 
-Book Property DMN_SXPAConfigurator Auto
-{Stores the temporary mod configurator. Auto-Fill.}
+Book Property DMN_SXPAConfiguratorBook Auto
+{The mod configurator in book form. Auto-Fill.}
+Spell Property DMN_SXPAConfiguratorSpell Auto
+{The mod configurator in spell form. Auto-Fill.}
 
 GlobalVariable Property DMN_SXPADebug Auto
 {Set to the debug global variable.}
@@ -376,14 +378,17 @@ Function updateSXPA()
 EndFunction
 
 Function configurationDefaults()
-; Add (or update) the mod configurator to the player inventory silently.
-	giveConfigurator(DMN_SXPAConfigurator)
+; Add (or update) the mod configurator spell to the player spells silently.
+	giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+; Add (or update) the mod configurator book to the player inventory silently.
+	giveConfiguratorBook(DMN_SXPAConfiguratorBook)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
 EndFunction
 
 Function debugMode()
-; Reset the configurator.
-	giveConfigurator(DMN_SXPAConfigurator)
+; Reset the configurators.
+	giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+	giveConfiguratorBook(DMN_SXPAConfiguratorBook)
 EndFunction
 
 Function postMaintenance()
