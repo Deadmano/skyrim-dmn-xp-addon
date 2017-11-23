@@ -48,7 +48,7 @@ Function giveConfiguratorBook(Book akConfigurator, Bool bRemoveOnly = False) Glo
 ; Else remove every configurator in the player inventory and add one, silently.
 		kRef.RemoveItem(akConfigurator, i, True)
 		kRef.AddItem(akConfigurator, 1, True)
-	ElseIf (bRemoveOnly)
+	ElseIf (i >= 1 && bRemoveOnly)
 		kRef.RemoveItem(akConfigurator, i, True)
 	EndIf
 EndFunction
@@ -62,7 +62,7 @@ Function giveConfiguratorSpell(Spell akConfigurator, Bool bRemoveOnly = False) G
 	ElseIf (!bRemoveOnly)
 ; Else add the configurator spell, silently.
 		kRef.AddSpell(akConfigurator, False)
-	ElseIf (bRemoveOnly)
+	ElseIf (kRef.HasSpell(akConfigurator) && bRemoveOnly)
 		kRef.RemoveSpell(akConfigurator)
 	EndIf
 EndFunction
@@ -715,7 +715,7 @@ Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, Gl
 	DMN_SXPALog(gDebug, "[Ended resetSXPAProgress Function]\n\n")
 EndFunction
 
-Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Float[] fSkillModifier, Float[] fXPModifier, Int iPassiveMonitoring) Global
+Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Book akConfiguratorBook, Float[] fSkillModifier, Float[] fXPModifier, Int iConfiguratorType, Int iPassiveMonitoring, Spell akConfiguratorSpell) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]\n\n")
@@ -729,6 +729,12 @@ Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, Glob
 	gMinXP.SetValue(250) 
 ; Set the maximum XP reward to default.
 	gMaxXP.SetValue(1000)
+; Remove the book configurator, if it exists.
+	giveConfiguratorBook(akConfiguratorBook, True)
+; Add the spell configurator, if the player doesn't already have it.
+	giveConfiguratorSpell(akConfiguratorSpell)
+; Set the configurator to default (skill).
+	iConfiguratorType = 1
 ; Disable passive monitoring.
 	iPassiveMonitoring = 0
 ; Enable active (always-on) monitoring.

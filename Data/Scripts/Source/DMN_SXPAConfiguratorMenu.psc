@@ -3086,7 +3086,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			If (iButton == 0)
 			; [Reset SXPA Values To Default]
 				Notification("Skyrim XP Addon: Restoring SXPA default values...")
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA default values have been restored!")
@@ -3094,7 +3094,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 1)
 			; [Reset SXPA Values To Default And Wipe My SXPA Data]
 				Notification("Skyrim XP Addon: Restoring SXPA default values and wiping player's SXPA data...")
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
@@ -3120,7 +3120,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Wipe My SXPA Data And Reset SXPA Values To Default]
 				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
 				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
