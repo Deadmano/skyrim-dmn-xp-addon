@@ -57,6 +57,7 @@ String[] Property sNotificationMessage Auto
 {The list of notification messages shown to the player when a stat is updated.}
 
 Int Property iPassiveMonitoring Auto Conditional
+Int Property iConfiguratorType Auto Conditional
 
 Function startTracking()
 ; Register to start tracking player game stat changes.

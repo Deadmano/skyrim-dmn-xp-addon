@@ -37,29 +37,33 @@ Function DMN_SXPALog(GlobalVariable gDebug, String traceMessage) Global
 	EndIf
 EndFunction
 
-Function giveConfiguratorBook(Book akConfigurator) Global
+Function giveConfiguratorBook(Book akConfigurator, Bool bRemoveOnly = False) Global
 ; Save the amount of configurators the player has in their inventory.
 	Actor kRef = GetPlayer()
 	Int i = kRef.GetItemCount(akConfigurator)
-	If (i == 0)
+	If (i == 0 && !bRemoveOnly)
 ; If the player has none, add a single configurator to their inventory, silently.
 		kRef.AddItem(akConfigurator, 1, True)
-	ElseIf (i >= 1)
+	ElseIf (i >= 1 && !bRemoveOnly)
 ; Else remove every configurator in the player inventory and add one, silently.
 		kRef.RemoveItem(akConfigurator, i, True)
 		kRef.AddItem(akConfigurator, 1, True)
+	ElseIf (bRemoveOnly)
+		kRef.RemoveItem(akConfigurator, i, True)
 	EndIf
 EndFunction
 
-Function giveConfiguratorSpell(Spell akConfigurator) Global
+Function giveConfiguratorSpell(Spell akConfigurator, Bool bRemoveOnly = False) Global
 	Actor kRef = GetPlayer()
-	If (kRef.HasSpell(akConfigurator))
+	If (kRef.HasSpell(akConfigurator) && !bRemoveOnly)
 ; If the player has the configurator spell, remove it and re-add it, silently.
 		kRef.RemoveSpell(akConfigurator)
 		kRef.AddSpell(akConfigurator, False)
-	Else
+	ElseIf (!bRemoveOnly)
 ; Else add the configurator spell, silently.
 		kRef.AddSpell(akConfigurator, False)
+	ElseIf (bRemoveOnly)
+		kRef.RemoveSpell(akConfigurator)
 	EndIf
 EndFunction
 

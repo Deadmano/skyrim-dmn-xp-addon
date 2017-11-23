@@ -67,6 +67,11 @@ Message Property DMN_SXPAConfigMenuSpendXPMagic Auto
 Message Property DMN_SXPAConfigMenuSpendXPStealth Auto
 Message Property DMN_SXPAConfigMenuSpendXPAmount Auto
 
+Book Property DMN_SXPAConfiguratorBook Auto
+{The mod configurator in book form. Auto-Fill.}
+Spell Property DMN_SXPAConfiguratorSpell Auto
+{The mod configurator in spell form. Auto-Fill.}
+
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 DMN_SXPAPlayerAlias Property DMN_SXPAPA Auto
 
@@ -3030,6 +3035,24 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 				Notification("Skyrim XP Addon: Completed manual SXPA player stats update.")
 			ElseIf (iButton == 3)
+			; [Switch To Book Configurator]
+				giveConfiguratorSpell(DMN_SXPAConfiguratorSpell, True)
+				giveConfiguratorBook(DMN_SXPAConfiguratorBook)
+				DMN_SXPAEH.iConfiguratorType = 0
+				If (DMN_SXPAEH.iConfiguratorType == 0)
+					Notification("Skyrim XP Addon: Switched to the book configurator.")
+					bMenu = False
+				EndIf
+			ElseIf (iButton == 4)
+			; [Switch To Spell Configurator]
+				giveConfiguratorBook(DMN_SXPAConfiguratorBook, True)
+				giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+				DMN_SXPAEH.iConfiguratorType = 1
+				If (DMN_SXPAEH.iConfiguratorType == 1)
+					Notification("Skyrim XP Addon: Switched to the spell configurator.")
+					bMenu = False
+				EndIf
+			ElseIf (iButton == 5)
 			; [Return to Miscellaneous]
 				iMenu = 24
 			EndIf
@@ -3044,10 +3067,10 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				If (iButton == 0)
 				; [Enable Compatibility]
 					DMN_SXPAEH.iModCompatibility[0] = 1
-					Notification("Enabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
+					Notification("Skyrim XP Addon: Enabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
 				ElseIf (iButton == 1)
 					DMN_SXPAEH.iModCompatibility[0] = 0
-					Notification("Disabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
+					Notification("Skyrim XP Addon: Disabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
 				; [Previous Menu]
 				ElseIf (iButton == 2)
 					iMenu = 26
