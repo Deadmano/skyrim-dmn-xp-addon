@@ -30,6 +30,8 @@ GlobalVariable Property DMN_SXPAExperiencePoints Auto
 Message Property DMN_SXPAConfigMenu Auto
 Message Property DMN_SXPAConfigMenuMiscellaneous Auto
 Message Property DMN_SXPAConfigMenuMiscellaneousDebugSettings Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousModCompatibility01 Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousModCompatibility01_1 Auto
 Message Property DMN_SXPAConfigMenuMiscellaneousResetConfirmation Auto
 Message Property DMN_SXPAConfigMenuMiscellaneousWipeConfirmation Auto
 Message Property DMN_SXPAConfigMenuTracking Auto
@@ -2969,12 +2971,15 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Debug Settings]
 				iMenu = 25
 			ElseIf (iButton == 1)
-			; [Wipe SXPA Player Data]
+			; [Mod Compatibility]
 				iMenu = 26
 			ElseIf (iButton == 2)
 			; [Reset SXPA Default Values]
 				iMenu = 27
 			ElseIf (iButton == 3)
+			; [Wipe SXPA Player Data]
+				iMenu = 28
+			ElseIf (iButton == 4)
 			; [Return to Main Config]
 				iMenu = 0
 			EndIf
@@ -3028,28 +3033,26 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Miscellaneous]
 				iMenu = 24
 			EndIf
-	; Show the Miscellaneous - Wipe Confirmation menu.
+	; Show the Miscellaneous - Mod Compatibility 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 26)
-			iButton = DMN_SXPAConfigMenuMiscellaneousWipeConfirmation.Show()
+			Int i01 = DMN_SXPAEH.iModCompatibility[0]
+			iButton = DMN_SXPAConfigMenuMiscellaneousModCompatibility01.Show()
 			If (iButton == 0)
-			; [Wipe My SXPA Data]
-				Notification("Skyrim XP Addon: Wiping player's SXPA data...")
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-				Notification("Skyrim XP Addon: SXPA player data has been wiped!")
-			; Register for XP activity active tracking once more.
-				DMN_SXPAPA.waitForStatChange()
-				bMenu = False
+			; [SkyrimSouls - Unpaused Game Menus (SKSE Plugin)]
+				iButton = DMN_SXPAConfigMenuMiscellaneousModCompatibility01_1.Show(i01)
+				If (iButton == 0)
+				; [Enable Compatibility]
+					DMN_SXPAEH.iModCompatibility[0] = 1
+					Notification("Enabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
+				ElseIf (iButton == 1)
+					DMN_SXPAEH.iModCompatibility[0] = 0
+					Notification("Disabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
+				; [Previous Menu]
+				ElseIf (iButton == 2)
+					iMenu = 26
+				EndIf
 			ElseIf (iButton == 1)
-			; [Wipe My SXPA Data And Reset SXPA Values To Default]
-				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
-			; Register for XP activity active tracking once more.
-				DMN_SXPAPA.waitForStatChange()
-				Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
-				bMenu = False
-			ElseIf (iButton == 2)
 			; [Return to Miscellaneous]
 				iMenu = 24
 			EndIf
@@ -3073,6 +3076,31 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA default values have been restored and SXPA player data wiped!")
+				bMenu = False
+			ElseIf (iButton == 2)
+			; [Return to Miscellaneous]
+				iMenu = 24
+			EndIf
+	; Show the Miscellaneous - Wipe Confirmation menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 28)
+			iButton = DMN_SXPAConfigMenuMiscellaneousWipeConfirmation.Show()
+			If (iButton == 0)
+			; [Wipe My SXPA Data]
+				Notification("Skyrim XP Addon: Wiping player's SXPA data...")
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				Notification("Skyrim XP Addon: SXPA player data has been wiped!")
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				bMenu = False
+			ElseIf (iButton == 1)
+			; [Wipe My SXPA Data And Reset SXPA Values To Default]
+				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
 				bMenu = False
 			ElseIf (iButton == 2)
 			; [Return to Miscellaneous]

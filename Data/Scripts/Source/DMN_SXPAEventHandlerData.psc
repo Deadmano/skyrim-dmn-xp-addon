@@ -36,6 +36,8 @@ Float[] Property fSkillModifier Auto Hidden
 ; The list of XP modifiers that affect the XP given per stat progression.
 Float[] Property fXPModifier Auto Hidden
 ; The list of converted XP values for each stat.
+Int[] Property iModCompatibility Auto Hidden
+; The list that handles the state of mod compatability and support.
 Int[] Property iSkillXP Auto Hidden
 ; The list of total generic XP spent on each skill.
 Int[] Property iSkillXPSpent Auto Hidden
@@ -129,6 +131,16 @@ Function copyEventHandlerData()
 			Else
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
+			EndIf
+			iModCompatibility = New Int[128]
+			iModCompatibility = DMN_SXPAEH.iModCompatibility
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying iModCompatibility array now...")
+			If (iModCompatibility)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied iModCompatibility.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + iModCompatibility)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: iModCompatibility is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + iModCompatibility)
 			EndIf
 			iSkillXP = New Int[128]
 			iSkillXP = DMN_SXPAEH.iSkillXP
@@ -253,6 +265,19 @@ Function restoreEventHandlerData()
 			Else
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
+			EndIf
+			iIndex = 0
+			While (iIndex < iModCompatibility.Length)
+				DMN_SXPAEH.iModCompatibility[iIndex] = iModCompatibility[iIndex]
+				iIndex += 1
+			EndWhile
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring iModCompatibility array now...")
+			If (DMN_SXPAEH.iModCompatibility)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored iModCompatibility.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + DMN_SXPAEH.iModCompatibility)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: iModCompatibility is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + DMN_SXPAEH.iModCompatibility)
 			EndIf
 			iIndex = 0
 			While (iIndex < iSkillXP.Length)

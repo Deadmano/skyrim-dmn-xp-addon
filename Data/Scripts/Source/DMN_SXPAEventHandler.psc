@@ -39,6 +39,8 @@ Float[] Property fSkillModifier Auto
 {The list of skill modifiers that affect the XP cost per skill level.}
 Float[] Property fXPModifier Auto
 {The list of XP modifiers that affect the XP given per stat progression.}
+Int[] Property iModCompatibility Auto
+{The list that handles the state of mod compatability and support.}
 Int[] Property iSkillXP Auto
 {The list of converted XP values for each stat.}
 Int[] Property iSkillXPSpent Auto

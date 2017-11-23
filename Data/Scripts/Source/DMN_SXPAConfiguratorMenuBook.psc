@@ -19,10 +19,15 @@ ScriptName DMN_SXPAConfiguratorMenuBook Extends ObjectReference
 
 Import Debug
 Import Game
+Import Utility
 
 DMN_SXPAConfiguratorMenu Property DMN_SXPACM Auto
+DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 
 Event OnRead()
+	If (DMN_SXPAEH.iModCompatibility[0] == 1) ; Mod Compatibility: SkyrimSouls - Unpaused Game Menus (SKSE Plugin).
+		Wait(0.1)
+	EndIf
 ; Disable all other menus temporarily leaving only the message box to show.
 	DisablePlayerControls(False, False, False, False, False, True)
 ; Undo the above change.
