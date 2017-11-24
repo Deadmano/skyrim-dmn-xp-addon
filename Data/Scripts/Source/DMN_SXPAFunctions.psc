@@ -787,13 +787,19 @@ Int Function getXPActivityStateForMCM(String sXPActivityName, GlobalVariable gDe
 	Return bState as Int
 EndFunction
 
-Float Function getXPActivityMultiplierForMCM(String sXPActivityName, GlobalVariable gDebug, Float[] fXPModifier, String[] sStatName) Global
+Float Function getXPActivityMultiplierForMCM(String sXPActivityName, GlobalVariable gDebug, Float[] fXPModifier, String[] sStatName, Bool bGetDefault = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started getXPActivityMultiplierForMCM Function]")
+	Float fMult
 	Int iIndex = sStatName.Find(sXPActivityName)
-	Float fMult = fXPModifier[iIndex]
-	DMN_SXPALog(gDebug, sStatName[iIndex] + " multiplier is set to " + fMult + ".")
+	If (!bGetDefault)
+		fMult = fXPModifier[iIndex]
+		DMN_SXPALog(gDebug, sStatName[iIndex] + " multiplier is set to " + fMult + ".")
+	ElseIf (bGetDefault)
+		fMult = setXPModifierDefaults(gDebug, fXPModifier, False, iIndex, True)
+		DMN_SXPALog(gDebug, sStatName[iIndex] + " default multiplier is  " + fMult + ".")
+	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "getXPActivityMultiplierForMCM() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended getXPActivityMultiplierForMCM Function]\n\n")
@@ -897,7 +903,7 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	DMN_SXPALog(gDebug, "[Ended setXPActivityStateDefaults Function]\n\n")
 EndFunction
 
-Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool bSingleUpdate = False, Int iArrayIndex = 0) Global
+Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool bSingleUpdate = False, Int iArrayIndex = 0, Bool bGetDefault = False) Global
 ; Resets the default XP Modifier values.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
@@ -942,7 +948,7 @@ Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool 
 	fMult[36] = 0.20 ; Armor Made
 	fMult[37] = 0.20 ; Potions Mixed
 	fMult[38] = 0.20 ; Poisons Mixed
-	If (!bSingleUpdate)
+	If (!bSingleUpdate && !bGetDefault)
 		DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
 		Int iIndex = 0
 		While (iIndex < fMult.Length)
@@ -955,6 +961,9 @@ Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool 
 		DMN_SXPALog(gDebug, "Previous array value: " + fXPModifier[iArrayIndex] + ".")
 		fXPModifier[iArrayIndex] = fMult[iArrayIndex]
 		DMN_SXPALog(gDebug, "Set array value to default: " + fXPModifier[iArrayIndex] + ".")
+	ElseIf (bGetDefault)
+		Float fMultDefault = fMult[iArrayIndex]
+		Return fMultDefault
 	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
