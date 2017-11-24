@@ -897,6 +897,10 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	bXPActivityState[36] = False ; Armor Made
 	bXPActivityState[37] = False ; Potions Mixed
 	bXPActivityState[38] = False ; Poisons Mixed
+	bXPActivityState[39] = True ; Locks Picked
+	bXPActivityState[40] = True ; Items Pickpocketed
+	bXPActivityState[41] = False ; Jail Escapes
+	bXPActivityState[42] = True ; Items Stolen
 	DMN_SXPALog(gDebug, "XP Activity State new values: " + bXPActivityState + ".")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPActivityStateDefaults() function took " + (fStop - fStart) + " seconds to complete.")
@@ -908,7 +912,7 @@ Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier,
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setXPModifierDefaults Function]")
-	Float[] fMult = New Float[39]
+	Float[] fMult = New Float[43]
 	fMult[0] = 0.60 ; Locations Discovered
 	fMult[1] = 5.00 ; Standing Stones Found
 	fMult[2] = 0.40 ; Nirnroots Found
@@ -948,6 +952,10 @@ Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier,
 	fMult[36] = 0.20 ; Armor Made
 	fMult[37] = 0.20 ; Potions Mixed
 	fMult[38] = 0.20 ; Poisons Mixed
+	fMult[39] = 0.40 ; Locks Picked
+	fMult[40] = 0.05 ; Items Pickpocketed
+	fMult[41] = 3.00 ; Jail Escapes
+	fMult[42] = 0.05 ; Items Stolen
 	If (!bSingleUpdate && !bGetDefault)
 		DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
 		Int iIndex = 0
