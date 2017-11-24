@@ -2074,126 +2074,220 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; -------------------------------------
 		ElseIf (iMenu == 9)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
 			String sSkill
 			Int iAmount
 			iButton = DMN_SXPAConfigMenuSpendXPMagic.Show(i)
 			If (iButton == 0)
 			; [Alteration]
 				sSkill = "Alteration"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 					iMenu = 9
 				; [Return to Spend XP - Magic]
 				EndIf
 			ElseIf (iButton == 1)
 			; [Conjuration]
 				sSkill = "Conjuration"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 2)
 			; [Destruction]
 				sSkill = "Destruction"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 3)
 			; [Enchanting]
 				sSkill = "Enchanting"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 4)
 			; [Illusion]
 				sSkill = "Illusion"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 5)
 			; [Restoration]
 				sSkill = "Restoration"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
@@ -2210,126 +2304,220 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; -------------------------------------
 		ElseIf (iMenu == 10)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
 			String sSkill
 			Int iAmount
 			iButton = DMN_SXPAConfigMenuSpendXPStealth.Show(i)
 			If (iButton == 0)
 			; [Alchemy]
 				sSkill = "Alchemy"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 1)
 			; [Light Armor]
 				sSkill = "LightArmor"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 2)
 			; [Lockpicking]
 				sSkill = "Lockpicking"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 3)
 			; [Pickpocket]
 				sSkill = "Pickpocket"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 4)
 			; [Sneak]
 				sSkill = "Sneak"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 5)
 			; [Speech]
 				sSkill = "Speechcraft"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
