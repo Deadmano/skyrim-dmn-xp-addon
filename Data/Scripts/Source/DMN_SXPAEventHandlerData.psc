@@ -45,6 +45,8 @@ Int[] Property iSkillXPSpent Auto Hidden
 Int[] Property iSkillXPSpentEffective Auto Hidden
 ; The list of all player stat values that we are tracking.
 Int[] Property iTrackedStatCount Auto Hidden
+; The type of configurator being used. 1 = spell, 0 = book.
+Int Property iConfiguratorType Auto Hidden
 ; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
 Int Property iPassiveMonitoring Auto Hidden
 
@@ -183,6 +185,9 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iTrackedStatCount array: " + iTrackedStatCount)
 			EndIf
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed array copy process.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying configurator type...")
+			iConfiguratorType = DMN_SXPAEH.iConfiguratorType
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied configurator type.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying passive monitoring state...")
 			iPassiveMonitoring = DMN_SXPAEH.iPassiveMonitoring
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied passive monitoring state.")
@@ -333,6 +338,9 @@ Function restoreEventHandlerData()
 			EndIf
 			iIndex = 0
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed array restore process.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring configurator type...")
+			DMN_SXPAEH.iConfiguratorType = iConfiguratorType
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored configurator type.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring passive monitoring state...")
 			DMN_SXPAEH.iPassiveMonitoring = iPassiveMonitoring
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored passive monitoring state.")
