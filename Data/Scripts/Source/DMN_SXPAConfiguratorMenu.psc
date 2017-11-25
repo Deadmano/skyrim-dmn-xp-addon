@@ -133,6 +133,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return To Main Config]
 				iMenu = 0
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the XP Settings menu.
 	; --------------------------
@@ -146,6 +149,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iMenu = 4
 			ElseIf (iButton == 2)
 				iMenu = 0
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Configure Min/Max XP menu.
 	; -----------------------------------
@@ -160,6 +166,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return to XP Settings]
 				iMenu = 2
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Configure Multipliers menu.
 	; -----------------------------------
@@ -187,6 +196,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to XP Settings]
 				iMenu = 2
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Multiplier Categories - Activities - General 01 menu.
 	; -------------------------------------------------------------
@@ -347,6 +359,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -397,6 +412,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -447,6 +465,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -622,6 +643,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -794,6 +818,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Multiplier Categories - Activities - Quests 01]
 				iMenu = 43
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -969,6 +996,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -1111,6 +1141,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Multiplier Categories - Activities - Combat 01]
 				iMenu = 45
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -1253,6 +1286,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -1458,6 +1494,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -1630,6 +1669,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Multiplier Categories - Activities - Crafting 01]
 				iMenu = 48
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -1772,6 +1814,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Configure Multipliers]
 				iMenu = 4
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (bReset)
 				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
@@ -1820,6 +1865,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; [Return to Configure Min/Max XP]
 				iMenu = 3
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
 			EndIf
 			If (minXP > 0)
 				DMN_SXPAExperienceMin.SetValue(minXP)
@@ -1860,6 +1908,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; [Return to Configure Min/Max XP]
 				iMenu = 3
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
 			EndIf
 			If (maxXP > 0)
 				DMN_SXPAExperienceMax.SetValue(maxXP)
@@ -1882,6 +1933,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 3)
 			; [Return To Main Menu]
 				iMenu = 0
+			ElseIf (iButton == 4)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Spend XP - Combat menu.
 	; -------------------------------------
@@ -2107,6 +2161,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Spend XP]
 				iMenu = 7
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
 				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
@@ -2337,6 +2394,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Spend XP]
 				iMenu = 7
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
 				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
@@ -2567,6 +2627,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Spend XP]
 				iMenu = 7
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
 				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
@@ -2626,6 +2689,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			; [Return To Tracking Options]
 				iMenu = 1
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Tracking Options - Type menu.
 	; --------------------------------------
@@ -2671,6 +2737,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options]
 				iMenu = 1
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Tracking Options - Activity - General 01 menu.
 	; ----------------------------------------------------
@@ -2709,6 +2778,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -2761,6 +2833,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -2810,6 +2885,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [[Return to Tracking Options - Activity - Quests 01]]
 				iMenu = 14
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -2862,6 +2940,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -2905,6 +2986,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity - Combat 01]
 				iMenu = 16
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -2948,6 +3032,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -3106,6 +3193,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -3148,6 +3238,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -3187,6 +3280,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity - General 02]
 				iMenu = 22
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -3218,6 +3314,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Main Config]
 				iMenu = 0
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Miscellaneous - Debug menu.
 	; ----------------------------------------------------
@@ -3286,6 +3385,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Miscellaneous]
 				iMenu = 24
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Miscellaneous - Mod Compatibility 01 menu.
 	; ----------------------------------------------------
@@ -3305,10 +3407,16 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				; [Previous Menu]
 				ElseIf (iButton == 2)
 					iMenu = 26
+				ElseIf (iButton == 3)
+				; [X]
+					bMenu = False
 				EndIf
 			ElseIf (iButton == 1)
 			; [Return to Miscellaneous]
 				iMenu = 24
+			ElseIf (iButton == 2)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Miscellaneous - Reset Confirmation menu.
 	; ----------------------------------------------------
@@ -3334,6 +3442,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return to Miscellaneous]
 				iMenu = 24
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Miscellaneous - Wipe Confirmation menu.
 	; ----------------------------------------------------
@@ -3359,6 +3470,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return to Miscellaneous]
 				iMenu = 24
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 		EndIf
 	EndWhile
