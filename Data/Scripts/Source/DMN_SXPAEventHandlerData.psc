@@ -36,6 +36,8 @@ Float[] Property fSkillModifier Auto Hidden
 ; The list of XP modifiers that affect the XP given per stat progression.
 Float[] Property fXPModifier Auto Hidden
 ; The list of converted XP values for each stat.
+Int[] Property iModCompatibility Auto Hidden
+; The list that handles the state of mod compatability and support.
 Int[] Property iSkillXP Auto Hidden
 ; The list of total generic XP spent on each skill.
 Int[] Property iSkillXPSpent Auto Hidden
@@ -43,6 +45,8 @@ Int[] Property iSkillXPSpent Auto Hidden
 Int[] Property iSkillXPSpentEffective Auto Hidden
 ; The list of all player stat values that we are tracking.
 Int[] Property iTrackedStatCount Auto Hidden
+; The type of configurator being used. 1 = spell, 0 = book.
+Int Property iConfiguratorType Auto Hidden
 ; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
 Int Property iPassiveMonitoring Auto Hidden
 
@@ -130,6 +134,16 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
 			EndIf
+			iModCompatibility = New Int[128]
+			iModCompatibility = DMN_SXPAEH.iModCompatibility
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying iModCompatibility array now...")
+			If (iModCompatibility)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied iModCompatibility.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + iModCompatibility)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: iModCompatibility is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + iModCompatibility)
+			EndIf
 			iSkillXP = New Int[128]
 			iSkillXP = DMN_SXPAEH.iSkillXP
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying iSkillXP array now...")
@@ -171,6 +185,9 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iTrackedStatCount array: " + iTrackedStatCount)
 			EndIf
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed array copy process.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying configurator type...")
+			iConfiguratorType = DMN_SXPAEH.iConfiguratorType
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied configurator type.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying passive monitoring state...")
 			iPassiveMonitoring = DMN_SXPAEH.iPassiveMonitoring
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied passive monitoring state.")
@@ -255,6 +272,19 @@ Function restoreEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
 			EndIf
 			iIndex = 0
+			While (iIndex < iModCompatibility.Length)
+				DMN_SXPAEH.iModCompatibility[iIndex] = iModCompatibility[iIndex]
+				iIndex += 1
+			EndWhile
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring iModCompatibility array now...")
+			If (DMN_SXPAEH.iModCompatibility)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored iModCompatibility.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + DMN_SXPAEH.iModCompatibility)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: iModCompatibility is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iModCompatibility array: " + DMN_SXPAEH.iModCompatibility)
+			EndIf
+			iIndex = 0
 			While (iIndex < iSkillXP.Length)
 				DMN_SXPAEH.iSkillXP[iIndex] = iSkillXP[iIndex]
 				iIndex += 1
@@ -308,6 +338,9 @@ Function restoreEventHandlerData()
 			EndIf
 			iIndex = 0
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed array restore process.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring configurator type...")
+			DMN_SXPAEH.iConfiguratorType = iConfiguratorType
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored configurator type.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring passive monitoring state...")
 			DMN_SXPAEH.iPassiveMonitoring = iPassiveMonitoring
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored passive monitoring state.")

@@ -37,28 +37,44 @@ Function DMN_SXPALog(GlobalVariable gDebug, String traceMessage) Global
 	EndIf
 EndFunction
 
-Function giveConfigurator(Book configurator) Global
+Function giveConfiguratorBook(Book akConfigurator, Bool bRemoveOnly = False) Global
 ; Save the amount of configurators the player has in their inventory.
-	Actor ref = GetPlayer()
-	Int i = ref.GetItemCount(configurator)
-	If (i == 0)
+	Actor kRef = GetPlayer()
+	Int i = kRef.GetItemCount(akConfigurator)
+	If (i == 0 && !bRemoveOnly)
 ; If the player has none, add a single configurator to their inventory, silently.
-		ref.AddItem(configurator, 1, True)
-	ElseIf (i >= 1)
+		kRef.AddItem(akConfigurator, 1, True)
+	ElseIf (i >= 1 && !bRemoveOnly)
 ; Else remove every configurator in the player inventory and add one, silently.
-		ref.RemoveItem(configurator, i, True)
-		ref.AddItem(configurator, 1, True)
+		kRef.RemoveItem(akConfigurator, i, True)
+		kRef.AddItem(akConfigurator, 1, True)
+	ElseIf (i >= 1 && bRemoveOnly)
+		kRef.RemoveItem(akConfigurator, i, True)
+	EndIf
+EndFunction
+
+Function giveConfiguratorSpell(Spell akConfigurator, Bool bRemoveOnly = False) Global
+	Actor kRef = GetPlayer()
+	If (kRef.HasSpell(akConfigurator) && !bRemoveOnly)
+; If the player has the configurator spell, remove it and re-add it, silently.
+		kRef.RemoveSpell(akConfigurator)
+		kRef.AddSpell(akConfigurator, False)
+	ElseIf (!bRemoveOnly)
+; Else add the configurator spell, silently.
+		kRef.AddSpell(akConfigurator, False)
+	ElseIf (kRef.HasSpell(akConfigurator) && bRemoveOnly)
+		kRef.RemoveSpell(akConfigurator)
 	EndIf
 EndFunction
 
 Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount) Global
 	DMN_SXPALog(gDebug, "[Started spendXP Function]")
+	Actor kRef = GetPlayer()
 	Int iCurrentXP = gTotalXP.GetValue() as Int
-	Float fSkillLevel = GetPlayer().GetActorValue(sSkill)
-	Float fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
-	Int iSkillImproveOffset
+	Float fSkillLevel = kRef.GetActorValue(sSkill)
 ; Map out skill names to match with the stored sSkillName array values so that the
 ; iIndex variable will correctly find a match and provide an index to go on.
+	Int iSkillImproveOffset
 	If (sSkill == "Alchemy")
 		iSkillImproveOffset = 65
 	ElseIf (sSkill == "Enchanting")
@@ -84,50 +100,68 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSkillM
 	ElseIf (sSkill == "TwoHanded")
 		sSkill = "Two-Handed"
 	EndIf
+	Float fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
 	Int iIndex = sSkillName.Find(sSkill) as Int
 	Float fEffectiveXP = (iAmount * fSkillModifier[iIndex]) / 2
 	Int iEffectiveXP = round(fEffectiveXP)
-		;Float fSkillCost = fSkillModifier[iIndex] * 2 * fSkillLevelOffsetPOW + iSkillImproveOffset
-		Float fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
-		Int iSkillCost = round(fSkillCost)
-		iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
-		iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
-		iSkillXPSpentEffective[iIndex] = iSkillXPSpentEffective[iIndex] + iEffectiveXP
-	If (iSkillXP[iIndex] >= iSkillCost)
-			iSkillXP[iIndex] = iSkillXP[iIndex] - iSkillCost
-	; Revert the earlier skill name changes so that specific skill names with spaces
-	; correctly parse into the engine for levelling purposes.
-		If (sSkill == "Light Armor")
-			sSkill = "LightArmor"
-		ElseIf (sSkill == "Heavy Armor")
-			sSkill = "HeavyArmor"
-		ElseIf (sSkill == "Archery")
-			sSkill = "Marksman"
-		ElseIf (sSkill == "One-Handed")
-			sSkill = "OneHanded"
-		ElseIf (sSkill == "Speech")
-			sSkill = "Speechcraft"
-		ElseIf (sSkill == "Two-Handed")
-			sSkill = "TwoHanded"
-		EndIf
-	; Add +1 to the skill level the player chose to spend XP on, provided they have enough XP.
-		IncrementSkillBy(sSkill, 1)
-		Notification("Skyrim XP Addon: " + sSkill + " reached enough experience points to level up! (" + (fSkillLevel) + " > " + (fSkillLevel + 1) + ")")
+	iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
+	iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
+	iSkillXPSpentEffective[iIndex] = iSkillXPSpentEffective[iIndex] + iEffectiveXP
+	Float fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
+	Int iSkillCost = round(fSkillCost)
+	Int iLevelsGained
+; Revert the earlier skill name changes so that specific skill names with spaces
+; correctly parse into the engine for levelling purposes.
+	If (sSkill == "Light Armor")
+		sSkill = "LightArmor"
+	ElseIf (sSkill == "Heavy Armor")
+		sSkill = "HeavyArmor"
+	ElseIf (sSkill == "Archery")
+		sSkill = "Marksman"
+	ElseIf (sSkill == "One-Handed")
+		sSkill = "OneHanded"
+	ElseIf (sSkill == "Speech")
+		sSkill = "Speechcraft"
+	ElseIf (sSkill == "Two-Handed")
+		sSkill = "TwoHanded"
 	EndIf
-		Notification("Skyrim XP Addon: Converted " + iAmount + " generic XP to " + sSkill + " specific XP. (" + iEffectiveXP + "XP)")
-		DMN_SXPALog(gDebug, "Chosen Skill: " + sSkill)
-		DMN_SXPALog(gDebug, "Skill Index: " + iIndex)
-		DMN_SXPALog(gDebug, "Skill Level: " + fSkillLevel)
-		DMN_SXPALog(gDebug, "Current Generic XP: " + iCurrentXP)
-		DMN_SXPALog(gDebug, "Generic XP Invested: " + iAmount)
-		DMN_SXPALog(gDebug, "Skill Modifier: " + fSkillModifier[iIndex])
-		DMN_SXPALog(gDebug, "Converted To Skill-Specific XP: " + iEffectiveXP)
-		DMN_SXPALog(gDebug, "XP Cost To Level " + (fSkillLevel+1) + ": " + fSkillCost)
-		DMN_SXPALog(gDebug, "Remaining XP To Level " + (fSkillLevel+1) + ": " + (fSkillCost - iSkillXP[iIndex]))
-		Int iNewXP = iCurrentXP - iAmount
-		gTotalXP.SetValue(iNewXP)
-		DMN_SXPALog(gDebug, "New Generic XP: " + iNewXP)
-		DMN_SXPALog(gDebug, "[Ended spendXP Function]\n\n")
+; Assign skill levels so long as we have enough skill XP for each level.
+	While (iSkillXP[iIndex] >= iSkillCost)
+	iLevelsGained += 1
+	fSkillLevel = kRef.GetActorValue(sSkill) + iLevelsGained
+	DMN_SXPALog(gDebug, "Calculating XP Cost For Level: " + (fSkillLevel as Int) + ".")
+	fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
+	DMN_SXPALog(gDebug, "Power Of Value: " + fSkillLevelOffsetPOW + ".")
+	fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
+	DMN_SXPALog(gDebug, "Gross Skill Cost As Float: " + fSkillCost + ".")
+	iSkillCost = round(fSkillCost)
+	DMN_SXPALog(gDebug, "Rounded Skill Cost As Int: " + iSkillCost + ".")
+	iSkillXP[iIndex] = iSkillXP[iIndex] - iSkillCost
+	DMN_SXPALog(gDebug, "Skill XP Remaining: " + iSkillXP[iIndex] + ".\n\n")
+	EndWhile
+	IncrementSkillBy(sSkill, iLevelsGained)
+	If (iLevelsGained == 1)
+		Notification("Skyrim XP Addon: " + sSkill + " reached enough experience points to level up! (" + (fSkillLevel - iLevelsGained) + " > " + (fSkillLevel) + ")")
+	ElseIf (iLevelsGained > 1)
+		Notification("Skyrim XP Addon: " + sSkill + " reached enough experience points to level up " + iLevelsGained + " times! (" + (fSkillLevel - iLevelsGained) + " > " + (fSkillLevel) + ")")
+	EndIf
+	Notification("Skyrim XP Addon: Converted " + iAmount + " generic XP to " + sSkill + " specific XP. (" + iEffectiveXP + "XP)")
+	DMN_SXPALog(gDebug, "Chosen Skill: " + sSkill + ".")
+	DMN_SXPALog(gDebug, "Skill Index: " + iIndex + ".")
+	DMN_SXPALog(gDebug, "Original Skill Level: " + ((fSkillLevel  - iLevelsGained) as Int) + ".")
+	DMN_SXPALog(gDebug, "New Skill Level: " + (fSkillLevel as Int) + ".")
+	DMN_SXPALog(gDebug, "Skill Levels gained: " + iLevelsGained + ".")
+	DMN_SXPALog(gDebug, "Original Generic XP: " + iCurrentXP + ".")
+	DMN_SXPALog(gDebug, "Generic XP Invested: " + iAmount + ".")
+	DMN_SXPALog(gDebug, "Skill Modifier: " + fSkillModifier[iIndex] + ".")
+	DMN_SXPALog(gDebug, "Converted To Skill-Specific XP: " + iEffectiveXP + ".")
+	Int iNewXP = iCurrentXP - iAmount
+	gTotalXP.SetValue(iNewXP)
+	DMN_SXPALog(gDebug, "New Generic XP: " + iNewXP + ".")
+	DMN_SXPALog(gDebug, "Skill XP Cost To Level " + ((fSkillLevel as Int) + 1) + ": " + fSkillCost + ".")
+	DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
+	DMN_SXPALog(gDebug, "Additional Skill XP Required: " + (fSkillCost - iSkillXP[iIndex]) + ".")
+	DMN_SXPALog(gDebug, "[Ended spendXP Function]\n\n")
 EndFunction
 
 Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPModifier, Int iIndex) Global
@@ -699,10 +733,10 @@ Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, Gl
 	DMN_SXPALog(gDebug, "[Ended resetSXPAProgress Function]\n\n")
 EndFunction
 
-Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Float[] fSkillModifier, Float[] fXPModifier, Int iPassiveMonitoring) Global
+Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Book akConfiguratorBook, Float[] fSkillModifier, Float[] fXPModifier, Int iConfiguratorType, Int iPassiveMonitoring, Spell akConfiguratorSpell) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]")
+	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]\n\n")
 ; Set the Skill Modifiers to default values.
 	setSkillModifierDefaults(gDebug, fSkillModifier)
 ; Set the XP Activity states to default.
@@ -713,6 +747,12 @@ Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, Glob
 	gMinXP.SetValue(250) 
 ; Set the maximum XP reward to default.
 	gMaxXP.SetValue(1000)
+; Remove the book configurator, if it exists.
+	giveConfiguratorBook(akConfiguratorBook, True)
+; Add the spell configurator, if the player doesn't already have it.
+	giveConfiguratorSpell(akConfiguratorSpell)
+; Set the configurator to default (skill).
+	iConfiguratorType = 1
 ; Disable passive monitoring.
 	iPassiveMonitoring = 0
 ; Enable active (always-on) monitoring.
@@ -732,6 +772,38 @@ Bool Function getXPActivityState(GlobalVariable gDebug, Bool[] bXPActivityState,
 	DMN_SXPALog(gDebug, "getXPActivityState() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended getXPActivityState Function]\n\n")
 	Return bState
+EndFunction
+
+Int Function getXPActivityStateForMCM(String sXPActivityName, GlobalVariable gDebug, Bool[] bXPActivityState, String[] sStatName) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started getXPActivityStateForMCM Function]")
+	Int iIndex = sStatName.Find(sXPActivityName)
+	Bool bState = bXPActivityState[iIndex]
+	DMN_SXPALog(gDebug, sStatName[iIndex] + " state is set to " + bState + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "getXPActivityStateForMCM() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended getXPActivityStateForMCM Function]\n\n")
+	Return bState as Int
+EndFunction
+
+Float Function getXPActivityMultiplierForMCM(String sXPActivityName, GlobalVariable gDebug, Float[] fXPModifier, String[] sStatName, Bool bGetDefault = False) Global
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
+	DMN_SXPALog(gDebug, "[Started getXPActivityMultiplierForMCM Function]")
+	Float fMult
+	Int iIndex = sStatName.Find(sXPActivityName)
+	If (!bGetDefault)
+		fMult = fXPModifier[iIndex]
+		DMN_SXPALog(gDebug, sStatName[iIndex] + " multiplier is set to " + fMult + ".")
+	ElseIf (bGetDefault)
+		fMult = setXPModifierDefaults(gDebug, fXPModifier, False, iIndex, True)
+		DMN_SXPALog(gDebug, sStatName[iIndex] + " default multiplier is  " + fMult + ".")
+	EndIf
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "getXPActivityMultiplierForMCM() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended getXPActivityMultiplierForMCM Function]\n\n")
+	Return fMult as Float
 EndFunction
 
 Function setXPActivityState(GlobalVariable gDebug, Bool[] bXPActivityState, Int iXPActivityIndex, Bool bEnabled, String[] sStatName) Global
@@ -825,58 +897,82 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	bXPActivityState[36] = False ; Armor Made
 	bXPActivityState[37] = False ; Potions Mixed
 	bXPActivityState[38] = False ; Poisons Mixed
+	bXPActivityState[39] = True ; Locks Picked
+	bXPActivityState[40] = True ; Items Pickpocketed
+	bXPActivityState[41] = False ; Jail Escapes
+	bXPActivityState[42] = True ; Items Stolen
 	DMN_SXPALog(gDebug, "XP Activity State new values: " + bXPActivityState + ".")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPActivityStateDefaults() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended setXPActivityStateDefaults Function]\n\n")
 EndFunction
 
-Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier) Global
+Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool bSingleUpdate = False, Int iArrayIndex = 0, Bool bGetDefault = False) Global
 ; Resets the default XP Modifier values.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setXPModifierDefaults Function]")
-	DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
-	fXPModifier[0] = 0.60 ; Locations Discovered
-	fXPModifier[1] = 5.00 ; Standing Stones Found
-	fXPModifier[2] = 0.40 ; Nirnroots Found
-	fXPModifier[3] = 0.40 ; Books Read
-	fXPModifier[4] = 0.15 ; Ingredients Harvested
-	fXPModifier[5] = 0.40 ; Wings Plucked
-	fXPModifier[6] = 0.80 ; Persuasions
-	fXPModifier[7] = 0.80 ; Intimidations
-	fXPModifier[8] = 0.20 ; Misc Objectives Completed
-	fXPModifier[9] = 4.00 ; Main Quests Completed
-	fXPModifier[10] = 3.00 ; Side Quests Completed
-	fXPModifier[11] = 3.00 ; The Companions Quests Completed
-	fXPModifier[12] = 2.00 ; College of Winterhold Quests Completed
-	fXPModifier[13] = 2.00 ; Thieves' Guild Quests Completed
-	fXPModifier[14] = 1.50 ; The Dark Brotherhood Quests Completed
-	fXPModifier[15] = 3.00 ; Civil War Quests Completed
-	fXPModifier[16] = 2.00 ; Daedric Quests Completed
-	fXPModifier[17] = 10.00 ; Questlines Completed
-	fXPModifier[18] = 0.25 ; People Killed
-	fXPModifier[19] = 0.40 ; Animals Killed
-	fXPModifier[20] = 0.40 ; Creatures Killed
-	fXPModifier[21] = 0.30 ; Undead Killed
-	fXPModifier[22] = 0.50 ; Daedra Killed
-	fXPModifier[23] = 0.50 ; Automatons Killed
-	fXPModifier[24] = 0.60 ; Weapons Disarmed
-	fXPModifier[25] = 3.00 ; Brawls Won
-	fXPModifier[26] = 0.40 ; Bunnies Slaughtered
-	fXPModifier[27] = 10.00 ; Dragon Souls Collected
-	fXPModifier[28] = 1.50 ; Words Of Power Learned
-	fXPModifier[29] = 3.00 ; Words Of Power Unlocked
-	fXPModifier[30] = 5.00 ; Shouts Mastered
-	fXPModifier[31] = 0.50 ; Souls Trapped
-	fXPModifier[32] = 0.25 ; Magic Items Made
-	fXPModifier[33] = 0.10 ; Weapons Improved
-	fXPModifier[34] = 0.20 ; Weapons Made
-	fXPModifier[35] = 0.10 ; Armor Improved
-	fXPModifier[36] = 0.20 ; Armor Made
-	fXPModifier[37] = 0.20 ; Potions Mixed
-	fXPModifier[38] = 0.20 ; Poisons Mixed
-	DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+	Float[] fMult = New Float[43]
+	fMult[0] = 0.60 ; Locations Discovered
+	fMult[1] = 5.00 ; Standing Stones Found
+	fMult[2] = 0.40 ; Nirnroots Found
+	fMult[3] = 0.40 ; Books Read
+	fMult[4] = 0.15 ; Ingredients Harvested
+	fMult[5] = 0.40 ; Wings Plucked
+	fMult[6] = 0.80 ; Persuasions
+	fMult[7] = 0.80 ; Intimidations
+	fMult[8] = 0.20 ; Misc Objectives Completed
+	fMult[9] = 4.00 ; Main Quests Completed
+	fMult[10] = 3.00 ; Side Quests Completed
+	fMult[11] = 3.00 ; The Companions Quests Completed
+	fMult[12] = 2.00 ; College of Winterhold Quests Completed
+	fMult[13] = 2.00 ; Thieves' Guild Quests Completed
+	fMult[14] = 1.50 ; The Dark Brotherhood Quests Completed
+	fMult[15] = 3.00 ; Civil War Quests Completed
+	fMult[16] = 2.00 ; Daedric Quests Completed
+	fMult[17] = 10.00 ; Questlines Completed
+	fMult[18] = 0.25 ; People Killed
+	fMult[19] = 0.40 ; Animals Killed
+	fMult[20] = 0.40 ; Creatures Killed
+	fMult[21] = 0.30 ; Undead Killed
+	fMult[22] = 0.50 ; Daedra Killed
+	fMult[23] = 0.50 ; Automatons Killed
+	fMult[24] = 0.60 ; Weapons Disarmed
+	fMult[25] = 3.00 ; Brawls Won
+	fMult[26] = 0.40 ; Bunnies Slaughtered
+	fMult[27] = 10.00 ; Dragon Souls Collected
+	fMult[28] = 1.50 ; Words Of Power Learned
+	fMult[29] = 3.00 ; Words Of Power Unlocked
+	fMult[30] = 5.00 ; Shouts Mastered
+	fMult[31] = 0.50 ; Souls Trapped
+	fMult[32] = 0.25 ; Magic Items Made
+	fMult[33] = 0.10 ; Weapons Improved
+	fMult[34] = 0.20 ; Weapons Made
+	fMult[35] = 0.10 ; Armor Improved
+	fMult[36] = 0.20 ; Armor Made
+	fMult[37] = 0.20 ; Potions Mixed
+	fMult[38] = 0.20 ; Poisons Mixed
+	fMult[39] = 0.40 ; Locks Picked
+	fMult[40] = 0.05 ; Items Pickpocketed
+	fMult[41] = 3.00 ; Jail Escapes
+	fMult[42] = 0.05 ; Items Stolen
+	If (!bSingleUpdate && !bGetDefault)
+		DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
+		Int iIndex = 0
+		While (iIndex < fMult.Length)
+			fXPModifier[iIndex] = fMult[iIndex]
+			iIndex += 1
+		EndWhile
+		DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+	ElseIf (bSingleUpdate)
+	; If called for a single update, set the value as passed in.
+		DMN_SXPALog(gDebug, "Previous array value: " + fXPModifier[iArrayIndex] + ".")
+		fXPModifier[iArrayIndex] = fMult[iArrayIndex]
+		DMN_SXPALog(gDebug, "Set array value to default: " + fXPModifier[iArrayIndex] + ".")
+	ElseIf (bGetDefault)
+		Float fMultDefault = fMult[iArrayIndex]
+		Return fMultDefault
+	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended setXPModifierDefaults Function]\n\n")

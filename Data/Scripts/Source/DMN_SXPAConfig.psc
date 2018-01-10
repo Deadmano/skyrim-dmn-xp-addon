@@ -17,7 +17,7 @@ ScriptName DMN_SXPAConfig Extends Quest
 
 {Skyrim XP Addon - Configuration Script by Deadmano.}
 ;==============================================
-; Version: 2.0.0
+; Version: 2.1.0
 ;===============
 
 Import DMN_DeadmaniacFunctionsSXPA
@@ -30,8 +30,10 @@ DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 DMN_SXPAEventHandlerData Property DMN_SXPAEHD Auto
 DMN_SXPAPlayerAlias Property DMN_SXPAPA Auto
 
-Book Property DMN_SXPAConfigurator Auto
-{Stores the temporary mod configurator. Auto-Fill.}
+Book Property DMN_SXPAConfiguratorBook Auto
+{The mod configurator in book form. Auto-Fill.}
+Spell Property DMN_SXPAConfiguratorSpell Auto
+{The mod configurator in spell form. Auto-Fill.}
 
 GlobalVariable Property DMN_SXPADebug Auto
 {Set to the debug global variable.}
@@ -90,6 +92,15 @@ Message Property DMN_SXPAUpdateAnnouncement_v2_0_0 Auto
 
 ; END v2.0.0
 ;-------------
+
+; BEGIN v2.1.0
+;-------------
+
+Message Property DMN_SXPAUpdateAnnouncement_v2_1_0 Auto
+{The message that is shown to the player for the update to version 2.1.0. Auto-Fill.}
+
+; END v2.1.0
+;-------------
 ;
 ; END Update Related Variables and Properties
 ;==============================================
@@ -101,13 +112,18 @@ Event OnInit()
 EndEvent
 
 Function preMaintenance()
+	Int debugState = DMN_SXPADebug.GetValue() as Int
+	If (debugState == 1)
+	; If debugging is enabled, switch to debug mode.
+		debugMode()
+	EndIf
 	If (!bSuppressDebugState)
-		If (DMN_SXPADebug.GetValue() as Int == 1)
+		If (debugState == 1)
 			Int iChoice = DMN_SXPAMessageDebugEnabled.Show()
 			If (iChoice == 0)
 			; [Disable Debugging]
 				DMN_SXPADebug.SetValue(0)
-				If (DMN_SXPADebug.GetValue() as Int == 0)
+				If (debugState == 0)
 					Notification("Skyrim XP Addon: Successfully disabled debugging mode.")
 				Else
 					Notification("Skyrim XP Addon: Could not disable debugging mode.")
@@ -138,7 +154,7 @@ EndFunction
  
 Function Maintenance()
 ; The latest (current) version of Skyrim XP Addon. Update this to the version number.
-	parseSXPAVersion("2", "0", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
+	parseSXPAVersion("2", "1", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
 ; ---------------- UPDATE! ^^^^^^^^^^^
 
 	If (DMN_SXPADebug.GetValue() == 1)
@@ -273,6 +289,17 @@ Function updateSXPA()
 	EndIf
 ; END v1.2.0 FIXES/PATCHES
 
+; BEGIN v2.0.0 FIXES/PATCHES
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("2", "1", "0"))
+	; Backup user data then reset the Event Handler quest so the new properties/variables are accessible.
+		DMN_SXPAEHD.updateEventHandlerData()
+	; Remove the book configurator and switch to the skill configurator by default.
+		giveConfiguratorBook(DMN_SXPAConfiguratorBook, True)
+		giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+		DMN_SXPAEH.iConfiguratorType = 1
+	EndIf
+; END v2.0.0 FIXES/PATCHES
+
 ; BEGIN NON-SPECIFIC VERSION UPDATES
 ;-----------------------------------
 
@@ -311,7 +338,7 @@ Function updateSXPA()
 	
 	Int updateCount = 0
 	; Change this to the latest update announcement message.
-	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v2_0_0
+	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v2_1_0
 
 ; v1.1.0
 ;-------
@@ -339,7 +366,7 @@ Function updateSXPA()
 		; [Let's Begin A New Journey Together! (Balanced)]
 			Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
 			resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-			setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+			setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 		; Register for XP activity active tracking once more.
 			DMN_SXPAPA.waitForStatChange()
 			Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
@@ -347,6 +374,15 @@ Function updateSXPA()
 		; [I'd Prefer To Leave Things As Is (Not Recommended)]
 			Notification("Skyrim XP Addon: Your SXPA user data and settings were left untouched.")
 		EndIf
+		updateCount += 1
+	EndIf
+	
+; v2.1.0
+;-------
+	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("2", "1", "0") && \
+		DMN_SXPAiVersionRunning >= 2100)
+		Wait(3.0)
+		DMN_SXPAUpdateAnnouncement_v2_1_0.Show()
 		updateCount += 1
 	EndIf
 
@@ -371,9 +407,15 @@ Function updateSXPA()
 EndFunction
 
 Function configurationDefaults()
-; Add (or update) the mod configurator to the player inventory silently.
-	giveConfigurator(DMN_SXPAConfigurator)
+; Add (or update) the mod configurator spell to the player spells silently.
+	giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
+EndFunction
+
+Function debugMode()
+; Reset the configurators.
+	giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+	giveConfiguratorBook(DMN_SXPAConfiguratorBook)
 EndFunction
 
 Function postMaintenance()

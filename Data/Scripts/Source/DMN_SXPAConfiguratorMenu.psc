@@ -13,12 +13,12 @@
 ; You should have received a copy of the GNU General Public License
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ScriptName DMN_SXPAConfiguratorMenu Extends ObjectReference
+ScriptName DMN_SXPAConfiguratorMenu Extends Quest
 
 {Temporary mod configuration script pre-MCM.}
 
-Import Game
 Import Debug
+Import Game
 Import Utility
 Import DMN_SXPAFunctions
 
@@ -30,6 +30,8 @@ GlobalVariable Property DMN_SXPAExperiencePoints Auto
 Message Property DMN_SXPAConfigMenu Auto
 Message Property DMN_SXPAConfigMenuMiscellaneous Auto
 Message Property DMN_SXPAConfigMenuMiscellaneousDebugSettings Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousModCompatibility01 Auto
+Message Property DMN_SXPAConfigMenuMiscellaneousModCompatibility01_1 Auto
 Message Property DMN_SXPAConfigMenuMiscellaneousResetConfirmation Auto
 Message Property DMN_SXPAConfigMenuMiscellaneousWipeConfirmation Auto
 Message Property DMN_SXPAConfigMenuTracking Auto
@@ -48,7 +50,16 @@ Message Property DMN_SXPAConfigMenuXP Auto
 Message Property DMN_SXPAConfigMenuXPMinMax Auto
 Message Property DMN_SXPAConfigMenuXPMinMaxRewardMax Auto
 Message Property DMN_SXPAConfigMenuXPMinMaxRewardMin Auto
-Message Property DMN_SXPAConfigMenuXPMultiplier Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategories Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCombat01 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCombat02 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting01 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting02 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCrime Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesMagic Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierValues Auto
 Message Property DMN_SXPAConfigMenuSpendXP Auto
 Message Property DMN_SXPAConfigMenuSpendXPCombat Auto
@@ -56,17 +67,13 @@ Message Property DMN_SXPAConfigMenuSpendXPMagic Auto
 Message Property DMN_SXPAConfigMenuSpendXPStealth Auto
 Message Property DMN_SXPAConfigMenuSpendXPAmount Auto
 
+Book Property DMN_SXPAConfiguratorBook Auto
+{The mod configurator in book form. Auto-Fill.}
+Spell Property DMN_SXPAConfiguratorSpell Auto
+{The mod configurator in spell form. Auto-Fill.}
+
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 DMN_SXPAPlayerAlias Property DMN_SXPAPA Auto
-
-Event OnRead()
-; Disable all other menus temporarily leaving only the message box to show.
-	DisablePlayerControls(False, False, False, False, False, True)
-; Undo the above change.
-	EnablePlayerControls(False, False, False, False, False, True)
-; Fire up the configuration function.
-	configureMod()
-EndEvent
 
 Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 ; Stop further config menu activation until we finish processing this request.
@@ -78,10 +85,20 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 		Float fMultiplierStandingStonesFound
 		Float fMultiplierNirnrootsFound
 		Float fMultiplierBooksRead
+		Float fMultChoice
 		Int iXPActivityIndex
 		Int minXP
 		Int maxXP
 		String sXPActivityName
+		Float[] fMultOption = New Float[8]
+		fMultOption[0] = 0.10
+		fMultOption[1] = 0.25
+		fMultOption[2] = 0.40
+		fMultOption[3] = 0.80
+		fMultOption[4] = 1.00
+		fMultOption[5] = 3.00
+		fMultOption[6] = 6.00
+		fMultOption[7] = 10.00
 	; Prevent any possible issues with recycling the iButton.
 		If (iButton == -1)
 	; Show the Main Config menu.
@@ -116,6 +133,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return To Main Config]
 				iMenu = 0
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the XP Settings menu.
 	; --------------------------
@@ -129,6 +149,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				iMenu = 4
 			ElseIf (iButton == 2)
 				iMenu = 0
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Configure Min/Max XP menu.
 	; -----------------------------------
@@ -143,131 +166,1670 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return to XP Settings]
 				iMenu = 2
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Configure Multipliers menu.
 	; -----------------------------------
 		ElseIf (iMenu == 4)
-			iButton = DMN_SXPAConfigMenuXPMultiplier.Show()
+			Float fMult
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategories.Show()
+			If (iButton == 0)
+			; [General]
+				iMenu = 40
+			ElseIf (iButton == 1)
+			; [Quests]
+				iMenu = 43
+			ElseIf (iButton == 2)
+			; [Combat]
+				iMenu = 45
+			ElseIf (iButton == 3)
+			; [Magic]
+				iMenu = 47
+			ElseIf (iButton == 4)
+			; [Crafting]
+				iMenu = 48
+			ElseIf (iButton == 5)
+			; [Crime]
+				iMenu = 50
+			ElseIf (iButton == 6)
+			; [Return to XP Settings]
+				iMenu = 2
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
+			EndIf
+	; Show the Multiplier Categories - Activities - General 01 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 40)
+			Float i01 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Locations Discovered]
-				iButton = DMN_SXPAConfigMenuXPMultiplierValues.Show()
-				If (iButton == 0)
-					fMultiplierLocationsDiscovered = 0.40
-				ElseIf (iButton == 1)
-					fMultiplierLocationsDiscovered = 0.80
-				ElseIf (iButton == 2)
-					fMultiplierLocationsDiscovered = 1.20
-				ElseIf (iButton == 3)
-					fMultiplierLocationsDiscovered = 2.00
-				ElseIf (iButton == 4)
-					fMultiplierLocationsDiscovered = 2.50
-				ElseIf (iButton == 5)
-					fMultiplierLocationsDiscovered = 3.00
-				ElseIf (iButton == 6)
-					fMultiplierLocationsDiscovered = 4.00
-				ElseIf (iButton == 7)
-					fMultiplierLocationsDiscovered = 6.00
-				ElseIf (iButton == 8)
-					fMultiplierLocationsDiscovered = 10.00
+				sXPActivityName = "Locations Discovered"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
 				ElseIf (iButton == 9)
-				; [Return to Configure Multipliers]
-					iMenu = 4
-				EndIf
-				If (fMultiplierLocationsDiscovered > 0)
-					DMN_SXPAEH.fXPModifier[0] = fMultiplierLocationsDiscovered
-					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[0] + " XP multiplier set to " + fMultiplierLocationsDiscovered + ".")
+				; [Return to Multiplier Categories - Activities - General 01]
+					iMenu = 40
 				EndIf
 			ElseIf (iButton == 1)
 			; [Standing Stones Found]
-				iButton = DMN_SXPAConfigMenuXPMultiplierValues.Show()
-				If (iButton == 0)
-					fMultiplierStandingStonesFound = 0.40
-				ElseIf (iButton == 1)
-					fMultiplierStandingStonesFound = 0.80
-				ElseIf (iButton == 2)
-					fMultiplierStandingStonesFound = 1.20
-				ElseIf (iButton == 3)
-					fMultiplierStandingStonesFound = 2.00
-				ElseIf (iButton == 4)
-					fMultiplierStandingStonesFound = 2.50
-				ElseIf (iButton == 5)
-					fMultiplierStandingStonesFound = 3.00
-				ElseIf (iButton == 6)
-					fMultiplierStandingStonesFound = 4.00
-				ElseIf (iButton == 7)
-					fMultiplierStandingStonesFound = 6.00
-				ElseIf (iButton == 8)
-					fMultiplierStandingStonesFound = 10.00
+				sXPActivityName = "Standing Stones Found"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
 				ElseIf (iButton == 9)
-				; [Return to Configure Multipliers]
-					iMenu = 4
-				EndIf
-				If (fMultiplierStandingStonesFound > 0)
-					DMN_SXPAEH.fXPModifier[1] = fMultiplierStandingStonesFound
-					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[1] + " XP multiplier set to " + fMultiplierStandingStonesFound + ".")
+				; [Return to Multiplier Categories - Activities - General 01]
+					iMenu = 40
 				EndIf
 			ElseIf (iButton == 2)
-			; [Nirnroots Found]
-				iButton = DMN_SXPAConfigMenuXPMultiplierValues.Show()
-				If (iButton == 0)
-					fMultiplierNirnrootsFound = 0.40
-				ElseIf (iButton == 1)
-					fMultiplierNirnrootsFound = 0.80
-				ElseIf (iButton == 2)
-					fMultiplierNirnrootsFound = 1.20
-				ElseIf (iButton == 3)
-					fMultiplierNirnrootsFound = 2.00
-				ElseIf (iButton == 4)
-					fMultiplierNirnrootsFound = 2.50
-				ElseIf (iButton == 5)
-					fMultiplierNirnrootsFound = 3.00
-				ElseIf (iButton == 6)
-					fMultiplierNirnrootsFound = 4.00
-				ElseIf (iButton == 7)
-					fMultiplierNirnrootsFound = 6.00
-				ElseIf (iButton == 8)
-					fMultiplierNirnrootsFound = 10.00
+			; [Books Read]
+				sXPActivityName = "Books Read"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
 				ElseIf (iButton == 9)
-				; [Return to Configure Multipliers]
-					iMenu = 4
-				EndIf
-				If (fMultiplierNirnrootsFound > 0)
-					DMN_SXPAEH.fXPModifier[2] = fMultiplierNirnrootsFound
-					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[2] + " XP multiplier set to " + fMultiplierNirnrootsFound + ".")
+				; [Return to Multiplier Categories - Activities - General 01]
+					iMenu = 40
 				EndIf
 			ElseIf (iButton == 3)
-			; [Books Read]
-				iButton = DMN_SXPAConfigMenuXPMultiplierValues.Show()
-				If (iButton == 0)
-					fMultiplierBooksRead = 0.40
-				ElseIf (iButton == 1)
-					fMultiplierBooksRead = 0.80
-				ElseIf (iButton == 2)
-					fMultiplierBooksRead = 1.20
-				ElseIf (iButton == 3)
-					fMultiplierBooksRead = 2.00
-				ElseIf (iButton == 4)
-					fMultiplierBooksRead = 2.50
-				ElseIf (iButton == 5)
-					fMultiplierBooksRead = 3.00
-				ElseIf (iButton == 6)
-					fMultiplierBooksRead = 4.00
-				ElseIf (iButton == 7)
-					fMultiplierBooksRead = 6.00
-				ElseIf (iButton == 8)
-					fMultiplierBooksRead = 10.00
+			; [Persuasions]
+				sXPActivityName = "Persuasions"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
 				ElseIf (iButton == 9)
-				; [Return to Configure Multipliers]
-					iMenu = 4
-				EndIf
-				If (fMultiplierBooksRead > 0)
-					DMN_SXPAEH.fXPModifier[3] = fMultiplierBooksRead
-					Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[3] + " XP multiplier set to " + fMultiplierBooksRead + ".")
+				; [Return to Multiplier Categories - Activities - General 01]
+					iMenu = 40
 				EndIf
 			ElseIf (iButton == 4)
-			; [Return to XP Settings]
-				iMenu = 2
+			; [Intimidations]
+				sXPActivityName = "Intimidations"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 01]
+					iMenu = 40
+				EndIf
+			ElseIf (iButton == 5)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - General 02 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 41)
+			Float fMult
+			Bool bReset
+			;iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral02.Show()
+			If (iButton == 0)
+			; [Locations Discovered]
+				sXPActivityName = "Locations Discovered"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show()
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 02]
+					iMenu = 41
+				EndIf
+			ElseIf (iButton == 5)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - General 03 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 42)
+			Float fMult
+			Bool bReset
+			;iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral03.Show()
+			If (iButton == 0)
+			; [Locations Discovered]
+				sXPActivityName = "Locations Discovered"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show()
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 03]
+					iMenu = 42
+				EndIf
+			ElseIf (iButton == 5)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Quests 01 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 43)
+			Float i01 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01.Show(i01, i02, i03, i04, i05)
+			If (iButton == 0)
+			; [Misc Objectives]
+				sXPActivityName = "Misc Objectives Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 01]
+					iMenu = 43
+				EndIf
+			ElseIf (iButton == 1)
+			; [Main Quests]
+				sXPActivityName = "Main Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 01]
+					iMenu = 43
+				EndIf
+			ElseIf (iButton == 2)
+			; [Side Quests]
+				sXPActivityName = "Side Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 01]
+					iMenu = 43
+				EndIf
+			ElseIf (iButton == 3)
+			; [Companions Quests]
+				sXPActivityName = "The Companions Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 01]
+					iMenu = 43
+				EndIf
+			ElseIf (iButton == 4)
+			; [College of Winterhold Quests]
+				sXPActivityName = "College of Winterhold Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 01]
+					iMenu = 43
+				EndIf
+			ElseIf (iButton == 5)
+			; [>>]
+				iMenu = 44
+			ElseIf (iButton == 6)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Quests 02 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 44)
+			Float i01 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02.Show(i01, i02, i03, i04, i05)
+			If (iButton == 0)
+			; [Thieves Guild Quests]
+				sXPActivityName = "Thieves' Guild Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 02]
+					iMenu = 44
+				EndIf
+			ElseIf (iButton == 1)
+			; [Dark Brotherhood Quests]
+				sXPActivityName = "The Dark Brotherhood Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 02]
+					iMenu = 44
+				EndIf
+			ElseIf (iButton == 2)
+			; [Civil War Quests]
+				sXPActivityName = "Civil War Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 02]
+					iMenu = 44
+				EndIf
+			ElseIf (iButton == 3)
+			; [Daedric Quests]
+				sXPActivityName = "Daedric Quests Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 02]
+					iMenu = 44
+				EndIf
+			ElseIf (iButton == 4)
+			; [Questlines]
+				sXPActivityName = "Questlines Completed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Quests 02]
+					iMenu = 44
+				EndIf
+			ElseIf (iButton == 5)
+			; [Return to Multiplier Categories - Activities - Quests 01]
+				iMenu = 43
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Combat 01 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 45)
+			Float i01 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat01.Show(i01, i02, i03, i04, i05)
+			If (iButton == 0)
+			; [People Killed]
+				sXPActivityName = "People Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 01]
+					iMenu = 45
+				EndIf
+			ElseIf (iButton == 1)
+			; [Animals Killed]
+				sXPActivityName = "Animals Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 01]
+					iMenu = 45
+				EndIf
+			ElseIf (iButton == 2)
+			; [Creatures Killed]
+				sXPActivityName = "Creatures Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 01]
+					iMenu = 45
+				EndIf
+			ElseIf (iButton == 3)
+			; [Undead Killed]
+				sXPActivityName = "Undead Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 01]
+					iMenu = 45
+				EndIf
+			ElseIf (iButton == 4)
+			; [Daedra Killed]
+				sXPActivityName = "Daedra Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 01]
+					iMenu = 45
+				EndIf
+			ElseIf (iButton == 5)
+			; [>>]
+				iMenu = 46
+			ElseIf (iButton == 6)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Combat 02 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 46)
+			Float i01 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat02.Show(i01, i02, i03, i04)
+			If (iButton == 0)
+			; [Automatons Killed]
+				sXPActivityName = "Automatons Killed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 02]
+					iMenu = 46
+				EndIf
+			ElseIf (iButton == 1)
+			; [Weapons Disarmed]
+				sXPActivityName = "Weapons Disarmed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 02]
+					iMenu = 46
+				EndIf
+			ElseIf (iButton == 2)
+			; [Brawls Won]
+				sXPActivityName = "Brawls Won"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 02]
+					iMenu = 46
+				EndIf
+			ElseIf (iButton == 3)
+			; [Bunnies Slaughtered]
+				sXPActivityName = "Bunnies Slaughtered"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Combat 02]
+					iMenu = 46
+				EndIf
+			ElseIf (iButton == 4)
+			; [Return to Multiplier Categories - Activities - Combat 01]
+				iMenu = 45
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Magic menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 47)
+			Float i01 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesMagic.Show(i01, i02, i03, i04)
+			If (iButton == 0)
+			; [Dragon Souls Collected]
+				sXPActivityName = "Dragon Souls Collected"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Magic]
+					iMenu = 47
+				EndIf
+			ElseIf (iButton == 1)
+			; [Words Of Power Learned]
+				sXPActivityName = "Words Of Power Learned"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Magic]
+					iMenu = 47
+				EndIf
+			ElseIf (iButton == 2)
+			; [Words Of Power Unlocked]
+				sXPActivityName = "Words Of Power Unlocked"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Magic]
+					iMenu = 47
+				EndIf
+			ElseIf (iButton == 3)
+			; [Shouts Mastered]
+				sXPActivityName = "Shouts Mastered"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Magic]
+					iMenu = 47
+				EndIf
+			ElseIf (iButton == 4)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Crafting 01 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 48)
+			Float i01 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i06 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i060 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting01.Show(i01, i02, i03, i04, i05, i06)
+			If (iButton == 0)
+			; [Souls Trapped]
+				sXPActivityName = "Souls Trapped"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 01]
+					iMenu = 48
+				EndIf
+			ElseIf (iButton == 1)
+			; [Magic Items Made]
+				sXPActivityName = "Magic Items Made"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 01]
+					iMenu = 48
+				EndIf
+			ElseIf (iButton == 2)
+			; [Weapons Improved]
+				sXPActivityName = "Weapons Improved"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 01]
+					iMenu = 48
+				EndIf
+			ElseIf (iButton == 3)
+			; [Weapons Made]
+				sXPActivityName = "Weapons Made"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 01]
+					iMenu = 48
+				EndIf
+			ElseIf (iButton == 4)
+			; [Armor Improved]
+				sXPActivityName = "Armor Improved"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 01]
+					iMenu = 48
+				EndIf
+			ElseIf (iButton == 5)
+			; [Armor Made]
+				sXPActivityName = "Armor Made"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i06, i060)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 01]
+					iMenu = 48
+				EndIf
+			ElseIf (iButton == 6)
+			; [>>]
+				iMenu = 49
+			ElseIf (iButton == 7)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Crafting 02 menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 49)
+			Float i01 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting02.Show(i01, i02, i03, i04, i05)
+			If (iButton == 0)
+			; [Potions Mixed]
+				sXPActivityName = "Potions Mixed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 02]
+					iMenu = 49
+				EndIf
+			ElseIf (iButton == 1)
+			; [Poisons Mixed]
+				sXPActivityName = "Poisons Mixed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 02]
+					iMenu = 49
+				EndIf
+			ElseIf (iButton == 2)
+			; [Ingredients Harvested]
+				sXPActivityName = "Ingredients Harvested"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 02]
+					iMenu = 49
+				EndIf
+			ElseIf (iButton == 3)
+			; [Nirnroots Found]
+				sXPActivityName = "Nirnroots Found"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 02]
+					iMenu = 49
+				EndIf
+			ElseIf (iButton == 4)
+			; [Wings Plucked]
+				sXPActivityName = "Wings Plucked"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crafting 02]
+					iMenu = 49
+				EndIf
+			ElseIf (iButton == 5)
+			; [Return to Multiplier Categories - Activities - Crafting 01]
+				iMenu = 48
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
+	; Show the Multiplier Categories - Activities - Crime menu.
+	; -------------------------------------------------------------
+		ElseIf (iMenu == 50)
+			Float i01 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float fMult
+			Bool bReset
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrime.Show(i01, i02, i03, i04)
+			If (iButton == 0)
+			; [Locks Picked]
+				sXPActivityName = "Locks Picked"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crime]
+					iMenu = 50
+				EndIf
+			ElseIf (iButton == 1)
+			; [Items Pickpocketed]
+				sXPActivityName = "Items Pickpocketed"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crime]
+					iMenu = 50
+				EndIf
+			ElseIf (iButton == 2)
+			; [Jail Escapes]
+				sXPActivityName = "Jail Escapes"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crime]
+					iMenu = 50
+				EndIf
+			ElseIf (iButton == 3)
+			; [Items Stolen]
+				sXPActivityName = "Items Stolen"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - Crime]
+					iMenu = 50
+				EndIf
+			ElseIf (iButton == 4)
+			; [Return to Configure Multipliers]
+				iMenu = 4
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
+			EndIf
+			If (bReset)
+				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
+			EndIf
+			If (fMult > 0)
+				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
+				fMult = 0
+			EndIf
+			sXPActivityName = ""
+			iXPActivityIndex = 0
+			bReset = False
 	; Show the Minimum Base XP Reward menu.
 	; -------------------------------------
 		ElseIf (iMenu == 5)
@@ -303,6 +1865,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; [Return to Configure Min/Max XP]
 				iMenu = 3
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
 			EndIf
 			If (minXP > 0)
 				DMN_SXPAExperienceMin.SetValue(minXP)
@@ -343,6 +1908,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; [Return to Configure Min/Max XP]
 				iMenu = 3
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
 			EndIf
 			If (maxXP > 0)
 				DMN_SXPAExperienceMax.SetValue(maxXP)
@@ -365,137 +1933,237 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 3)
 			; [Return To Main Menu]
 				iMenu = 0
+			ElseIf (iButton == 4)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Spend XP - Combat menu.
 	; -------------------------------------
 		ElseIf (iMenu == 8)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
 			String sSkill
 			Int iAmount
 			iButton = DMN_SXPAConfigMenuSpendXPCombat.Show(i)
 			If (iButton == 0)
 			; [Archery]
 				sSkill = "Marksman"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 1)
 			; [Block]
 				sSkill = "Block"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 2)
 			; [Heavy Armor]
 				sSkill = "HeavyArmor"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 3)
 			; [One-Handed]
 				sSkill = "OneHanded"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 4)
 			; [Smithing]
 				sSkill = "Smithing"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 6)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 5)
 			; [Two-Handed]
 				sSkill = "TwoHanded"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Combat]
 					iMenu = 8
 				EndIf
 			ElseIf (iButton == 6)
 			; [Return to Spend XP]
 				iMenu = 7
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
 				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
@@ -506,132 +2174,229 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; -------------------------------------
 		ElseIf (iMenu == 9)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
 			String sSkill
 			Int iAmount
 			iButton = DMN_SXPAConfigMenuSpendXPMagic.Show(i)
 			If (iButton == 0)
 			; [Alteration]
 				sSkill = "Alteration"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 					iMenu = 9
 				; [Return to Spend XP - Magic]
 				EndIf
 			ElseIf (iButton == 1)
 			; [Conjuration]
 				sSkill = "Conjuration"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 2)
 			; [Destruction]
 				sSkill = "Destruction"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 3)
 			; [Enchanting]
 				sSkill = "Enchanting"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 4)
 			; [Illusion]
 				sSkill = "Illusion"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 5)
 			; [Restoration]
 				sSkill = "Restoration"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Magic]
 					iMenu = 9
 				EndIf
 			ElseIf (iButton == 6)
 			; [Return to Spend XP]
 				iMenu = 7
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
 				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
@@ -642,132 +2407,229 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; -------------------------------------
 		ElseIf (iMenu == 10)
 			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
 			String sSkill
 			Int iAmount
 			iButton = DMN_SXPAConfigMenuSpendXPStealth.Show(i)
 			If (iButton == 0)
 			; [Alchemy]
 				sSkill = "Alchemy"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 1)
 			; [Light Armor]
 				sSkill = "LightArmor"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 2)
 			; [Lockpicking]
 				sSkill = "Lockpicking"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 3)
 			; [Pickpocket]
 				sSkill = "Pickpocket"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 4)
 			; [Sneak]
 				sSkill = "Sneak"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 5)
 			; [Speech]
 				sSkill = "Speechcraft"
-				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i)
+				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
-				; [100XP]
+				; [100 XP]
 					iAmount = 100
 				ElseIf (iButton == 1)
-				; [500XP]
-					iAmount = 500
-				ElseIf (iButton == 2)
-				; [1000XP]
+				; [1,000 XP]
 					iAmount = 1000
+				ElseIf (iButton == 2)
+				; [10,000 XP]
+					iAmount = 10000
 				ElseIf (iButton == 3)
-				; [5000XP]
-					iAmount = 5000
+				; [100,000 XP]
+					iAmount = 100000
 				ElseIf (iButton == 4)
+				; [10% XP]
+					iAmount = i10
+				ElseIf (iButton == 5)
+				; [25% XP]
+					iAmount = i25
+				ElseIf (iButton == 6)
+				; [50% XP]
+					iAmount = i50
+				ElseIf (iButton == 7)
+				; [75% XP]
+					iAmount = i75
+				ElseIf (iButton == 8)
+				; [100% XP]
+					iAmount = i
+				ElseIf (iButton == 9)
 				; [Return to Spend XP - Stealth]
 					iMenu = 10
 				EndIf
 			ElseIf (iButton == 6)
 			; [Return to Spend XP]
 				iMenu = 7
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
 				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
@@ -827,6 +2689,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			; [Return To Tracking Options]
 				iMenu = 1
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Tracking Options - Type menu.
 	; --------------------------------------
@@ -872,11 +2737,19 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options]
 				iMenu = 1
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
-	; Show the Tracking Options - Activity - General menu.
+	; Show the Tracking Options - Activity - General 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 13)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show()
+			Int i01 = getXPActivityStateForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Locations Discovered]
 				sXPActivityName = "Locations Discovered"
@@ -905,6 +2778,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -920,7 +2796,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Quests 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 14)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01.Show()
+			Int i01 = getXPActivityStateForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Misc Objectives]
 				sXPActivityName = "Misc Objectives Completed"
@@ -952,6 +2833,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -967,7 +2851,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Quests 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 15)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02.Show()
+			Int i01 = getXPActivityStateForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Thieves Guild Quests]
 				sXPActivityName = "Thieves' Guild Quests Completed"
@@ -996,6 +2885,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [[Return to Tracking Options - Activity - Quests 01]]
 				iMenu = 14
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1011,7 +2903,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Combat 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 16)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat01.Show()
+			Int i01 = getXPActivityStateForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat01.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [People Killed]
 				sXPActivityName = "People Killed"
@@ -1043,6 +2940,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 7)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1058,7 +2958,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Combat 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 17)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat02.Show()
+			Int i01 = getXPActivityStateForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCombat02.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Automatons Killed]
 				sXPActivityName = "Automatons Killed"
@@ -1082,6 +2986,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity - Combat 01]
 				iMenu = 16
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1097,7 +3004,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Magic menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 18)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesMagic.Show()
+			Int i01 = getXPActivityStateForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesMagic.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Dragon Souls Collected]
 				sXPActivityName = "Dragon Souls Collected"
@@ -1121,6 +3032,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1136,7 +3050,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Crafting 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 19)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01.Show()
+		; Get the states of the XP activities to display in the menu shown to the player.
+			Int i01 = getXPActivityStateForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i06 = getXPActivityStateForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
 			; [Souls Trapped]
 				sXPActivityName = "Souls Trapped"
@@ -1173,6 +3094,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 8)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1188,7 +3112,13 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Crafting 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 20)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02.Show()
+		; Get the states of the XP activities to display in the menu shown to the player.
+			Int i01 = getXPActivityStateForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
 			; [Potions Mixed]
 				sXPActivityName = "Potions Mixed"
@@ -1217,6 +3147,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity - Crafting 01]
 				iMenu = 19
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1232,7 +3165,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - Crime menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 21)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrime.Show()
+			Int i01 = getXPActivityStateForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesCrime.Show(i01, i02, i03, i04)
 			If (iButton == 0)
 			; [Locks Picked]
 				sXPActivityName = "Locks Picked"
@@ -1256,6 +3193,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1298,6 +3238,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1337,6 +3280,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 4)
 			; [Return to Tracking Options - Activity - General 02]
 				iMenu = 22
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 			If (sXPActivityName && iXPActivityIndex >= 0)
 				If (bXPActivityState)
@@ -1357,14 +3303,20 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Debug Settings]
 				iMenu = 25
 			ElseIf (iButton == 1)
-			; [Wipe SXPA Player Data]
+			; [Mod Compatibility]
 				iMenu = 26
 			ElseIf (iButton == 2)
 			; [Reset SXPA Default Values]
 				iMenu = 27
 			ElseIf (iButton == 3)
+			; [Wipe SXPA Player Data]
+				iMenu = 28
+			ElseIf (iButton == 4)
 			; [Return to Main Config]
 				iMenu = 0
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Miscellaneous - Debug menu.
 	; ----------------------------------------------------
@@ -1413,12 +3365,90 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 				Notification("Skyrim XP Addon: Completed manual SXPA player stats update.")
 			ElseIf (iButton == 3)
+			; [Switch To Book Configurator]
+				giveConfiguratorSpell(DMN_SXPAConfiguratorSpell, True)
+				giveConfiguratorBook(DMN_SXPAConfiguratorBook)
+				DMN_SXPAEH.iConfiguratorType = 0
+				If (DMN_SXPAEH.iConfiguratorType == 0)
+					Notification("Skyrim XP Addon: Switched to the book configurator.")
+					bMenu = False
+				EndIf
+			ElseIf (iButton == 4)
+			; [Switch To Spell Configurator]
+				giveConfiguratorBook(DMN_SXPAConfiguratorBook, True)
+				giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+				DMN_SXPAEH.iConfiguratorType = 1
+				If (DMN_SXPAEH.iConfiguratorType == 1)
+					Notification("Skyrim XP Addon: Switched to the spell configurator.")
+					bMenu = False
+				EndIf
+			ElseIf (iButton == 5)
 			; [Return to Miscellaneous]
 				iMenu = 24
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+	; Show the Miscellaneous - Mod Compatibility 01 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 26)
+			Int i01 = DMN_SXPAEH.iModCompatibility[0]
+			iButton = DMN_SXPAConfigMenuMiscellaneousModCompatibility01.Show()
+			If (iButton == 0)
+			; [SkyrimSouls - Unpaused Game Menus (SKSE Plugin)]
+				iButton = DMN_SXPAConfigMenuMiscellaneousModCompatibility01_1.Show(i01)
+				If (iButton == 0)
+				; [Enable Compatibility]
+					DMN_SXPAEH.iModCompatibility[0] = 1
+					Notification("Skyrim XP Addon: Enabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
+				ElseIf (iButton == 1)
+					DMN_SXPAEH.iModCompatibility[0] = 0
+					Notification("Skyrim XP Addon: Disabled compatibility for SkyrimSouls - Unpaused Game Menus (SKSE Plugin).")
+				; [Previous Menu]
+				ElseIf (iButton == 2)
+					iMenu = 26
+				ElseIf (iButton == 3)
+				; [X]
+					bMenu = False
+				EndIf
+			ElseIf (iButton == 1)
+			; [Return to Miscellaneous]
+				iMenu = 24
+			ElseIf (iButton == 2)
+			; [X]
+				bMenu = False
+			EndIf
+	; Show the Miscellaneous - Reset Confirmation menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 27)
+			iButton = DMN_SXPAConfigMenuMiscellaneousResetConfirmation.Show()
+			If (iButton == 0)
+			; [Reset SXPA Values To Default]
+				Notification("Skyrim XP Addon: Restoring SXPA default values...")
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				Notification("Skyrim XP Addon: SXPA default values have been restored!")
+				bMenu = False
+			ElseIf (iButton == 1)
+			; [Reset SXPA Values To Default And Wipe My SXPA Data]
+				Notification("Skyrim XP Addon: Restoring SXPA default values and wiping player's SXPA data...")
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+			; Register for XP activity active tracking once more.
+				DMN_SXPAPA.waitForStatChange()
+				Notification("Skyrim XP Addon: SXPA default values have been restored and SXPA player data wiped!")
+				bMenu = False
+			ElseIf (iButton == 2)
+			; [Return to Miscellaneous]
+				iMenu = 24
+			ElseIf (iButton == 3)
+			; [X]
+				bMenu = False
 			EndIf
 	; Show the Miscellaneous - Wipe Confirmation menu.
 	; ----------------------------------------------------
-		ElseIf (iMenu == 26)
+		ElseIf (iMenu == 28)
 			iButton = DMN_SXPAConfigMenuMiscellaneousWipeConfirmation.Show()
 			If (iButton == 0)
 			; [Wipe My SXPA Data]
@@ -1432,7 +3462,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Wipe My SXPA Data And Reset SXPA Values To Default]
 				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
 				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
@@ -1440,31 +3470,9 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 2)
 			; [Return to Miscellaneous]
 				iMenu = 24
-			EndIf
-	; Show the Miscellaneous - Reset Confirmation menu.
-	; ----------------------------------------------------
-		ElseIf (iMenu == 27)
-			iButton = DMN_SXPAConfigMenuMiscellaneousResetConfirmation.Show()
-			If (iButton == 0)
-			; [Reset SXPA Values To Default]
-				Notification("Skyrim XP Addon: Restoring SXPA default values...")
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
-			; Register for XP activity active tracking once more.
-				DMN_SXPAPA.waitForStatChange()
-				Notification("Skyrim XP Addon: SXPA default values have been restored!")
+			ElseIf (iButton == 3)
+			; [X]
 				bMenu = False
-			ElseIf (iButton == 1)
-			; [Reset SXPA Values To Default And Wipe My SXPA Data]
-				Notification("Skyrim XP Addon: Restoring SXPA default values and wiping player's SXPA data...")
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iPassiveMonitoring)
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-			; Register for XP activity active tracking once more.
-				DMN_SXPAPA.waitForStatChange()
-				Notification("Skyrim XP Addon: SXPA default values have been restored and SXPA player data wiped!")
-				bMenu = False
-			ElseIf (iButton == 2)
-			; [Return to Miscellaneous]
-				iMenu = 24
 			EndIf
 		EndIf
 	EndWhile
