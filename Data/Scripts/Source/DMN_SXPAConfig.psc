@@ -17,7 +17,7 @@ ScriptName DMN_SXPAConfig Extends Quest
 
 {Skyrim XP Addon - Configuration Script by Deadmano.}
 ;==============================================
-; Version: 2.0.0
+; Version: 2.1.0
 ;===============
 
 Import DMN_DeadmaniacFunctionsSXPA
@@ -92,6 +92,15 @@ Message Property DMN_SXPAUpdateAnnouncement_v2_0_0 Auto
 
 ; END v2.0.0
 ;-------------
+
+; BEGIN v2.1.0
+;-------------
+
+Message Property DMN_SXPAUpdateAnnouncement_v2_1_0 Auto
+{The message that is shown to the player for the update to version 2.1.0. Auto-Fill.}
+
+; END v2.1.0
+;-------------
 ;
 ; END Update Related Variables and Properties
 ;==============================================
@@ -145,7 +154,7 @@ EndFunction
  
 Function Maintenance()
 ; The latest (current) version of Skyrim XP Addon. Update this to the version number.
-	parseSXPAVersion("2", "0", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
+	parseSXPAVersion("2", "1", "0") ; <--- CHANGE! No more than: "9e9", "99", "9".
 ; ---------------- UPDATE! ^^^^^^^^^^^
 
 	If (DMN_SXPADebug.GetValue() == 1)
@@ -329,7 +338,7 @@ Function updateSXPA()
 	
 	Int updateCount = 0
 	; Change this to the latest update announcement message.
-	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v2_0_0
+	Message latestUpdate = DMN_SXPAUpdateAnnouncement_v2_1_0
 
 ; v1.1.0
 ;-------
@@ -373,7 +382,7 @@ Function updateSXPA()
 	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("2", "1", "0") && \
 		DMN_SXPAiVersionRunning >= 2100)
 		Wait(3.0)
-		;DMN_SXPAUpdateAnnouncement_v2_1_0.Show()
+		DMN_SXPAUpdateAnnouncement_v2_1_0.Show()
 		updateCount += 1
 	EndIf
 
