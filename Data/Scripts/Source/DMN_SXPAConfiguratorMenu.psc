@@ -43,6 +43,8 @@ Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCrafting02 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesCrime Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01 Auto
+Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral02 Auto
+Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral03 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesMagic Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02 Auto
@@ -57,6 +59,8 @@ Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting01 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting02 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesCrime Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral02 Auto
+Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral03 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesMagic Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02 Auto
@@ -203,22 +207,24 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 40)
-			Float i01 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i06 = getXPActivityMultiplierForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i060 = getXPActivityMultiplierForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
-			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01.Show(i01, i02, i03, i04, i05)
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
-			; [Locations Discovered]
-				sXPActivityName = "Locations Discovered"
+			; [Mauls]
+				sXPActivityName = "Mauls"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
 				If (fMultChoice == 0)
@@ -245,8 +251,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 40
 				EndIf
 			ElseIf (iButton == 1)
-			; [Standing Stones Found]
-				sXPActivityName = "Standing Stones Found"
+			; [Necks Bitten]
+				sXPActivityName = "Necks Bitten"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
 				If (fMultChoice == 0)
@@ -273,8 +279,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 40
 				EndIf
 			ElseIf (iButton == 2)
-			; [Books Read]
-				sXPActivityName = "Books Read"
+			; [Days as a Werewolf]
+				sXPActivityName = "Days as a Werewolf"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
 				If (fMultChoice == 0)
@@ -301,8 +307,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 40
 				EndIf
 			ElseIf (iButton == 3)
-			; [Persuasions]
-				sXPActivityName = "Persuasions"
+			; [Days as a Vampire]
+				sXPActivityName = "Days as a Vampire"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
 				If (fMultChoice == 0)
@@ -329,8 +335,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 40
 				EndIf
 			ElseIf (iButton == 4)
-			; [Intimidations]
-				sXPActivityName = "Intimidations"
+			; [Locations Discovered]
+				sXPActivityName = "Locations Discovered"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
 				If (fMultChoice == 0)
@@ -357,9 +363,40 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 40
 				EndIf
 			ElseIf (iButton == 5)
+			; [Locations Cleared]
+				sXPActivityName = "Dungeons Cleared"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i06, i060)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 01]
+					iMenu = 40
+				EndIf
+			ElseIf (iButton == 6)
+			; [>>]
+				iMenu = 41
+			ElseIf (iButton == 7)
 			; [Return to Configure Multipliers]
 				iMenu = 4
-			ElseIf (iButton == 6)
+			ElseIf (iButton == 8)
 			; [X]
 				bMenu = False
 			EndIf
@@ -378,14 +415,138 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 41)
+			Float i01 = getXPActivityMultiplierForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i06 = getXPActivityMultiplierForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i060 = getXPActivityMultiplierForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
-			;iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral02.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral02.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
-			; [Locations Discovered]
-				sXPActivityName = "Locations Discovered"
+			; [Days Passed]
+				sXPActivityName = "Days Passed"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show()
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 02]
+					iMenu = 41
+				EndIf
+			ElseIf (iButton == 1)
+			; [Standing Stones Found]
+				sXPActivityName = "Standing Stones Found"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 02]
+					iMenu = 41
+				EndIf
+			ElseIf (iButton == 2)
+			; [Chests Looted]
+				sXPActivityName = "Chests Looted"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 02]
+					iMenu = 41
+				EndIf
+			ElseIf (iButton == 3)
+			; [Books Read]
+				sXPActivityName = "Books Read"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 02]
+					iMenu = 41
+				EndIf
+			ElseIf (iButton == 4)
+			; [Horses Owned]
+				sXPActivityName = "Horses Owned"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
 				If (fMultChoice == 0)
 					fMult = fMultOption[0]
 				ElseIf (fMultChoice == 1)
@@ -410,9 +571,40 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 41
 				EndIf
 			ElseIf (iButton == 5)
-			; [Return to Configure Multipliers]
-				iMenu = 4
+			; [Houses Owned]
+				sXPActivityName = "Houses Owned"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i06, i060)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 02]
+					iMenu = 41
+				EndIf
 			ElseIf (iButton == 6)
+			; [>>]
+				iMenu = 42
+			ElseIf (iButton == 7)
+			; [Return to Multiplier Categories - Activities - General 01]
+				iMenu = 40
+			ElseIf (iButton == 8)
 			; [X]
 				bMenu = False
 			EndIf
@@ -431,14 +623,136 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 03 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 42)
+			Float i01 = getXPActivityMultiplierForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
-			;iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral03.Show()
+			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral03.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
-			; [Locations Discovered]
-				sXPActivityName = "Locations Discovered"
+			; [Stores Invested In]
+				sXPActivityName = "Stores Invested In"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show()
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i01, i010)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 03]
+					iMenu = 42
+				EndIf
+			ElseIf (iButton == 1)
+			; [Successful Barters]
+				sXPActivityName = "Barters"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i02, i020)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 03]
+					iMenu = 42
+				EndIf
+			ElseIf (iButton == 2)
+			; [Successful Persuasions]
+				sXPActivityName = "Persuasions"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i03, i030)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 03]
+					iMenu = 42
+				EndIf
+			ElseIf (iButton == 3)
+			; [Successful Bribes]
+				sXPActivityName = "Bribes"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i04, i040)
+				If (fMultChoice == 0)
+					fMult = fMultOption[0]
+				ElseIf (fMultChoice == 1)
+					fMult = fMultOption[1]
+				ElseIf (fMultChoice == 2)
+					fMult = fMultOption[2]
+				ElseIf (fMultChoice == 3)
+					fMult = fMultOption[3]
+				ElseIf (fMultChoice == 4)
+					fMult = fMultOption[4]
+				ElseIf (fMultChoice == 5)
+					fMult = fMultOption[5]
+				ElseIf (fMultChoice == 6)
+					fMult = fMultOption[6]
+				ElseIf (fMultChoice == 7)
+					fMult = fMultOption[7]
+				ElseIf (fMultChoice == 8)
+				; [Reset]
+					bReset = True
+				ElseIf (iButton == 9)
+				; [Return to Multiplier Categories - Activities - General 03]
+					iMenu = 42
+				EndIf
+			ElseIf (iButton == 4)
+			; [Successful Intimidations]
+				sXPActivityName = "Intimidations"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				fMultChoice = DMN_SXPAConfigMenuXPMultiplierValues.Show(i05, i050)
 				If (fMultChoice == 0)
 					fMult = fMultOption[0]
 				ElseIf (fMultChoice == 1)
@@ -463,8 +777,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					iMenu = 42
 				EndIf
 			ElseIf (iButton == 5)
-			; [Return to Configure Multipliers]
-				iMenu = 4
+			; [Return to Multiplier Categories - Activities - General 03]
+				iMenu = 41
 			ElseIf (iButton == 6)
 			; [X]
 				bMenu = False
@@ -2671,7 +2985,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Crime]
 				iMenu = 21
 			ElseIf (iButton == 6)
-			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; Since we're leaving the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
 				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
@@ -2690,6 +3004,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return To Tracking Options]
 				iMenu = 1
 			ElseIf (iButton == 7)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -2738,47 +3068,88 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options]
 				iMenu = 1
 			ElseIf (iButton == 7)
+			; Since we're exiting the tracking options menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
 	; Show the Tracking Options - Activity - General 01 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 13)
-			Int i01 = getXPActivityStateForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
-			Int i02 = getXPActivityStateForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
-			Int i03 = getXPActivityStateForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
-			Int i04 = getXPActivityStateForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
-			Int i05 = getXPActivityStateForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
-			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show(i01, i02, i03, i04, i05)
+			Int i01 = getXPActivityStateForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i06 = getXPActivityStateForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral01.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
+			; [Mauls]
+				sXPActivityName = "Mauls"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 1)
+			; [Necks Bitten]
+				sXPActivityName = "Necks Bitten"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 2)
+			; [Days as a Werewolf]
+				sXPActivityName = "Days as a Werewolf"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 3)
+			; [Days as a Vampire]
+				sXPActivityName = "Days as a Vampire"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 4)
 			; [Locations Discovered]
 				sXPActivityName = "Locations Discovered"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
-			ElseIf (iButton == 1)
-			; [Standing Stones Found]
-				sXPActivityName = "Standing Stones Found"
-				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
-			ElseIf (iButton == 2)
-			; [Books Read]
-				sXPActivityName = "Books Read"
-				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
-			ElseIf (iButton == 3)
-			; [Persuasions]
-				sXPActivityName = "Persuasions"
-				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
-			ElseIf (iButton == 4)
-			; [Intimidations]
-				sXPActivityName = "Intimidations"
-				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
-				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 5)
+			; [Locations Cleared]
+				sXPActivityName = "Dungeons Cleared"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 6)
+			; [>>]
+				iMenu = 22
+			ElseIf (iButton == 7)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
-			ElseIf (iButton == 6)
+			ElseIf (iButton == 8)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -2834,6 +3205,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
 			ElseIf (iButton == 7)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -2886,6 +3273,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [[Return to Tracking Options - Activity - Quests 01]]
 				iMenu = 14
 			ElseIf (iButton == 6)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -2941,6 +3344,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
 			ElseIf (iButton == 7)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -2987,6 +3406,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity - Combat 01]
 				iMenu = 16
 			ElseIf (iButton == 5)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -3033,6 +3468,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
 			ElseIf (iButton == 5)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -3095,6 +3546,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
 			ElseIf (iButton == 8)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -3148,6 +3615,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity - Crafting 01]
 				iMenu = 19
 			ElseIf (iButton == 6)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -3194,6 +3677,22 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Return to Tracking Options - Activity Categories]
 				iMenu = 11
 			ElseIf (iButton == 5)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -3211,34 +3710,66 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - General 02 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 22)
-			;iButton = .Show()
+			Int i01 = getXPActivityStateForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i06 = getXPActivityStateForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral02.Show(i01, i02, i03, i04, i05, i06)
 			If (iButton == 0)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Days Passed]
+				sXPActivityName = "Days Passed"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 1)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Standing Stones Found]
+				sXPActivityName = "Standing Stones Found"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 2)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Chests Looted]
+				sXPActivityName = "Chests Looted"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 3)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Books Read]
+				sXPActivityName = "Books Read"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 4)
+			; [Horses Owned]
+				sXPActivityName = "Horses Owned"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 5)
+			; [Houses Owned]
+				sXPActivityName = "Houses Owned"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 6)
 			; [>>]
 				iMenu = 23
-			ElseIf (iButton == 5)
-			; [Return to Tracking Options - Activity Categories]
-				iMenu = 11
-			ElseIf (iButton == 6)
+			ElseIf (iButton == 7)
+			; [Return to Tracking Options - Activity - General 01]
+				iMenu = 13
+			ElseIf (iButton == 8)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf
@@ -3256,31 +3787,57 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Tracking Options - Activity - General 03 menu.
 	; ----------------------------------------------------
 		ElseIf (iMenu == 23)
-			;iButton = .Show()
+			Int i01 = getXPActivityStateForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i02 = getXPActivityStateForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i03 = getXPActivityStateForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i04 = getXPActivityStateForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			Int i05 = getXPActivityStateForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.sStatName)
+			iButton = DMN_SXPAConfigMenuTrackingActivityCategoriesGeneral03.Show(i01, i02, i03, i04, i05)
 			If (iButton == 0)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Stores Invested In]
+				sXPActivityName = "Stores Invested In"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 1)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Successful Barters]
+				sXPActivityName = "Barters"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 2)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Successful Persuasions]
+				sXPActivityName = "Persuasions"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 3)
-			; [Placeholder]
-				sXPActivityName = ""
+			; [Successful Bribes]
+				sXPActivityName = "Bribes"
 				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
 				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
 			ElseIf (iButton == 4)
+			; [Successful Intimidations]
+				sXPActivityName = "Intimidations"
+				iXPActivityIndex = getXPActivityIndex(sXPActivityName, DMN_SXPAEH.sStatName)
+				bXPActivityState = getXPActivityState(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, iXPActivityIndex, DMN_SXPAEH.sStatName)
+			ElseIf (iButton == 5)
 			; [Return to Tracking Options - Activity - General 02]
 				iMenu = 22
-			ElseIf (iButton == 5)
+			ElseIf (iButton == 6)
+			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
+			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
+				If (bActiveMonitoringEnabled)
+					bActiveMonitoringEnabled = None
+					DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: Re-enabling XP activity active tracking.")
+					DMN_SXPAActiveMonitoring.SetValue(1)
+					If (DMN_SXPAActiveMonitoring.GetValue() == 1)
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: XP activity active tracking was enabled.\n\n")
+					Else
+						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT enabled!\n\n")
+					EndIf
+				; Register for XP activity active tracking once more.
+					DMN_SXPAPA.waitForStatChange()
+				EndIf
 			; [X]
 				bMenu = False
 			EndIf

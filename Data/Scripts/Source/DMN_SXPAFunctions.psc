@@ -901,6 +901,18 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	bXPActivityState[40] = True ; Items Pickpocketed
 	bXPActivityState[41] = False ; Jail Escapes
 	bXPActivityState[42] = True ; Items Stolen
+	bXPActivityState[43] = False ; Mauls
+	bXPActivityState[44] = False ; Necks Bitten
+	bXPActivityState[45] = False ; Days as a Werewolf
+	bXPActivityState[46] = False ; Days as a Vampire
+	bXPActivityState[47] = True ; Dungeons Cleared
+	bXPActivityState[48] = False ; Days Passed
+	bXPActivityState[49] = True ; Chests Looted
+	bXPActivityState[50] = False ; Horses Owned
+	bXPActivityState[51] = False ; Houses Owned
+	bXPActivityState[52] = False ; Stores Invested In
+	bXPActivityState[53] = False ; Barters
+	bXPActivityState[54] = True ; Bribes
 	DMN_SXPALog(gDebug, "XP Activity State new values: " + bXPActivityState + ".")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setXPActivityStateDefaults() function took " + (fStop - fStart) + " seconds to complete.")
@@ -912,7 +924,7 @@ Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier,
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setXPModifierDefaults Function]")
-	Float[] fMult = New Float[43]
+	Float[] fMult = New Float[55]
 	fMult[0] = 0.60 ; Locations Discovered
 	fMult[1] = 5.00 ; Standing Stones Found
 	fMult[2] = 0.40 ; Nirnroots Found
@@ -956,6 +968,18 @@ Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier,
 	fMult[40] = 0.05 ; Items Pickpocketed
 	fMult[41] = 3.00 ; Jail Escapes
 	fMult[42] = 0.05 ; Items Stolen
+	fMult[43] = 0.30 ; Mauls
+	fMult[44] = 0.60 ; Necks Bitten
+	fMult[45] = 0.10 ; Days as a Werewolf
+	fMult[46] = 0.10 ; Days as a Vampire
+	fMult[47] = 1.20 ; Dungeons Cleared
+	fMult[48] = 0.10 ; Days Passed
+	fMult[49] = 0.30 ; Chests Looted
+	fMult[50] = 2.00 ; Horses Owned
+	fMult[51] = 5.00 ; Houses Owned
+	fMult[52] = 2.50 ; Stores Invested In
+	fMult[53] = 0.25 ; Barters
+	fMult[54] = 1.00 ; Bribes
 	If (!bSingleUpdate && !bGetDefault)
 		DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
 		Int iIndex = 0
@@ -964,11 +988,13 @@ Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier,
 			iIndex += 1
 		EndWhile
 		DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+		Return 0
 	ElseIf (bSingleUpdate)
 	; If called for a single update, set the value as passed in.
 		DMN_SXPALog(gDebug, "Previous array value: " + fXPModifier[iArrayIndex] + ".")
 		fXPModifier[iArrayIndex] = fMult[iArrayIndex]
 		DMN_SXPALog(gDebug, "Set array value to default: " + fXPModifier[iArrayIndex] + ".")
+		Return 0
 	ElseIf (bGetDefault)
 		Float fMultDefault = fMult[iArrayIndex]
 		Return fMultDefault
