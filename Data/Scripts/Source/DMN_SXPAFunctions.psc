@@ -1048,3 +1048,24 @@ String Function prettyPrintXP(Float fXP) Global
 	Trace("sPrettyXP Value: " + sPrettyXP + "\n\n")
 	Return sPrettyXP
 EndFunction
+
+String Function convertSkillName(String sSkillName) Global
+; Certain skills have differing internal and in-game names or formatting, such as
+; "Archery" being "Marksman" internally or "Heavy Armor" being "HeavyArmor" internally.
+; This function aims to correct that for script usage elsewhere.
+	String sConvertedSkillName = sSkillName
+	If (sSkillName == "HeavyArmor")
+		sConvertedSkillName = "Heavy Armor"
+	ElseIf (sSkillName == "LightArmor")
+		sConvertedSkillName = "Light Armor"
+	ElseIf (sSkillName == "Marksman")
+		sConvertedSkillName = "Archery"
+	ElseIf (sSkillName == "OneHanded")
+		sConvertedSkillName = "One-Handed"
+	ElseIf (sSkillName == "Speechcraft")
+		sConvertedSkillName = "Speech"
+	ElseIf (sSkillName == "TwoHanded")
+		sConvertedSkillName = "Two-Handed"
+	EndIf
+	Return sConvertedSkillName
+EndFunction
