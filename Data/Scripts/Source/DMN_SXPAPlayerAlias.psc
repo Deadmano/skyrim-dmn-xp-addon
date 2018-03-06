@@ -24,6 +24,7 @@ Import Debug
 Import Utility
 
 GlobalVariable Property DMN_SXPAActiveMonitoring Auto
+GlobalVariable Property DMN_SXPAAutomaticXPSpending Auto
  
 DMN_SXPAConfig Property DMN_SXPAC Auto
 DMN_SXPAEventHandler Property DMN_SXPAEH Auto
@@ -43,6 +44,8 @@ EndFunction
 Event OnUpdate()
 ; The variable that holds the monitor state. 1 = on, 0 = off.
 	Bool bContinueMonitoring = DMN_SXPAActiveMonitoring.GetValue() As Int
+; The variable that holds the automatic XP spending state. 1 = on, 0 = off.
+	Bool bAutomaticXPSpending = DMN_SXPAAutomaticXPSpending.GetValue() As Int
 ; If monitoring has not been turned off we will register for another OnUpdate()
 ; cycle for 1 second. This will continue looping until the monitoring variable
 ; is switched to 0 (off) either by another script, or by player request.
@@ -52,6 +55,13 @@ Event OnUpdate()
 		If (checkPlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName))
 			updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage)
 		EndIf
+		RegisterForSingleUpdate(1.0)
+	EndIf
+; If automatic XP spending is still enabled after the first loop, we will
+; register for another OnUpdate() cycle for 1 second. Same as above loop.
+	If (bAutomaticXPSpending == 1)
+; Spend XP on tagged skills.
+		autoSpendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fTaggedSkillsPriority, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sTaggedSkills)
 		RegisterForSingleUpdate(1.0)
 	EndIf
 EndEvent

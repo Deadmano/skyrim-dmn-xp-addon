@@ -37,6 +37,8 @@ Bool[] Property bXPActivityState Auto
 {Affects whether or not the XP activity will be tracked and give XP or not.}
 Float[] Property fSkillModifier Auto
 {The list of skill modifiers that affect the XP cost per skill level.}
+Float[] Property fTaggedSkillsPriority Auto
+{The list of priorities for player-tagged skills for automatic XP spending.}
 Float[] Property fXPModifier Auto
 {The list of XP modifiers that affect the XP given per stat progression.}
 Int[] Property iModCompatibility Auto
@@ -55,9 +57,21 @@ String[] Property sStatName Auto
 {The list of all player stat names that we are tracking.}
 String[] Property sNotificationMessage Auto
 {The list of notification messages shown to the player when a stat is updated.}
+String[] Property sTaggedSkills Auto Conditional
+{The list of skills the player has tagged for automatic XP spending.}
 
+Bool Property bTaggedSkillSlot01Used Auto Conditional
+Bool Property bTaggedSkillSlot02Used Auto Conditional
+Bool Property bTaggedSkillSlot03Used Auto Conditional
+Bool Property bTaggedSkillSlot04Used Auto Conditional
 Int Property iPassiveMonitoring Auto Conditional
 Int Property iConfiguratorType Auto Conditional
+; The following 4 variables hold the skill name
+; index from 1 (Archery) to 18 (Speech).
+Int Property iTaggedSkillSlot01 Auto Conditional
+Int Property iTaggedSkillSlot02 Auto Conditional
+Int Property iTaggedSkillSlot03 Auto Conditional
+Int Property iTaggedSkillSlot04 Auto Conditional
 
 Function startTracking()
 ; Register to start tracking player game stat changes.

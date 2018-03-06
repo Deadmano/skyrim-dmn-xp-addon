@@ -23,6 +23,7 @@ Import Utility
 Import DMN_SXPAFunctions
 
 GlobalVariable Property DMN_SXPAActiveMonitoring Auto
+GlobalVariable Property DMN_SXPAAutomaticXPSpending Auto
 GlobalVariable Property DMN_SXPAExperienceMin Auto
 GlobalVariable Property DMN_SXPAExperienceMax Auto
 GlobalVariable Property DMN_SXPAExperiencePoints Auto
@@ -49,6 +50,16 @@ Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesMagic Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02 Auto
 Message Property DMN_SXPAConfigMenuXP Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpending Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkills Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices01 Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices02 Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices03 Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsPriority Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot01 Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot02 Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot03 Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot04 Auto
 Message Property DMN_SXPAConfigMenuXPMinMax Auto
 Message Property DMN_SXPAConfigMenuXPMinMaxRewardMax Auto
 Message Property DMN_SXPAConfigMenuXPMinMaxRewardMin Auto
@@ -90,6 +101,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 		Float fMultiplierNirnrootsFound
 		Float fMultiplierBooksRead
 		Float fMultChoice
+		Int iTagSkillChosen
+		Int iTagSkillPriority
 		Int iXPActivityIndex
 		Int minXP
 		Int maxXP
@@ -146,14 +159,17 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 		ElseIf (iMenu == 2)
 			iButton = DMN_SXPAConfigMenuXP.Show()
 			If (iButton == 0)
+			; [Configure Automatic XP Spending]
+				iMenu = 29
+			ElseIf (iButton == 1)
 			; [Configure Min/Max XP]
 				iMenu = 3
-			ElseIf (iButton == 1)
+			ElseIf (iButton == 2)
 			; [Configure Multipliers]
 				iMenu = 4
-			ElseIf (iButton == 2)
-				iMenu = 0
 			ElseIf (iButton == 3)
+				iMenu = 0
+			ElseIf (iButton == 4)
 			; [X]
 				bMenu = False
 			EndIf
@@ -4030,6 +4046,844 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 3)
 			; [X]
 				bMenu = False
+			EndIf
+	; Show the Configure Automatic XP Spending menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 29)
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpending.Show()
+			If (iButton == 0)
+			; [Enable Automatic XP Spending]
+				DMN_SXPAAutomaticXPSpending.SetValue(1)
+				If (DMN_SXPAAutomaticXPSpending.GetValue() As Int == 1)
+					Notification("Skyrim XP Addon: Enabled automatic XP spending.")
+				EndIf
+			ElseIf (iButton == 1)
+			; [Disable Automatic XP Spending]
+				DMN_SXPAAutomaticXPSpending.SetValue(0)
+				If (DMN_SXPAAutomaticXPSpending.GetValue() As Int == 0)
+					Notification("Skyrim XP Addon: Disabled automatic XP spending.")
+				EndIf
+			ElseIf (iButton == 2)
+			; [Tagged Skills]
+				iMenu = 30
+			ElseIf (iButton == 3)
+			; [Return to XP Settings]
+				iMenu = 2
+			ElseIf (iButton == 4)
+			; [X]
+				bMenu = False
+			EndIf
+	; Show the Configure Automatic XP Spending - Tagged Skills menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 30)
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkills.Show()
+			If (iButton == 0 || iButton == 1)
+			; [Slot 01 Empty/Used]
+				iMenu = 31
+			ElseIf (iButton == 2 || iButton == 3)
+			; [Slot 02 Empty/Used]
+				iMenu = 32
+			ElseIf (iButton == 4 || iButton == 5)
+			; [Slot 03 Empty/Used]
+				iMenu = 33
+			ElseIf (iButton == 6 || iButton == 7)
+			; [Slot 04 Empty/Used]
+				iMenu = 34
+			ElseIf (iButton == 8)
+			; [Return to Configure Automatic XP Spending]
+				iMenu = 29
+			ElseIf (iButton == 9)
+			; [X]
+				bMenu = False
+			EndIf
+	; Show the Configure Automatic XP Spending - Tagged Skills - Slot 01 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 31)
+			String s01 ; Tagged skill name.
+			String s02 = DMN_SXPAEH.sTaggedSkills[0] ; Current/Previous tagged skill name.
+			String s03 ; Tagged skill priority.
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot01.Show()
+			If (iButton == 0)
+			; [Check Skill]
+				MessageBox("Tagged skill: " + DMN_SXPAEH.sTaggedSkills[0] + ".")
+			ElseIf (iButton == 1)
+			Bool bPriorityMenu = True
+			While (bPriorityMenu)
+			; [Change Priority]
+				iTagSkillPriority = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsPriority.Show()
+				If (iTagSkillPriority == 0)
+				; [Check Priority]
+					If (DMN_SXPAEH.fTaggedSkillsPriority[0] == 0.60)
+						s03 = "High."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[0] == 0.30)
+						s03 = "Medium."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[0] == 0.10)
+						s03 = "Low."
+					EndIf
+					MessageBox("Tagged skill priority: " + s03)
+				ElseIf (iTagSkillPriority == 1)
+				; [High Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.60
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to High.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 2)
+				; [Medium Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.30
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Medium.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 3)
+				; [Low Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.10
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Low.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 4)
+				; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 01]
+					bPriorityMenu = False
+					iMenu = 31
+				ElseIf (iTagSkillPriority == 5)
+				; [X]
+					bPriorityMenu = False
+					bMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 2 || iButton == 3)
+			; [Add Skill/Change Skill]
+			Bool bSkills01 = True
+			Bool bSkills02 = False
+			Bool bSkills03 = False
+			Bool bSkillsMenu = True
+			While (bSkillsMenu)
+				If (bSkills01)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices01.Show()
+					If (iTagSkillChosen == 0)
+					; [Archery]
+						s01 = "Archery"
+					ElseIf (iTagSkillChosen == 1)
+					; [Block]
+						s01 = "Block"
+					ElseIf (iTagSkillChosen == 2)
+					; [Heavy Armor]
+						s01 = "Heavy Armor"
+					ElseIf (iTagSkillChosen == 3)
+					; [One-Handed]
+						s01 = "One-Handed"
+					ElseIf (iTagSkillChosen == 4)
+					; [Smithing]
+						s01 = "Smithing"
+					ElseIf (iTagSkillChosen == 5)
+					; [Two-Handed]
+						s01 = "Two-Handed"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills02 = True
+						bSkills01 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 01]
+						iMenu = 31
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.30
+					EndIf
+					bSkills01 = False
+				EndIf
+				If (bSkills02)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices02.Show()
+					If (iTagSkillChosen == 0)
+					; [Alteration]
+						s01 = "Alteration"
+					ElseIf (iTagSkillChosen == 1)
+					; [Conjuration]
+						s01 = "Conjuration"
+					ElseIf (iTagSkillChosen == 2)
+					; [Destruction]
+						s01 = "Destruction"
+					ElseIf (iTagSkillChosen == 3)
+					; [Enchanting]
+						s01 = "Enchanting"
+					ElseIf (iTagSkillChosen == 4)
+					; [Illusion]
+						s01 = "Illusion"
+					ElseIf (iTagSkillChosen == 5)
+					; [Restoration]
+						s01 = "Restoration"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills03 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Back]
+						bSkills01 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.30
+					EndIf
+					bSkills02 = False
+				EndIf
+				If (bSkills03)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices03.Show()
+					If (iTagSkillChosen == 0)
+					; [Alchemy]
+						s01 = "Alchemy"
+					ElseIf (iTagSkillChosen == 1)
+					; [Light Armor]
+						s01 = "Light Armor"
+					ElseIf (iTagSkillChosen == 2)
+					; [Lockpicking]
+						s01 = "Lockpicking"
+					ElseIf (iTagSkillChosen == 3)
+					; [Pickpocket]
+						s01 = "Pickpocket"
+					ElseIf (iTagSkillChosen == 4)
+					; [Sneak]
+						s01 = "Sneak"
+					ElseIf (iTagSkillChosen == 5)
+					; [Speech]
+						s01 = "Speech"
+					ElseIf (iTagSkillChosen == 6)
+					; [Back]
+						bSkills02 = True
+						bSkills03 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.30
+					EndIf
+					bSkills03 = False
+				EndIf
+				If (bSkills01 == False && bSkills02 == False && bSkills03 == False)
+				; No menus left open by the user, completely exit the skill choices menu.
+					bSkillsMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 4)
+			; [Remove Skill]
+				DMN_SXPAEH.sTaggedSkills[0] = ""
+				DMN_SXPAEH.iTaggedSkillSlot01 = 0
+				DMN_SXPAEH.bTaggedSkillSlot01Used = False
+				DMN_SXPAEH.fTaggedSkillsPriority[0] = 0.00
+				Notification("Skyrim XP Addon: Removed skill \"" + s02 + "\"" + " from tag slot 1.")
+			ElseIf (iButton == 5)
+			; [Return to Configure Automatic XP Spending - Tagged Skills]
+				iMenu = 30
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+		; Set the tagged skill to the chosen slot.
+			If (s01 && s01 != "")
+				DMN_SXPAEH.sTaggedSkills[0] = s01
+				DMN_SXPAEH.iTaggedSkillSlot01 = indexSkillName(s01)
+				DMN_SXPAEH.bTaggedSkillSlot01Used = True
+				If (iButton == 2)
+					Notification("Skyrim XP Addon: Added skill \"" + s01 + "\"" + " to tag slot 1.")
+				ElseIf (iButton == 3)
+					Notification("Skyrim XP Addon: Changed skill \"" + s02 + "\"" + " to \"" + s01 + "\"" + " in tag slot 1.")
+				EndIf
+				s01 = ""
+				s03 = ""
+			EndIf
+	; Show the Configure Automatic XP Spending - Tagged Skills - Slot 02 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 32)
+			String s01 ; Tagged skill name.
+			String s02 = DMN_SXPAEH.sTaggedSkills[1] ; Current/Previous tagged skill name.
+			String s03 ; Tagged skill priority.
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot02.Show()
+			If (iButton == 0)
+			; [Check Skill]
+				MessageBox("Tagged skill: " + DMN_SXPAEH.sTaggedSkills[1] + ".")
+			ElseIf (iButton == 1)
+			Bool bPriorityMenu = True
+			While (bPriorityMenu)
+			; [Change Priority]
+				iTagSkillPriority = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsPriority.Show()
+				If (iTagSkillPriority == 0)
+				; [Check Priority]
+					If (DMN_SXPAEH.fTaggedSkillsPriority[1] == 0.60)
+						s03 = "High."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[1] == 0.30)
+						s03 = "Medium."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[1] == 0.10)
+						s03 = "Low."
+					EndIf
+					MessageBox("Tagged skill priority: " + s03)
+				ElseIf (iTagSkillPriority == 1)
+				; [High Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.60
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to High.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 2)
+				; [Medium Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.30
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Medium.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 3)
+				; [Low Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.10
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Low.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 4)
+				; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 02]
+					bPriorityMenu = False
+					iMenu = 32
+				ElseIf (iTagSkillPriority == 5)
+				; [X]
+					bPriorityMenu = False
+					bMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 2 || iButton == 3)
+			; [Add Skill/Change Skill]
+			Bool bSkills01 = True
+			Bool bSkills02 = False
+			Bool bSkills03 = False
+			Bool bSkillsMenu = True
+			While (bSkillsMenu)
+				If (bSkills01)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices01.Show()
+					If (iTagSkillChosen == 0)
+					; [Archery]
+						s01 = "Archery"
+					ElseIf (iTagSkillChosen == 1)
+					; [Block]
+						s01 = "Block"
+					ElseIf (iTagSkillChosen == 2)
+					; [Heavy Armor]
+						s01 = "Heavy Armor"
+					ElseIf (iTagSkillChosen == 3)
+					; [One-Handed]
+						s01 = "One-Handed"
+					ElseIf (iTagSkillChosen == 4)
+					; [Smithing]
+						s01 = "Smithing"
+					ElseIf (iTagSkillChosen == 5)
+					; [Two-Handed]
+						s01 = "Two-Handed"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills02 = True
+						bSkills01 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 02]
+						iMenu = 32
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.30
+					EndIf
+					bSkills01 = False
+				EndIf
+				If (bSkills02)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices02.Show()
+					If (iTagSkillChosen == 0)
+					; [Alteration]
+						s01 = "Alteration"
+					ElseIf (iTagSkillChosen == 1)
+					; [Conjuration]
+						s01 = "Conjuration"
+					ElseIf (iTagSkillChosen == 2)
+					; [Destruction]
+						s01 = "Destruction"
+					ElseIf (iTagSkillChosen == 3)
+					; [Enchanting]
+						s01 = "Enchanting"
+					ElseIf (iTagSkillChosen == 4)
+					; [Illusion]
+						s01 = "Illusion"
+					ElseIf (iTagSkillChosen == 5)
+					; [Restoration]
+						s01 = "Restoration"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills03 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Back]
+						bSkills01 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.30
+					EndIf
+					bSkills02 = False
+				EndIf
+				If (bSkills03)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices03.Show()
+					If (iTagSkillChosen == 0)
+					; [Alchemy]
+						s01 = "Alchemy"
+					ElseIf (iTagSkillChosen == 1)
+					; [Light Armor]
+						s01 = "Light Armor"
+					ElseIf (iTagSkillChosen == 2)
+					; [Lockpicking]
+						s01 = "Lockpicking"
+					ElseIf (iTagSkillChosen == 3)
+					; [Pickpocket]
+						s01 = "Pickpocket"
+					ElseIf (iTagSkillChosen == 4)
+					; [Sneak]
+						s01 = "Sneak"
+					ElseIf (iTagSkillChosen == 5)
+					; [Speech]
+						s01 = "Speech"
+					ElseIf (iTagSkillChosen == 6)
+					; [Back]
+						bSkills02 = True
+						bSkills03 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.30
+					EndIf
+					bSkills03 = False
+				EndIf
+				If (bSkills01 == False && bSkills02 == False && bSkills03 == False)
+				; No menus left open by the user, completely exit the skill choices menu.
+					bSkillsMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 4)
+			; [Remove Skill]
+				DMN_SXPAEH.sTaggedSkills[1] = ""
+				DMN_SXPAEH.iTaggedSkillSlot02 = 0
+				DMN_SXPAEH.bTaggedSkillSlot02Used = False
+				DMN_SXPAEH.fTaggedSkillsPriority[1] = 0.00
+				Notification("Skyrim XP Addon: Removed skill \"" + s02 + "\"" + " from tag slot 2.")
+			ElseIf (iButton == 5)
+			; [Return to Configure Automatic XP Spending - Tagged Skills]
+				iMenu = 30
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+		; Set the tagged skill to the chosen slot.
+			If (s01 && s01 != "")
+				DMN_SXPAEH.sTaggedSkills[1] = s01
+				DMN_SXPAEH.iTaggedSkillSlot02 = indexSkillName(s01)
+				DMN_SXPAEH.bTaggedSkillSlot02Used = True
+				If (iButton == 2)
+					Notification("Skyrim XP Addon: Added skill \"" + s01 + "\"" + " to tag slot 2.")
+				ElseIf (iButton == 3)
+					Notification("Skyrim XP Addon: Changed skill \"" + s02 + "\"" + " to \"" + s01 + "\"" + " in tag slot 2.")
+				EndIf
+				s01 = ""
+			EndIf
+	; Show the Configure Automatic XP Spending - Tagged Skills - Slot 03 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 33)
+			String s01 ; Tagged skill name.
+			String s02 = DMN_SXPAEH.sTaggedSkills[2] ; Current/Previous tagged skill name.
+			String s03 ; Tagged skill priority.
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot03.Show()
+			If (iButton == 0)
+			; [Check Skill]
+				MessageBox("Tagged skill: " + DMN_SXPAEH.sTaggedSkills[2] + ".")
+			ElseIf (iButton == 1)
+			Bool bPriorityMenu = True
+			While (bPriorityMenu)
+			; [Change Priority]
+				iTagSkillPriority = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsPriority.Show()
+				If (iTagSkillPriority == 0)
+				; [Check Priority]
+					If (DMN_SXPAEH.fTaggedSkillsPriority[2] == 0.60)
+						s03 = "High."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[2] == 0.30)
+						s03 = "Medium."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[2] == 0.10)
+						s03 = "Low."
+					EndIf
+					MessageBox("Tagged skill priority: " + s03)
+				ElseIf (iTagSkillPriority == 1)
+				; [High Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.60
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to High.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 2)
+				; [Medium Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.30
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Medium.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 3)
+				; [Low Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.10
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Low.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 4)
+				; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 03]
+					bPriorityMenu = False
+					iMenu = 33
+				ElseIf (iTagSkillPriority == 5)
+				; [X]
+					bPriorityMenu = False
+					bMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 2 || iButton == 3)
+			; [Add Skill/Change Skill]
+			Bool bSkills01 = True
+			Bool bSkills02 = False
+			Bool bSkills03 = False
+			Bool bSkillsMenu = True
+			While (bSkillsMenu)
+				If (bSkills01)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices01.Show()
+					If (iTagSkillChosen == 0)
+					; [Archery]
+						s01 = "Archery"
+					ElseIf (iTagSkillChosen == 1)
+					; [Block]
+						s01 = "Block"
+					ElseIf (iTagSkillChosen == 2)
+					; [Heavy Armor]
+						s01 = "Heavy Armor"
+					ElseIf (iTagSkillChosen == 3)
+					; [One-Handed]
+						s01 = "One-Handed"
+					ElseIf (iTagSkillChosen == 4)
+					; [Smithing]
+						s01 = "Smithing"
+					ElseIf (iTagSkillChosen == 5)
+					; [Two-Handed]
+						s01 = "Two-Handed"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills02 = True
+						bSkills01 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 03]
+						iMenu = 33
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.30
+					EndIf
+					bSkills01 = False
+				EndIf
+				If (bSkills02)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices02.Show()
+					If (iTagSkillChosen == 0)
+					; [Alteration]
+						s01 = "Alteration"
+					ElseIf (iTagSkillChosen == 1)
+					; [Conjuration]
+						s01 = "Conjuration"
+					ElseIf (iTagSkillChosen == 2)
+					; [Destruction]
+						s01 = "Destruction"
+					ElseIf (iTagSkillChosen == 3)
+					; [Enchanting]
+						s01 = "Enchanting"
+					ElseIf (iTagSkillChosen == 4)
+					; [Illusion]
+						s01 = "Illusion"
+					ElseIf (iTagSkillChosen == 5)
+					; [Restoration]
+						s01 = "Restoration"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills03 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Back]
+						bSkills01 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.30
+					EndIf
+					bSkills02 = False
+				EndIf
+				If (bSkills03)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices03.Show()
+					If (iTagSkillChosen == 0)
+					; [Alchemy]
+						s01 = "Alchemy"
+					ElseIf (iTagSkillChosen == 1)
+					; [Light Armor]
+						s01 = "Light Armor"
+					ElseIf (iTagSkillChosen == 2)
+					; [Lockpicking]
+						s01 = "Lockpicking"
+					ElseIf (iTagSkillChosen == 3)
+					; [Pickpocket]
+						s01 = "Pickpocket"
+					ElseIf (iTagSkillChosen == 4)
+					; [Sneak]
+						s01 = "Sneak"
+					ElseIf (iTagSkillChosen == 5)
+					; [Speech]
+						s01 = "Speech"
+					ElseIf (iTagSkillChosen == 6)
+					; [Back]
+						bSkills02 = True
+						bSkills03 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.30
+					EndIf
+					bSkills03 = False
+				EndIf
+				If (bSkills01 == False && bSkills02 == False && bSkills03 == False)
+				; No menus left open by the user, completely exit the skill choices menu.
+					bSkillsMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 4)
+			; [Remove Skill]
+				DMN_SXPAEH.sTaggedSkills[2] = ""
+				DMN_SXPAEH.iTaggedSkillSlot03 = 0
+				DMN_SXPAEH.bTaggedSkillSlot03Used = False
+				DMN_SXPAEH.fTaggedSkillsPriority[2] = 0.00
+				Notification("Skyrim XP Addon: Removed skill \"" + s02 + "\"" + " from tag slot 3.")
+			ElseIf (iButton == 5)
+			; [Return to Configure Automatic XP Spending - Tagged Skills]
+				iMenu = 30
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+		; Set the tagged skill to the chosen slot.
+			If (s01 && s01 != "")
+				DMN_SXPAEH.sTaggedSkills[2] = s01
+				DMN_SXPAEH.iTaggedSkillSlot03 = indexSkillName(s01)
+				DMN_SXPAEH.bTaggedSkillSlot03Used = True
+				If (iButton == 2)
+					Notification("Skyrim XP Addon: Added skill \"" + s01 + "\"" + " to tag slot 3.")
+				ElseIf (iButton == 3)
+					Notification("Skyrim XP Addon: Changed skill \"" + s02 + "\"" + " to \"" + s01 + "\"" + " in tag slot 3.")
+				EndIf
+				s01 = ""
+			EndIf
+	; Show the Configure Automatic XP Spending - Tagged Skills - Slot 04 menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 34)
+			String s01 ; Tagged skill name.
+			String s02 = DMN_SXPAEH.sTaggedSkills[3] ; Current/Previous tagged skill name.
+			String s03 ; Tagged skill priority.
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsSlot04.Show()
+			If (iButton == 0)
+			; [Check Skill]
+				MessageBox("Tagged skill: " + DMN_SXPAEH.sTaggedSkills[3] + ".")
+			ElseIf (iButton == 1)
+			Bool bPriorityMenu = True
+			While (bPriorityMenu)
+			; [Change Priority]
+				iTagSkillPriority = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsPriority.Show()
+				If (iTagSkillPriority == 0)
+				; [Check Priority]
+					If (DMN_SXPAEH.fTaggedSkillsPriority[3] == 0.60)
+						s03 = "High."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[3] == 0.30)
+						s03 = "Medium."
+					ElseIf (DMN_SXPAEH.fTaggedSkillsPriority[3] == 0.10)
+						s03 = "Low."
+					EndIf
+					MessageBox("Tagged skill priority: " + s03)
+				ElseIf (iTagSkillPriority == 1)
+				; [High Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.60
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to High.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 2)
+				; [Medium Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.30
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Medium.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 3)
+				; [Low Priority]
+					DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.10
+					Notification("Skyrim XP Addon: Set \"" + s02 + "\"" + " automatic XP spend priority to Low.")
+					bPriorityMenu = False
+				ElseIf (iTagSkillPriority == 4)
+				; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 04]
+					bPriorityMenu = False
+					iMenu = 34
+				ElseIf (iTagSkillPriority == 5)
+				; [X]
+					bPriorityMenu = False
+					bMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 2 || iButton == 3)
+			; [Add Skill/Change Skill]
+			Bool bSkills01 = True
+			Bool bSkills02 = False
+			Bool bSkills03 = False
+			Bool bSkillsMenu = True
+			While (bSkillsMenu)
+				If (bSkills01)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices01.Show()
+					If (iTagSkillChosen == 0)
+					; [Archery]
+						s01 = "Archery"
+					ElseIf (iTagSkillChosen == 1)
+					; [Block]
+						s01 = "Block"
+					ElseIf (iTagSkillChosen == 2)
+					; [Heavy Armor]
+						s01 = "Heavy Armor"
+					ElseIf (iTagSkillChosen == 3)
+					; [One-Handed]
+						s01 = "One-Handed"
+					ElseIf (iTagSkillChosen == 4)
+					; [Smithing]
+						s01 = "Smithing"
+					ElseIf (iTagSkillChosen == 5)
+					; [Two-Handed]
+						s01 = "Two-Handed"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills02 = True
+						bSkills01 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Return to Configure Automatic XP Spending - Tagged Skills - Slot 04]
+						iMenu = 34
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.30
+					EndIf
+					bSkills01 = False
+				EndIf
+				If (bSkills02)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices02.Show()
+					If (iTagSkillChosen == 0)
+					; [Alteration]
+						s01 = "Alteration"
+					ElseIf (iTagSkillChosen == 1)
+					; [Conjuration]
+						s01 = "Conjuration"
+					ElseIf (iTagSkillChosen == 2)
+					; [Destruction]
+						s01 = "Destruction"
+					ElseIf (iTagSkillChosen == 3)
+					; [Enchanting]
+						s01 = "Enchanting"
+					ElseIf (iTagSkillChosen == 4)
+					; [Illusion]
+						s01 = "Illusion"
+					ElseIf (iTagSkillChosen == 5)
+					; [Restoration]
+						s01 = "Restoration"
+					ElseIf (iTagSkillChosen == 6)
+					; [>>]
+						bSkills03 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [Back]
+						bSkills01 = True
+						bSkills02 = False
+					ElseIf (iTagSkillChosen == 8)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.30
+					EndIf
+					bSkills02 = False
+				EndIf
+				If (bSkills03)
+					iTagSkillChosen = DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices03.Show()
+					If (iTagSkillChosen == 0)
+					; [Alchemy]
+						s01 = "Alchemy"
+					ElseIf (iTagSkillChosen == 1)
+					; [Light Armor]
+						s01 = "Light Armor"
+					ElseIf (iTagSkillChosen == 2)
+					; [Lockpicking]
+						s01 = "Lockpicking"
+					ElseIf (iTagSkillChosen == 3)
+					; [Pickpocket]
+						s01 = "Pickpocket"
+					ElseIf (iTagSkillChosen == 4)
+					; [Sneak]
+						s01 = "Sneak"
+					ElseIf (iTagSkillChosen == 5)
+					; [Speech]
+						s01 = "Speech"
+					ElseIf (iTagSkillChosen == 6)
+					; [Back]
+						bSkills02 = True
+						bSkills03 = False
+					ElseIf (iTagSkillChosen == 7)
+					; [X]
+						bSkillsMenu = False
+					EndIf
+				; If a skill was tagged, set its default priority to medium.
+					If (iButton == 2 && iTagSkillChosen >= 0 && iTagSkillChosen <= 5)
+						DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.30
+					EndIf
+					bSkills03 = False
+				EndIf
+				If (bSkills01 == False && bSkills02 == False && bSkills03 == False)
+				; No menus left open by the user, completely exit the skill choices menu.
+					bSkillsMenu = False
+				EndIf
+			EndWhile
+			ElseIf (iButton == 4)
+			; [Remove Skill]
+				DMN_SXPAEH.sTaggedSkills[3] = ""
+				DMN_SXPAEH.iTaggedSkillSlot04 = 0
+				DMN_SXPAEH.bTaggedSkillSlot04Used = False
+				DMN_SXPAEH.fTaggedSkillsPriority[3] = 0.00
+				Notification("Skyrim XP Addon: Removed skill \"" + s02 + "\"" + " from tag slot 4.")
+			ElseIf (iButton == 5)
+			; [Return to Configure Automatic XP Spending - Tagged Skills]
+				iMenu = 30
+			ElseIf (iButton == 6)
+			; [X]
+				bMenu = False
+			EndIf
+		; Set the tagged skill to the chosen slot.
+			If (s01 && s01 != "")
+				DMN_SXPAEH.sTaggedSkills[3] = s01
+				DMN_SXPAEH.iTaggedSkillSlot04 = indexSkillName(s01)
+				DMN_SXPAEH.bTaggedSkillSlot04Used = True
+				If (iButton == 2)
+					Notification("Skyrim XP Addon: Added skill \"" + s01 + "\"" + " to tag slot 4.")
+				ElseIf (iButton == 3)
+					Notification("Skyrim XP Addon: Changed skill \"" + s02 + "\"" + " to \"" + s01 + "\"" + " in tag slot 4.")
+				EndIf
+				s01 = ""
 			EndIf
 		EndIf
 	EndWhile
