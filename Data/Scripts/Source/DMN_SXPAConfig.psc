@@ -409,6 +409,7 @@ EndFunction
 Function configurationDefaults()
 ; Add (or update) the mod configurator spell to the player spells silently.
 	giveConfiguratorSpell(DMN_SXPAConfiguratorSpell)
+	DMN_SXPAEH.iConfiguratorType = 1
 	debugNotification(DMN_SXPADebug, "Skyrim XP Addon DEBUG: Gave the player the latest Skyrim XP Addon Configurator!")
 EndFunction
 
@@ -418,7 +419,28 @@ Function debugMode()
 	giveConfiguratorBook(DMN_SXPAConfiguratorBook)
 EndFunction
 
+Function restoreConfigurators()
+	Actor kRef = GetPlayer()
+; Spell Configurator.
+	If (DMN_SXPAEH.iConfiguratorType == 1)
+		If (!kRef.HasSpell(DMN_SXPAConfiguratorSpell))
+			kRef.AddSpell(DMN_SXPAConfiguratorSpell, False)
+			DMN_SXPALog(DMN_SXPADebug, "SXPA spell configurator not detected. Gave the player a new one.\n\n")
+		EndIf
+	EndIf
+; Book Configurator.
+	If (DMN_SXPAEH.iConfiguratorType == 0)
+		Int i = kRef.GetItemCount(DMN_SXPAConfiguratorBook)
+		If (i == 0)
+			kRef.AddItem(DMN_SXPAConfiguratorBook, 1, True)
+			DMN_SXPALog(DMN_SXPADebug, "SXPA book configurator not detected. Gave the player a new one.\n\n")
+		EndIf
+	EndIf
+EndFunction
+
 Function postMaintenance()
+; Detect a missing SXPA configurator, and if found, give the player a new one.
+	restoreConfigurators()
 ; Re-enable XP activity active tracking if active tracking was already enabled prior.
 	If (bActiveMonitoringEnabled)
 		bActiveMonitoringEnabled = None
