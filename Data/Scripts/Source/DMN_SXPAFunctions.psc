@@ -67,100 +67,133 @@ Function giveConfiguratorSpell(Spell akConfigurator, Bool bRemoveOnly = False) G
 	EndIf
 EndFunction
 
-Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount) Global
+Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount, Bool bAuto = False) Global
 	DMN_SXPALog(gDebug, "[Started spendXP Function]")
+	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+	Float fStop ; Log the time the function stopped running.
 	Actor kRef = GetPlayer()
+	Bool bLevelUpSkill = False
+	Float fEffectiveXP
+	Float fSkillCost
+	Float fSkillLevel = kRef.GetActorValue(convertSkillName(sSkill, True))
+	Float fSkillLevelOffsetPOW
+	Int iCount
 	Int iCurrentXP = gTotalXP.GetValue() as Int
-	Float fSkillLevel = kRef.GetActorValue(sSkill)
-; Map out skill names to match with the stored sSkillName array values so that the
-; iIndex variable will correctly find a match and provide an index to go on.
+	Int iEffectiveXP
+	Int iIndex
+	Int iLevelsGained
+	Int iNewXP
+	Int iSkillCost
 	Int iSkillImproveOffset
+; Set the improvement multiplier offsets to balance out XP conversion.
 	If (sSkill == "Alchemy")
 		iSkillImproveOffset = 65
 	ElseIf (sSkill == "Enchanting")
 		iSkillImproveOffset = 170
-	ElseIf (sSkill == "HeavyArmor")
-		sSkill = "Heavy Armor"
-	ElseIf (sSkill == "LightArmor")
-		sSkill = "Light Armor"
 	ElseIf (sSkill == "Lockpicking")
 		iSkillImproveOffset = 300
-	ElseIf (sSkill == "Marksman")
-		sSkill = "Archery"
-	ElseIf (sSkill == "OneHanded")
-		sSkill = "One-Handed"
 	ElseIf (sSkill == "Pickpocket")
 		iSkillImproveOffset = 250
 	ElseIf (sSkill == "Smithing")
 		iSkillImproveOffset = 300
 	ElseIf (sSkill == "Sneak")
 		iSkillImproveOffset = 120
-	ElseIf (sSkill == "Speechcraft")
-		sSkill = "Speech"
-	ElseIf (sSkill == "TwoHanded")
-		sSkill = "Two-Handed"
 	EndIf
-	Float fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
-	Int iIndex = sSkillName.Find(sSkill) as Int
-	Float fEffectiveXP = (iAmount * fSkillModifier[iIndex]) / 2
-	Int iEffectiveXP = round(fEffectiveXP)
+	iIndex = sSkillName.Find(sSkill) as Int
+	fEffectiveXP = (iAmount * fSkillModifier[iIndex]) / 2
+	iEffectiveXP = round(fEffectiveXP)
 	iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
 	iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
 	iSkillXPSpentEffective[iIndex] = iSkillXPSpentEffective[iIndex] + iEffectiveXP
-	Float fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
-	Int iSkillCost = round(fSkillCost)
-	Int iLevelsGained
-; Revert the earlier skill name changes so that specific skill names with spaces
-; correctly parse into the engine for levelling purposes.
-	If (sSkill == "Light Armor")
-		sSkill = "LightArmor"
-	ElseIf (sSkill == "Heavy Armor")
-		sSkill = "HeavyArmor"
-	ElseIf (sSkill == "Archery")
-		sSkill = "Marksman"
-	ElseIf (sSkill == "One-Handed")
-		sSkill = "OneHanded"
-	ElseIf (sSkill == "Speech")
-		sSkill = "Speechcraft"
-	ElseIf (sSkill == "Two-Handed")
-		sSkill = "TwoHanded"
+	fSkillLevelOffsetPOW = pow((fSkillLevel + 1), 1.95)
+	fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
+	iSkillCost = round(fSkillCost)
+; Ensure we only run the skill level-up if there is enough skill-specific XP.
+	If (iSkillXP[iIndex] >= iSkillCost)
+		bLevelUpSkill = True
+	Else
+		DMN_SXPALog(gDebug, "Not enough skill-specific XP to level up. Skipping skill level-up section.")
 	EndIf
 ; Assign skill levels so long as we have enough skill XP for each level.
-	While (iSkillXP[iIndex] >= iSkillCost)
-	iLevelsGained += 1
-	fSkillLevel = kRef.GetActorValue(sSkill) + iLevelsGained
-	DMN_SXPALog(gDebug, "Calculating XP Cost For Level: " + (fSkillLevel as Int) + ".")
-	fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
-	DMN_SXPALog(gDebug, "Power Of Value: " + fSkillLevelOffsetPOW + ".")
-	fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
-	DMN_SXPALog(gDebug, "Gross Skill Cost As Float: " + fSkillCost + ".")
-	iSkillCost = round(fSkillCost)
-	DMN_SXPALog(gDebug, "Rounded Skill Cost As Int: " + iSkillCost + ".")
-	iSkillXP[iIndex] = iSkillXP[iIndex] - iSkillCost
-	DMN_SXPALog(gDebug, "Skill XP Remaining: " + iSkillXP[iIndex] + ".\n\n")
+	While (bLevelUpSkill)
+		iCount += 1
+		fSkillLevel = kRef.GetActorValue(convertSkillName(sSkill, True)) + iCount
+		If (!bAuto)
+			DMN_SXPALog(gDebug, "Calculating XP Cost For Level: " + (fSkillLevel as Int) + ".")
+		EndIf
+		fSkillLevelOffsetPOW = pow(fSkillLevel, 1.95)
+		If (!bAuto)
+			DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
+			DMN_SXPALog(gDebug, "Power Of Value: " + fSkillLevelOffsetPOW + ".")
+		EndIf
+		fSkillCost = fSkillModifier[iIndex] * fSkillLevelOffsetPOW + iSkillImproveOffset
+		If (!bAuto)
+			DMN_SXPALog(gDebug, "Gross Skill Cost As Float: " + fSkillCost + ".")
+		EndIf
+		iSkillCost = round(fSkillCost)
+		If (!bAuto)
+			DMN_SXPALog(gDebug, "Rounded Skill Cost As Int: " + iSkillCost + ".")
+		EndIf
+		If (iSkillXP[iIndex] >= iSkillCost)
+			bLevelUpSkill = True
+			iSkillXP[iIndex] = iSkillXP[iIndex] - iSkillCost
+			iLevelsGained += 1
+		Else
+			If (!bAuto)
+				DMN_SXPALog(gDebug, "Ran out of skill-specific XP, exiting loop now.")
+			EndIf
+			bLevelUpSkill = False
+		EndIf
+		If (!bAuto)
+			DMN_SXPALog(gDebug, "Skill XP Remaining: " + iSkillXP[iIndex] + ".\n\n")
+		EndIf
 	EndWhile
-	IncrementSkillBy(sSkill, iLevelsGained)
+; Ensure we only level up a skill if at least 1 level was earned.
+	If (iLevelsGained > 0)
+		IncrementSkillBy(convertSkillName(sSkill, True), iLevelsGained)
+	EndIf
 	If (iLevelsGained == 1)
 		Notification("Skyrim XP Addon: " + sSkill + " reached enough experience points to level up! (" + (fSkillLevel - iLevelsGained) + " > " + (fSkillLevel) + ")")
 	ElseIf (iLevelsGained > 1)
 		Notification("Skyrim XP Addon: " + sSkill + " reached enough experience points to level up " + iLevelsGained + " times! (" + (fSkillLevel - iLevelsGained) + " > " + (fSkillLevel) + ")")
 	EndIf
-	Notification("Skyrim XP Addon: Converted " + iAmount + " generic XP to " + sSkill + " specific XP. (" + iEffectiveXP + "XP)")
-	DMN_SXPALog(gDebug, "Chosen Skill: " + sSkill + ".")
-	DMN_SXPALog(gDebug, "Skill Index: " + iIndex + ".")
-	DMN_SXPALog(gDebug, "Original Skill Level: " + ((fSkillLevel  - iLevelsGained) as Int) + ".")
-	DMN_SXPALog(gDebug, "New Skill Level: " + (fSkillLevel as Int) + ".")
-	DMN_SXPALog(gDebug, "Skill Levels gained: " + iLevelsGained + ".")
-	DMN_SXPALog(gDebug, "Original Generic XP: " + iCurrentXP + ".")
-	DMN_SXPALog(gDebug, "Generic XP Invested: " + iAmount + ".")
-	DMN_SXPALog(gDebug, "Skill Modifier: " + fSkillModifier[iIndex] + ".")
-	DMN_SXPALog(gDebug, "Converted To Skill-Specific XP: " + iEffectiveXP + ".")
-	Int iNewXP = iCurrentXP - iAmount
-	gTotalXP.SetValue(iNewXP)
-	DMN_SXPALog(gDebug, "New Generic XP: " + iNewXP + ".")
-	DMN_SXPALog(gDebug, "Skill XP Cost To Level " + ((fSkillLevel as Int) + 1) + ": " + fSkillCost + ".")
-	DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
-	DMN_SXPALog(gDebug, "Additional Skill XP Required: " + (fSkillCost - iSkillXP[iIndex]) + ".")
+	If (iAmount > 0)
+		Notification("Skyrim XP Addon: Converted " + iAmount + " generic XP to " + sSkill + " specific XP. (" + iEffectiveXP + "XP)")
+	EndIf
+		DMN_SXPALog(gDebug, "Chosen Skill: " + sSkill + ".")
+	If (!bAuto)
+		DMN_SXPALog(gDebug, "Skill Index: " + iIndex + ".")
+		DMN_SXPALog(gDebug, "Skill Modifier: " + fSkillModifier[iIndex] + ".")
+		DMN_SXPALog(gDebug, "Original Skill Level: " + ((fSkillLevel - iLevelsGained) as Int) + ".")
+		If (iLevelsGained > 0)
+			DMN_SXPALog(gDebug, "New Skill Level: " + (fSkillLevel as Int) + ".")
+			DMN_SXPALog(gDebug, "Skill Levels Gained: " + iLevelsGained + ".")
+		EndIf
+		If (iCurrentXP > 0)
+			DMN_SXPALog(gDebug, "Available Generic XP: " + iCurrentXP + ".")
+		EndIf
+		If (iAmount > 0)
+			DMN_SXPALog(gDebug, "Generic XP Invested: " + iAmount + ".")
+		EndIf
+		If (iEffectiveXP > 0)
+			DMN_SXPALog(gDebug, "Converted To Skill-Specific XP: " + iEffectiveXP + ".")
+		EndIf
+	EndIf
+	If (iAmount > 0)
+		iNewXP = iCurrentXP - iAmount
+		gTotalXP.SetValue(iNewXP)
+		If (!bAuto)
+			DMN_SXPALog(gDebug, "Remaining Generic XP: " + iNewXP + ".")
+		EndIf
+	EndIf
+	If (!bAuto)
+		DMN_SXPALog(gDebug, "Skill XP Cost To Level " + ((fSkillLevel as Int) + 1) + ": " + iSkillCost + " (" + fSkillCost + ")" + ".")
+		DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
+	EndIf
+	DMN_SXPALog(gDebug, "Additional Generic XP Required: " + ((iSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex] * 2 as Int) + " (" + ((fSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex] * 2) + ")" + ".")
+	DMN_SXPALog(gDebug, "Additional Skill XP Required: " + (iSkillCost - iSkillXP[iIndex]) + " (" + (fSkillCost - iSkillXP[iIndex]) + ")" + ".")
+	fStop = GetCurrentRealTime()
+	DMN_SXPALog(gDebug, "getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended spendXP Function]\n\n")
 EndFunction
 
@@ -379,16 +412,16 @@ Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSk
 		DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + iTaggedSkill03XP + "XP.")
 		DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + iTaggedSkill04XP + "XP.\n\n")
 		If (sTaggedSkill01 != "None")
-			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP)
+			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
 		EndIf
 		If (sTaggedSkill02 != "None")
-			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP)
+			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
 		EndIf
 		If (sTaggedSkill03 != "None")
-			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP)
+			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
 		EndIf
 		If (sTaggedSkill04 != "None")
-			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP)
+			spendXP(gDebug, gTotalXP, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
 		EndIf
 		Int iNewXP = gTotalXP.GetValue() as Int
 		DMN_SXPALog(gDebug, "Available Generic XP: " + iCurrentXP + ".")
@@ -1283,23 +1316,40 @@ String Function prettyPrintXP(Float fXP) Global
 	Return sPrettyXP
 EndFunction
 
-String Function convertSkillName(String sSkillName) Global
+String Function convertSkillName(String sSkillName, Bool bInternal = False) Global
 ; Certain skills have differing internal and in-game names or formatting, such as
 ; "Archery" being "Marksman" internally or "Heavy Armor" being "HeavyArmor" internally.
 ; This function aims to correct that for script usage elsewhere.
+; The bInternal parameter is used for internal calculations, reverse operation.
+;----
+;Internal to pretty print.
 	String sConvertedSkillName = sSkillName
-	If (sSkillName == "HeavyArmor")
+	If (sSkillName == "HeavyArmor" && !bInternal)
 		sConvertedSkillName = "Heavy Armor"
-	ElseIf (sSkillName == "LightArmor")
+	ElseIf (sSkillName == "LightArmor" && !bInternal)
 		sConvertedSkillName = "Light Armor"
-	ElseIf (sSkillName == "Marksman")
+	ElseIf (sSkillName == "Marksman" && !bInternal)
 		sConvertedSkillName = "Archery"
-	ElseIf (sSkillName == "OneHanded")
+	ElseIf (sSkillName == "OneHanded" && !bInternal)
 		sConvertedSkillName = "One-Handed"
-	ElseIf (sSkillName == "Speechcraft")
+	ElseIf (sSkillName == "Speechcraft" && !bInternal)
 		sConvertedSkillName = "Speech"
-	ElseIf (sSkillName == "TwoHanded")
+	ElseIf (sSkillName == "TwoHanded" && !bInternal)
 		sConvertedSkillName = "Two-Handed"
+	EndIf
+;Pretty print to internal.
+	If (sSkillName == "Heavy Armor" && bInternal)
+		sConvertedSkillName = "HeavyArmor"
+	ElseIf (sSkillName == "Light Armor" && bInternal)
+		sConvertedSkillName = "LightArmor"
+	ElseIf (sSkillName == "Archery" && bInternal)
+		sConvertedSkillName = "Marksman"
+	ElseIf (sSkillName == "One-Handed" && bInternal)
+		sConvertedSkillName = "OneHanded"
+	ElseIf (sSkillName == "Speech" && bInternal)
+		sConvertedSkillName = "Speechcraft"
+	ElseIf (sSkillName == "Two-Handed" && bInternal)
+		sConvertedSkillName = "TwoHanded"
 	EndIf
 	Return sConvertedSkillName
 EndFunction

@@ -2280,7 +2280,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			iButton = DMN_SXPAConfigMenuSpendXPCombat.Show(i)
 			If (iButton == 0)
 			; [Archery]
-				sSkill = "Marksman"
+				sSkill = "Archery"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
 				; [100 XP]
@@ -2350,7 +2350,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			ElseIf (iButton == 2)
 			; [Heavy Armor]
-				sSkill = "HeavyArmor"
+				sSkill = "Heavy Armor"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
 				; [100 XP]
@@ -2385,7 +2385,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			ElseIf (iButton == 3)
 			; [One-Handed]
-				sSkill = "OneHanded"
+				sSkill = "One-Handed"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
 				; [100 XP]
@@ -2455,7 +2455,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			ElseIf (iButton == 5)
 			; [Two-Handed]
-				sSkill = "TwoHanded"
+				sSkill = "Two-Handed"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
 				; [100 XP]
@@ -2781,7 +2781,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			ElseIf (iButton == 1)
 			; [Light Armor]
-				sSkill = "LightArmor"
+				sSkill = "Light Armor"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
 				; [100 XP]
@@ -2921,7 +2921,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				EndIf
 			ElseIf (iButton == 5)
 			; [Speech]
-				sSkill = "Speechcraft"
+				sSkill = "Speech"
 				iButton = DMN_SXPAConfigMenuSpendXPAmount.Show(i, i10, i25, i50, i75)
 				If (iButton == 0)
 				; [100 XP]
