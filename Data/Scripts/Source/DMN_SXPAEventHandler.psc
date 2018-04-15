@@ -33,6 +33,22 @@ GlobalVariable Property DMN_SXPAExperiencePoints Auto
 GlobalVariable Property DMN_SXPAExperienceMin Auto
 GlobalVariable Property DMN_SXPAExperienceMax Auto
 
+; The following 4 variables hold the used
+; (true)/unused (false) state of the skill slots.
+Bool Property bTaggedSkillSlot01Used Auto Conditional
+Bool Property bTaggedSkillSlot02Used Auto Conditional
+Bool Property bTaggedSkillSlot03Used Auto Conditional
+Bool Property bTaggedSkillSlot04Used Auto Conditional
+; The type of configurator being used. 1 = spell, 0 = book.
+Int Property iConfiguratorType Auto Conditional
+; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
+Int Property iPassiveMonitoring Auto Conditional
+; The following 4 variables hold the skill name
+; index from 1 (Archery) to 18 (Speech).
+Int Property iTaggedSkillSlot01 Auto Conditional
+Int Property iTaggedSkillSlot02 Auto Conditional
+Int Property iTaggedSkillSlot03 Auto Conditional
+Int Property iTaggedSkillSlot04 Auto Conditional
 Bool[] Property bXPActivityState Auto
 {Affects whether or not the XP activity will be tracked and give XP or not.}
 Float[] Property fSkillModifier Auto
@@ -59,19 +75,6 @@ String[] Property sNotificationMessage Auto
 {The list of notification messages shown to the player when a stat is updated.}
 String[] Property sTaggedSkills Auto Conditional
 {The list of skills the player has tagged for automatic XP spending.}
-
-Bool Property bTaggedSkillSlot01Used Auto Conditional
-Bool Property bTaggedSkillSlot02Used Auto Conditional
-Bool Property bTaggedSkillSlot03Used Auto Conditional
-Bool Property bTaggedSkillSlot04Used Auto Conditional
-Int Property iPassiveMonitoring Auto Conditional
-Int Property iConfiguratorType Auto Conditional
-; The following 4 variables hold the skill name
-; index from 1 (Archery) to 18 (Speech).
-Int Property iTaggedSkillSlot01 Auto Conditional
-Int Property iTaggedSkillSlot02 Auto Conditional
-Int Property iTaggedSkillSlot03 Auto Conditional
-Int Property iTaggedSkillSlot04 Auto Conditional
 
 Function startTracking()
 ; Register to start tracking player game stat changes.

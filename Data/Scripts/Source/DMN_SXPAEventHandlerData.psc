@@ -29,10 +29,28 @@ DMN_SXPAEventHandler Property DMN_SXPAEH Auto
 Quest Property DMN_SXPAEventHandlerHelper Auto
 {The Event Handler Helper quest. Auto-Fill.}
 
+; The following 4 variables hold the used
+; (true)/unused (false) state of the skill slots.
+Bool Property bTaggedSkillSlot01Used Auto Hidden
+Bool Property bTaggedSkillSlot02Used Auto Hidden
+Bool Property bTaggedSkillSlot03Used Auto Hidden
+Bool Property bTaggedSkillSlot04Used Auto Hidden
+; The type of configurator being used. 1 = spell, 0 = book.
+Int Property iConfiguratorType Auto Hidden
+; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
+Int Property iPassiveMonitoring Auto Hidden
+; The following 4 variables hold the skill name
+; index from 1 (Archery) to 18 (Speech).
+Int Property iTaggedSkillSlot01 Auto Hidden
+Int Property iTaggedSkillSlot02 Auto Hidden
+Int Property iTaggedSkillSlot03 Auto Hidden
+Int Property iTaggedSkillSlot04 Auto Hidden
 ; Affects whether or not the XP activity will be tracked and give XP or not.
 Bool[] Property bXPActivityState Auto Hidden
 ; The list of skill modifiers that affect the XP cost per skill level.
 Float[] Property fSkillModifier Auto Hidden
+; The list of priorities for player-tagged skills for automatic XP spending.
+Float[] Property fTaggedSkillsPriority Auto Hidden
 ; The list of XP modifiers that affect the XP given per stat progression.
 Float[] Property fXPModifier Auto Hidden
 ; The list of converted XP values for each stat.
@@ -45,10 +63,8 @@ Int[] Property iSkillXPSpent Auto Hidden
 Int[] Property iSkillXPSpentEffective Auto Hidden
 ; The list of all player stat values that we are tracking.
 Int[] Property iTrackedStatCount Auto Hidden
-; The type of configurator being used. 1 = spell, 0 = book.
-Int Property iConfiguratorType Auto Hidden
-; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
-Int Property iPassiveMonitoring Auto Hidden
+; The list of skills the player has tagged for automatic XP spending.
+String[] Property sTaggedSkills Auto Hidden
 
 Function updateEventHandlerData()
 ; This function first backs up relevant Event Handler user data, stops and
@@ -124,6 +140,16 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + fSkillModifier)
 			EndIf
+			fTaggedSkillsPriority = New Float[128]
+			fTaggedSkillsPriority = DMN_SXPAEH.fTaggedSkillsPriority
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fTaggedSkillsPriority array now...")
+			If (fTaggedSkillsPriority)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fTaggedSkillsPriority.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fTaggedSkillsPriority array: " + fTaggedSkillsPriority)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fTaggedSkillsPriority is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fTaggedSkillsPriority array: " + fTaggedSkillsPriority)
+			EndIf
 			fXPModifier = New Float[128]
 			fXPModifier = DMN_SXPAEH.fXPModifier
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fXPModifier array now...")
@@ -184,6 +210,16 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: iTrackedStatCount is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iTrackedStatCount array: " + iTrackedStatCount)
 			EndIf
+			sTaggedSkills = New String[128]
+			sTaggedSkills = DMN_SXPAEH.sTaggedSkills
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying sTaggedSkills array now...")
+			If (sTaggedSkills)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied sTaggedSkills.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "sTaggedSkills array: " + sTaggedSkills)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: sTaggedSkills is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "sTaggedSkills array: " + sTaggedSkills)
+			EndIf
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed array copy process.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying configurator type...")
 			iConfiguratorType = DMN_SXPAEH.iConfiguratorType
@@ -191,6 +227,18 @@ Function copyEventHandlerData()
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying passive monitoring state...")
 			iPassiveMonitoring = DMN_SXPAEH.iPassiveMonitoring
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied passive monitoring state.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying tagged skill slots...")
+			iTaggedSkillSlot01 = DMN_SXPAEH.iTaggedSkillSlot01
+			iTaggedSkillSlot02 = DMN_SXPAEH.iTaggedSkillSlot02
+			iTaggedSkillSlot03 = DMN_SXPAEH.iTaggedSkillSlot03
+			iTaggedSkillSlot04 = DMN_SXPAEH.iTaggedSkillSlot04
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied tagged skill slots.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying tagged skill slots used states...")
+			bTaggedSkillSlot01Used = DMN_SXPAEH.bTaggedSkillSlot01Used
+			bTaggedSkillSlot02Used = DMN_SXPAEH.bTaggedSkillSlot02Used
+			bTaggedSkillSlot03Used = DMN_SXPAEH.bTaggedSkillSlot03Used
+			bTaggedSkillSlot04Used = DMN_SXPAEH.bTaggedSkillSlot04Used
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied tagged skill slots used states.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed all tasks!")
 		EndIf
 	EndIf
@@ -257,6 +305,19 @@ Function restoreEventHandlerData()
 			Else
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillModifier is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + DMN_SXPAEH.fSkillModifier)
+			EndIf
+			iIndex = 0
+			While (iIndex < fTaggedSkillsPriority.Length)
+				DMN_SXPAEH.fTaggedSkillsPriority[iIndex] = fTaggedSkillsPriority[iIndex]
+				iIndex += 1
+			EndWhile
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fTaggedSkillsPriority array now...")
+			If (DMN_SXPAEH.fTaggedSkillsPriority)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fTaggedSkillsPriority.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fTaggedSkillsPriority array: " + DMN_SXPAEH.fTaggedSkillsPriority)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fTaggedSkillsPriority is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fTaggedSkillsPriority array: " + DMN_SXPAEH.fTaggedSkillsPriority)
 			EndIf
 			iIndex = 0
 			While (iIndex < fXPModifier.Length)
@@ -337,6 +398,19 @@ Function restoreEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "iTrackedStatCount array: " + DMN_SXPAEH.iTrackedStatCount)
 			EndIf
 			iIndex = 0
+			While (iIndex < sTaggedSkills.Length)
+				DMN_SXPAEH.sTaggedSkills[iIndex] = sTaggedSkills[iIndex]
+				iIndex += 1
+			EndWhile
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring sTaggedSkills array now...")
+			If (DMN_SXPAEH.sTaggedSkills)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored sTaggedSkills.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "sTaggedSkills array: " + DMN_SXPAEH.sTaggedSkills)
+			Else
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: sTaggedSkills is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "sTaggedSkills array: " + DMN_SXPAEH.sTaggedSkills)
+			EndIf
+			iIndex = 0
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "SUCCESS: Completed array restore process.")
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring configurator type...")
 			DMN_SXPAEH.iConfiguratorType = iConfiguratorType
@@ -344,6 +418,18 @@ Function restoreEventHandlerData()
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring passive monitoring state...")
 			DMN_SXPAEH.iPassiveMonitoring = iPassiveMonitoring
 			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored passive monitoring state.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring tagged skill slots...")
+			DMN_SXPAEH.iTaggedSkillSlot01 = iTaggedSkillSlot01
+			DMN_SXPAEH.iTaggedSkillSlot02 = iTaggedSkillSlot02
+			DMN_SXPAEH.iTaggedSkillSlot03 = iTaggedSkillSlot03
+			DMN_SXPAEH.iTaggedSkillSlot04 = iTaggedSkillSlot04
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored tagged skill slots.")
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring tagged skill slots used states...")
+			DMN_SXPAEH.bTaggedSkillSlot01Used = bTaggedSkillSlot01Used
+			DMN_SXPAEH.bTaggedSkillSlot02Used = bTaggedSkillSlot02Used
+			DMN_SXPAEH.bTaggedSkillSlot03Used = bTaggedSkillSlot03Used
+			DMN_SXPAEH.bTaggedSkillSlot04Used = bTaggedSkillSlot04Used
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored tagged skill slots used states.")
 			While (Self.IsRunning() && iInfiniteLoopBreak < 100)
 			; Wait at most 10 seconds for the quest to stop.
 				iInfiniteLoopBreak += 1
