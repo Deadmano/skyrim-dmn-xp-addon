@@ -472,6 +472,7 @@ EndFunction
 Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
+	Int iCurrentXP = gXP.GetValue() as Int
 	DMN_SXPALog(gDebug, "[Started setRandomXPValue Function]")
 	If (bIsUpdate || iUpdateCount > 1)
 		If (iUpdateCount > 500)
@@ -502,25 +503,49 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 				estimateScriptDuration(gDebug, fAverageFunctionRunDuration, iUpdateCount, "Estimated time to finish rewarding existing XP activities:")
 			EndIf
 		EndWhile
-		Int iNewXP = gXP.GetValue() as Int + iRandomXP
-		DMN_SXPALog(gDebug, "Previous XP: " + gXP.GetValue() as Int + ".")
-		gXP.SetValue(iNewXP)
-		DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXP + ".")
-		DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
-		If (bIsUpdate)
-			Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXP + "XP combined!")
+		Int iNewXP = iCurrentXP + iRandomXP
+	; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
+		If ((iCurrentXP + iRandomXP) >= 2147483647)
+			MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
+			DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+	; If no integer overflow is detected we can go ahead and add the random XP value.
+		ElseIf ((iCurrentXP + iRandomXP) < 2147483647)
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXP + ".")
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+			If (bIsUpdate)
+				Notification("Skyrim XP Addon: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXP + "XP combined!")
+			Else
+				Notification(sNotificationMessage[iIndex] + " (x" + iUpdateCount + ") +" + iRandomXP + "XP combined!")
+			EndIf
 		Else
-			Notification(sNotificationMessage[iIndex] + " (x" + iUpdateCount + ") +" + iRandomXP + "XP combined!")
+			DMN_SXPALog(gDebug, "WARNING: An unknown error occurred assigning XP!")
+			DMN_SXPALog(gDebug, "The New XP value would have been: " + iNewXP + ".")
+			DMN_SXPALog(gDebug, "The previous XP was: " + iCurrentXP + ".")
+			DMN_SXPALog(gDebug, "The random XP value was: " + iRandomXP + ".")
 		EndIf
 	Else
 		DMN_SXPALog(gDebug, "Assigning random XP for: " + sStatName[iIndex] + " now.")
 		Int iRandomXP = getRandomXPValue(gDebug, gMinXP, gMaxXP, fXPModifier, iIndex)
-		Int iNewXP = gXP.GetValue() as Int + iRandomXP
-		DMN_SXPALog(gDebug, "Previous XP: " + gXP.GetValue() as Int + ".")
-		gXP.SetValue(iNewXP)
-		DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXP + ".")
-		DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
-		Notification(sNotificationMessage[iIndex] + " +" + iRandomXP + "XP!")
+		Int iNewXP = iCurrentXP + iRandomXP
+	; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
+		If ((iCurrentXP + iRandomXP) >= 2147483647)
+			MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
+			DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+	; If no integer overflow is detected we can go ahead and add the random XP value.
+		ElseIf ((iCurrentXP + iRandomXP) < 2147483647)
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXP + ".")
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+			Notification(sNotificationMessage[iIndex] + " +" + iRandomXP + "XP!")
+		Else
+			DMN_SXPALog(gDebug, "WARNING: An unknown error occurred assigning XP!")
+			DMN_SXPALog(gDebug, "The New XP value would have been: " + iNewXP + ".")
+			DMN_SXPALog(gDebug, "The previous XP was: " + iCurrentXP + ".")
+			DMN_SXPALog(gDebug, "The random XP value was: " + iRandomXP + ".")
+		EndIf
 	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "setRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
@@ -531,6 +556,7 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started rewardExistingXPActivities Function]")
+	Bool bHitXPLimit
 ; Part 1: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity modifier.
 	Int iMinXP = gMinXP.GetValue() as Int
 	Int iMaxXP = gMaxXP.GetValue() as Int
@@ -819,16 +845,29 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 				DMN_SXPALog(gDebug, "Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
 				DMN_SXPALog(gDebug, "Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
 			; Part 8: Adding the total amount of XP earned for the XP activity to the total experience points.
-				Int iNewXP = gXP.GetValue() as Int + iRandomXPValue
-				DMN_SXPALog(gDebug, "Previous XP: " + gXP.GetValue() as Int + ".")
-				gXP.SetValue(iNewXP)
-				DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXPValue + ".")
-				DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
-				DMN_SXPALog(gDebug, "Completed update for: " + sStatName[iIndex] + ".\n\n")
-				If (iUpdateCount > 1)
-					debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
+				Int iNewXP = iCurrentXP + iRandomXPValue
+			; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
+				If ((iCurrentXP + iRandomXPValue) >= 2147483647)
+					bHitXPLimit = True
+					iRandomXPValue = 0
+					iUpdateCount = 0
+					DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+			; If no integer overflow is detected we can go ahead and add the random XP value.
+				ElseIf ((iCurrentXP + iRandomXPValue) < 2147483647)
+					DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+					gXP.SetValue(iNewXP)
+					DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXPValue + ".")
+					DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+					If (iUpdateCount > 1)
+						debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
+					Else
+						debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
+					EndIf
 				Else
-					debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
+					DMN_SXPALog(gDebug, "WARNING: An unknown error occurred assigning XP!")
+					DMN_SXPALog(gDebug, "The New XP value would have been: " + iNewXP + ".")
+					DMN_SXPALog(gDebug, "The previous XP was: " + iCurrentXP + ".")
+					DMN_SXPALog(gDebug, "The random XP value was: " + iRandomXPValue + ".")
 				EndIf
 				DMN_SXPALog(gDebug, "Completed update for: " + sStatName[iIndex] + ".\n\n")
 				iTotalXPAllocated += iRandomXPValue
@@ -852,6 +891,10 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 		Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity events.")
 	ElseIf (iTotalXPAllocated > 0 && iTotalUpdateCount > 0)
 		Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity event.")
+	EndIf
+; Show a message box to the player informing them that they have reached the generic XP limit.
+	If (bHitXPLimit)
+		MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
 	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "rewardExistingXPActivities() function took " + (fStop - fStart) + " seconds to complete.")
