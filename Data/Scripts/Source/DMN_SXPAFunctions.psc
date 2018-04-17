@@ -431,17 +431,22 @@ Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSk
 	DMN_SXPALog(gDebug, "[Ended autoSpendXP Function]\n\n")
 EndFunction
 
-Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPModifier, Int iIndex) Global
-	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
+Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPModifier, Int iIndex, Bool bSilent = False) Global
+	Float fStart ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog(gDebug, "[Started getRandomXPValue Function]")
+	If (!bSilent)
+		fStart = GetCurrentRealTime()
+		DMN_SXPALog(gDebug, "[Started getRandomXPValue Function]")
+	EndIf
 ; Part 1: Getting a random XP value between the min and max XP variables.
 	Int iMinXP = gMinXP.GetValue() as Int
 	Int iMaxXP = gMaxXP.GetValue() as Int
 	Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-	DMN_SXPALog(gDebug, "Min XP: " + iMinXP)
-	DMN_SXPALog(gDebug, "Max XP: " + iMaxXP)
-	DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+	If (!bSilent)
+		DMN_SXPALog(gDebug, "Min XP: " + iMinXP)
+		DMN_SXPALog(gDebug, "Max XP: " + iMaxXP)
+		DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+	EndIf
 ; Part 2: Getting the total random XP value based on the player level and formula below.
 	Int iPlayerLevel = GetPlayer().GetLevel()
 	Float fPlayerLevelOffset = iPlayerLevel - 1
@@ -450,15 +455,17 @@ Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, Glob
 	Int iRandomXPValue = round(fFinalRandomXPValue)
 	; String sPrettyXP = prettyPrintXP(fFinalRandomXPValue)
 	; Notification("Skyrim XP Addon: Pretty XP Display - " + sPrettyXP)
-	DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel)
-	DMN_SXPALog(gDebug, "Player Level Offset: " + fPlayerLevelOffset)
-	DMN_SXPALog(gDebug, "Power Of Value: " + fPlayerLevelOffsetSquared)
-	DMN_SXPALog(gDebug, "Final Random XP (Float): " + fFinalRandomXPValue)
-	; DMN_SXPALog(gDebug, "Pretty Print XP Value: " + sPrettyXP)
-	DMN_SXPALog(gDebug, "Final Random XP (Int): " + iRandomXPValue + "\n")
-	fStop = GetCurrentRealTime()
-	DMN_SXPALog(gDebug, "getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
-	DMN_SXPALog(gDebug, "[Ended getRandomXPValue Function]")
+	If (!bSilent)
+		DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel)
+		DMN_SXPALog(gDebug, "Player Level Offset: " + fPlayerLevelOffset)
+		DMN_SXPALog(gDebug, "Power Of Value: " + fPlayerLevelOffsetSquared)
+		DMN_SXPALog(gDebug, "Final Random XP (Float): " + fFinalRandomXPValue)
+		; DMN_SXPALog(gDebug, "Pretty Print XP Value: " + sPrettyXP)
+		DMN_SXPALog(gDebug, "Final Random XP (Int): " + iRandomXPValue + "\n")
+		fStop = GetCurrentRealTime()
+		DMN_SXPALog(gDebug, "getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
+		DMN_SXPALog(gDebug, "[Ended getRandomXPValue Function]")
+	EndIf
 	Return iRandomXPValue
 EndFunction
 
@@ -492,7 +499,7 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 			iFunctionRuns += 1
 			If (iFunctionRuns == 10)
 				Float fAverageFunctionRunDuration = fFunctionRunDuration / 10
-				estimateScriptDuration(gDebug, fAverageFunctionRunDuration, iUpdateCount)
+				estimateScriptDuration(gDebug, fAverageFunctionRunDuration, iUpdateCount, "Estimated time to finish rewarding existing XP activities:")
 			EndIf
 		EndWhile
 		Int iNewXP = gXP.GetValue() as Int + iRandomXP
@@ -537,12 +544,44 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 	DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel)
 	DMN_SXPALog(gDebug, "Player Level Offset: " + fPlayerLevelOffset)
 	DMN_SXPALog(gDebug, "Power Of Value: " + fPlayerLevelOffsetSquared + "\n\n")
-; Part 3: Looping through each XP activity and seeing if any of the values are greater than our stored values, if they are, update them.
-	DMN_SXPALog(gDebug, "An update was queued to assign XP values to existing stats!\n\n")
+; Part 3: Estimating how long the entire function should take to run, to inform the player.
 	Int iIndex = 0
-	Int iTotalXPAllocated
 	Int iTotalUpdateCount
+	Int iTotalXPAllocated
 	While (iIndex < sStatName.Length)
+		If (bXPActivityState[iIndex])
+			Int iStatValue = QueryStat(sStatName[iIndex])
+			Int iUpdateCount = iStatValue - iTrackedStatCount[iIndex]
+			iTotalUpdateCount += iUpdateCount
+			iUpdateCount = 0
+			iStatValue = 0
+		EndIf
+		iIndex += 1
+	EndWhile
+	iIndex = 0
+	Float fFunctionRunDuration = 0.00
+	Int iLoopsRun = 0
+	While (iLoopsRun < 101) ; Run 100 loops to get a time estimate.
+		Float fRunStart = GetCurrentRealTime()
+		fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
+		Float fRunStop = GetCurrentRealTime()
+		fFunctionRunDuration = fFunctionRunDuration + (fRunStop - fRunStart)
+		iLoopsRun += 1
+		If (iLoopsRun == 100) ; Once we have run 100 loops, pass the information on to our helper function.
+		; We divide by 6 at the end to simulate the way we give out XP for existing activities (bulk vs. 1 by 1).
+			Float fAverageFunctionRunDuration = fFunctionRunDuration / iLoopsRun / 6
+			If (iTotalUpdateCount < 1000)
+				estimateScriptDuration(gDebug, fAverageFunctionRunDuration, iTotalUpdateCount, "Estimated time to finish rewarding pre-existing XP activity actions:")
+			Else
+				estimateScriptDuration(gDebug, fAverageFunctionRunDuration, iTotalUpdateCount, "There are currently " + iTotalUpdateCount + " pre-existing XP activity actions that need to be rewarded. This may take a while and it is advised that you do not quit or reload a save until the process is complete.\n\nEstimated time to completion:\n", True)
+			EndIf
+		EndIf
+	EndWhile
+	iTotalUpdateCount = 0
+; Part 4: Looping through each XP activity and seeing if any of the values are greater than our stored values, if they are, update them.
+	DMN_SXPALog(gDebug, "An update was queued to assign XP values to existing stats!\n\n")
+	While (iIndex < sStatName.Length)
+		Int iCurrentXP = gXP.GetValue() as Int
 		Float fRandomXPValueFull
 		Float fRandomXPValueHalf
 		Float fRandomXPValueThird
@@ -562,14 +601,14 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			If (iStatValue > iTrackedStatCount[iIndex])
 				iTrackedStatCount[iIndex] = iStatValue
 				DMN_SXPALog(gDebug, "Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
-			; Part 4: Estimating the amount of times the XP activity was performed at previous levels.
+			; Part 5: Estimating the amount of times the XP activity was performed at previous levels.
 				Float fActivityCount1Percent = iUpdateCount * 0.01 ; Example Input: 250 = 250 * 0.01 = 2.5. 1%.
 				Float fActivityCount4Percent = iUpdateCount * 0.04 ; Example Input: 250 = 250 * 0.04 = 10. 4%.
 				Float fActivityCount5Percent = iUpdateCount * 0.05 ; Example Input: 250 = 250 * 0.05 = 12.5. 5%.
 				Float fActivityCount10Percent = iUpdateCount * 0.10 ; Example Input: 250 = 250 * 0.10 = 25. 10%.
 				Float fActivityCount15Percent = iUpdateCount * 0.15 ; Example Input: 250 = 250 * 0.15 = 37.5. 15%.
 				Float fActivityCount65Percent = iUpdateCount * 0.65 ; Example Input: 250 = 250 * 0.65 = 162.5. 65%.
-			; Part 5: Calculating the amount of XP earned for the XP activity at the level thresholds.
+			; Part 6: Calculating the amount of XP earned for the XP activity at the level thresholds.
 				Int iActivityCount1Percent = Floor(fActivityCount1Percent)
 				Int iActivityCount4Percent = Floor(fActivityCount4Percent)
 				Int iActivityCount5Percent = Floor(fActivityCount5Percent)
@@ -774,12 +813,12 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 				DMN_SXPALog(gDebug, "Total amount of XP gained for " + sStatName[iIndex] + " at level " +  iPlayerLevel / 6 + ": " + fRandomXPValueSixth + ".\n\n")
 				fRandomXPValueSixthTotal += fRandomXPValueSixth
 				fRandomXPValueSixth = 0
-			; Part 6: Calculating the total amount of XP earned for the XP activity.
+			; Part 7: Calculating the total amount of XP earned for the XP activity.
 				Float fFinalRandomXPValue = fRandomXPValueFullTotal + fRandomXPValueHalfTotal + fRandomXPValueThirdTotal + fRandomXPValueFourthTotal + fRandomXPValueFifthTotal + fRandomXPValueSixthTotal
 				Int iRandomXPValue = round(fFinalRandomXPValue)
 				DMN_SXPALog(gDebug, "Total amount of " + sStatName[iIndex] + ":" + " " + iUpdateCount + ".")
 				DMN_SXPALog(gDebug, "Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
-			; Part 7: Adding the total amount of XP earned for the XP activity to the total experience points.
+			; Part 8: Adding the total amount of XP earned for the XP activity to the total experience points.
 				Int iNewXP = gXP.GetValue() as Int + iRandomXPValue
 				DMN_SXPALog(gDebug, "Previous XP: " + gXP.GetValue() as Int + ".")
 				gXP.SetValue(iNewXP)
@@ -791,6 +830,7 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 				Else
 					debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP!")
 				EndIf
+				DMN_SXPALog(gDebug, "Completed update for: " + sStatName[iIndex] + ".\n\n")
 				iTotalXPAllocated += iRandomXPValue
 				iTotalUpdateCount += iUpdateCount
 				fRandomXPValueFullTotal = 0
@@ -801,6 +841,8 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 				fRandomXPValueSixthTotal = 0
 				fFinalRandomXPValue = 0
 				iRandomXPValue = 0
+				iUpdateCount = 0
+				iStatValue = 0
 			EndIf
 		EndIf
 		iIndex += 1
@@ -888,7 +930,7 @@ Function updatePlayerStatsCount(GlobalVariable gDebug, Bool[] bXPActivityState, 
 	DMN_SXPALog(gDebug, "[Ended updatePlayerStatsCount Function]\n\n")
 EndFunction
 
-Function estimateScriptDuration(GlobalVariable gDebug, Float fAverageFunctionRunDuration, Int iUpdateCount) Global
+Function estimateScriptDuration(GlobalVariable gDebug, Float fAverageFunctionRunDuration, Int iUpdateCount, String sNotificationMessage, Bool bUseMessageBox = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started estimateScriptDuration Function]")
@@ -904,12 +946,30 @@ Function estimateScriptDuration(GlobalVariable gDebug, Float fAverageFunctionRun
 	DMN_SXPALog(gDebug, "Minutes: " + iFunctionDurationMinutes)
 	Int iFunctionDurationSeconds = round(fFunctionDuration - iFunctionDurationMinutes * 60)
 	DMN_SXPALog(gDebug, "Seconds: " + iFunctionDurationSeconds)
-	If (iFunctionDurationMinutes > 1)
-		Notification("Skyrim XP Addon: Estimated time to completion: " + iFunctionDurationMinutes + " minutes and " + iFunctionDurationSeconds + " seconds.")
+	If (iFunctionDurationMinutes > 2)
+		If (!bUseMessageBox)
+			Notification("Skyrim XP Addon: " + sNotificationMessage + " " + iFunctionDurationMinutes + " minutes and " + iFunctionDurationSeconds + " seconds.")
+		Else
+			MessageBox("Skyrim XP Addon:\n\n" + sNotificationMessage + " " + iFunctionDurationMinutes + " minutes and " + iFunctionDurationSeconds + " seconds.")
+		EndIf
+	ElseIf (iFunctionDurationMinutes > 1)
+		If (!bUseMessageBox)
+			Notification("Skyrim XP Addon: " + sNotificationMessage + " " + iFunctionDurationMinutes + " minutes and " + iFunctionDurationSeconds + " seconds.")
+		Else
+			MessageBox("Skyrim XP Addon:\n\n" + sNotificationMessage + " " + iFunctionDurationMinutes + " minutes and " + iFunctionDurationSeconds + " seconds.")
+		EndIf
 	ElseIf (iFunctionDurationMinutes == 1)
-		Notification("Skyrim XP Addon: Estimated time to completion: " + iFunctionDurationMinutes + " minute and " + iFunctionDurationSeconds + " seconds.")
+		If (!bUseMessageBox)
+			Notification("Skyrim XP Addon: " + sNotificationMessage + " " + iFunctionDurationMinutes + " minute and " + iFunctionDurationSeconds + " seconds.")
+		Else
+			MessageBox("Skyrim XP Addon:\n\n" + sNotificationMessage + " " + iFunctionDurationMinutes + " minute and " + iFunctionDurationSeconds + " seconds.")
+		EndIf
 	ElseIf (iFunctionDurationMinutes < 1)
-		Notification("Skyrim XP Addon: Estimated time to completion: " + iFunctionDurationSeconds + " seconds.")
+		If (!bUseMessageBox)
+			Notification("Skyrim XP Addon: " + sNotificationMessage + " " + iFunctionDurationSeconds + " seconds.")
+		Else
+			MessageBox("Skyrim XP Addon:\n\n" + sNotificationMessage + " " + iFunctionDurationSeconds + " seconds.")
+		EndIf
 	EndIf
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "estimateScriptDuration() function took " + (fStop - fStart) + " seconds to complete.")
