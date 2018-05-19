@@ -450,7 +450,7 @@ Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, Glob
 ; Part 2: Getting the total random XP value based on the player level and formula below.
 	Int iPlayerLevel = GetPlayer().GetLevel()
 	Float fPlayerLevelOffset = iPlayerLevel - 1
-	Float fPlayerLevelOffsetSquared = pow(fPlayerLevelOffset, 2.0)
+	Float fPlayerLevelOffsetSquared = pow(fPlayerLevelOffset, 1.95)
 	Float fFinalRandomXPValue = (fPlayerLevelOffsetSquared + 25.00) / 100 * fRandomXPValue
 	Int iRandomXPValue = round(fFinalRandomXPValue)
 	; String sPrettyXP = prettyPrintXP(fFinalRandomXPValue)
@@ -566,7 +566,7 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 ; Part 2: Getting the player level, calculating the offset and then squaring it.
 	Int iPlayerLevel = GetPlayer().GetLevel()
 	Float fPlayerLevelOffset = iPlayerLevel - 1
-	Float fPlayerLevelOffsetSquared = pow(fPlayerLevelOffset, 2.0)
+	Float fPlayerLevelOffsetSquared = pow(fPlayerLevelOffset, 1.95)
 	DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel)
 	DMN_SXPALog(gDebug, "Player Level Offset: " + fPlayerLevelOffset)
 	DMN_SXPALog(gDebug, "Power Of Value: " + fPlayerLevelOffsetSquared + "\n\n")
