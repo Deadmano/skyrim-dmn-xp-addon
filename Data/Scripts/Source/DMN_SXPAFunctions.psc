@@ -100,7 +100,7 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Float[] fSkillM
 		iSkillImproveOffset = 120
 	EndIf
 	iIndex = sSkillName.Find(sSkill) as Int
-	fEffectiveXP = (iAmount * fSkillModifier[iIndex]) / 2
+	fEffectiveXP = (iAmount * fSkillModifier[iIndex])
 	iEffectiveXP = round(fEffectiveXP)
 	iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
 	iSkillXPSpent[iIndex] = iSkillXPSpent[iIndex] + iAmount
