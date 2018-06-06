@@ -39,6 +39,8 @@ Bool Property bTaggedSkillSlot01Used Auto Conditional
 Bool Property bTaggedSkillSlot02Used Auto Conditional
 Bool Property bTaggedSkillSlot03Used Auto Conditional
 Bool Property bTaggedSkillSlot04Used Auto Conditional
+; The skill cost formula being used. 1 = exponential, 0 = linear.
+Bool Property bUseExponentialSkillCost Auto Conditional
 ; The type of configurator being used. 1 = spell, 0 = book.
 Int Property iConfiguratorType Auto Conditional
 ; When on, monitoring becomes passive (event based). 1 = on, 0 = off.

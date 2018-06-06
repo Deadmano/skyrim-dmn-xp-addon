@@ -76,6 +76,8 @@ Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesMagic Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02 Auto
 Message Property DMN_SXPAConfigMenuXPMultiplierValues Auto
+Message Property DMN_SXPAConfigMenuXPSystemType Auto
+Message Property DMN_SXPAConfigMenuXPSystemTypeConfigure Auto
 Message Property DMN_SXPAConfigMenuSpendXP Auto
 Message Property DMN_SXPAConfigMenuSpendXPCombat Auto
 Message Property DMN_SXPAConfigMenuSpendXPMagic Auto
@@ -162,14 +164,17 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Configure Automatic XP Spending]
 				iMenu = 29
 			ElseIf (iButton == 1)
+			; [Configure XP System Type]
+				iMenu = 35
+			ElseIf (iButton == 2)
 			; [Configure Min/Max XP]
 				iMenu = 3
-			ElseIf (iButton == 2)
+			ElseIf (iButton == 3)
 			; [Configure Multipliers]
 				iMenu = 4
-			ElseIf (iButton == 3)
-				iMenu = 0
 			ElseIf (iButton == 4)
+				iMenu = 0
+			ElseIf (iButton == 5)
 			; [X]
 				bMenu = False
 			EndIf
@@ -2496,7 +2501,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -2729,7 +2734,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -2962,7 +2967,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -4884,6 +4889,59 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					Notification("Skyrim XP Addon: Changed skill \"" + s02 + "\"" + " to \"" + s01 + "\"" + " in tag slot 4.")
 				EndIf
 				s01 = ""
+			EndIf
+	; Show the Configure XP System Type menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 35)
+			iButton = DMN_SXPAConfigMenuXPSystemType.Show()
+			If (iButton == 0)
+			; [Switch To Exponential XP System]
+				DMN_SXPAEH.bUseExponentialSkillCost = True
+				If (DMN_SXPAEH.bUseExponentialSkillCost)
+					Notification("Skyrim XP Addon: Switched XP system type to exponential.")
+				EndIf
+			ElseIf (iButton == 1)
+			; [Switch To Linear XP System]
+				DMN_SXPAEH.bUseExponentialSkillCost = False
+				If (!DMN_SXPAEH.bUseExponentialSkillCost)
+					Notification("Skyrim XP Addon: Switched XP system type to linear.")
+				EndIf
+			ElseIf (iButton == 2)
+			; [Configure Individual XP Systems]
+				iMenu = 36
+			ElseIf (iButton == 3)
+			; [Return to XP Settings]
+				iMenu = 2
+			ElseIf (iButton == 4)
+			; [X]
+				bMenu = False
+			EndIf
+	; Show the Configure XP System Type - Individually Configure menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 36)
+			iButton = DMN_SXPAConfigMenuXPSystemTypeConfigure.Show()
+			If (iButton == 0)
+			; [Switch To Exponential Skill Cost]
+				DMN_SXPAEH.bUseExponentialSkillCost = True
+				If (DMN_SXPAEH.bUseExponentialSkillCost)
+					Notification("Skyrim XP Addon: Changed skill cost to exponential.")
+				EndIf
+			ElseIf (iButton == 1)
+			; [Switch To Linear Skill Cost]
+				DMN_SXPAEH.bUseExponentialSkillCost = False
+				If (!DMN_SXPAEH.bUseExponentialSkillCost)
+					Notification("Skyrim XP Addon: Changed skill cost to linear.")
+				EndIf
+			ElseIf (iButton == 2)
+			; [Reserved]
+			ElseIf (iButton == 3)
+			; [Reserved]
+			ElseIf (iButton == 4)
+			; [Return to Configure XP System Type]
+				iMenu = 35
+			ElseIf (iButton == 5)
+			; [X]
+				bMenu = False
 			EndIf
 		EndIf
 	EndWhile

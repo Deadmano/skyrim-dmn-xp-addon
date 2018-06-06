@@ -61,7 +61,7 @@ Event OnUpdate()
 ; register for another OnUpdate() cycle for 1 second. Same as above loop.
 	If (bAutomaticXPSpending == 1)
 ; Spend XP on tagged skills.
-		autoSpendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fTaggedSkillsPriority, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sTaggedSkills)
+		autoSpendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fTaggedSkillsPriority, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sTaggedSkills)
 		RegisterForSingleUpdate(1.0)
 	EndIf
 EndEvent
