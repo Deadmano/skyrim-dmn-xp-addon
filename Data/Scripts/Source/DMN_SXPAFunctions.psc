@@ -128,12 +128,12 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		fAverageXPValue = ((iMinXP + iMaxXP) / 2)
 		fBaseXPValue = ((pow(iPlayerLevel as Float, 1.95)) + 25.00) / 100 * fAverageXPValue
 		iBaseXPValue = round(fBaseXPValue)
-		fSkillCost = (pow(fSkillLevel, 1.30)) / ((pow(iPlayerLevel, 1.04)) + 6.50) / fSkillModifier[iIndex] * iBaseXPValue
+		fSkillCost = (pow(fSkillLevel, 1.30)) / ((pow(iPlayerLevel, 1.04)) + 6.50) * iBaseXPValue
 		iSkillCost = round(fSkillCost)
 	Else
 	; Linear formula.
 		fSkillLevelPOW = pow((fSkillLevel), 1.95)
-		fSkillCost = fSkillModifier[iIndex] * fSkillLevelPOW + iSkillImproveOffset
+		fSkillCost = fSkillLevelPOW + iSkillImproveOffset
 		iSkillCost = round(fSkillCost)
 	EndIf
 ; Ensure we only run the skill level-up if there is enough skill-specific XP.
@@ -166,10 +166,10 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		EndIf
 		If (bUseExponentialSkillCost)
 		; Calculate the cost to level up the skill using the exponential formula.
-			fSkillCost = (fSkillLevelPOW) / (fPlayerLevelPOW) / fSkillModifier[iIndex] * iBaseXPValue
+			fSkillCost = (fSkillLevelPOW) / (fPlayerLevelPOW) * iBaseXPValue
 		Else
 		; Calculate the cost to level up the skill using the linear formula.
-			fSkillCost = fSkillModifier[iIndex] * fSkillLevelPOW + iSkillImproveOffset
+			fSkillCost = fSkillLevelPOW + iSkillImproveOffset
 		EndIf
 		If (!bAuto)
 			DMN_SXPALog(gDebug, "Gross Skill Cost As Float: " + fSkillCost + ".")
@@ -249,7 +249,7 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		DMN_SXPALog(gDebug, "Skill XP Cost To Level " + ((fSkillLevel as Int) + 1) + ": " + iSkillCost + " (" + fSkillCost + ")" + ".")
 		DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
 	EndIf
-	DMN_SXPALog(gDebug, "Additional Generic XP Required: " + ((iSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex] * 2 as Int) + " (" + ((fSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex] * 2) + ")" + ".")
+	DMN_SXPALog(gDebug, "Additional Generic XP Required: " + ((iSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex]) as Int + " (" + ((fSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex]) + ")" + ".")
 	DMN_SXPALog(gDebug, "Additional Skill XP Required: " + (iSkillCost - iSkillXP[iIndex]) + " (" + (fSkillCost - iSkillXP[iIndex]) + ")" + ".")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
