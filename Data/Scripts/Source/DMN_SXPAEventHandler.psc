@@ -41,6 +41,8 @@ Bool Property bTaggedSkillSlot03Used Auto Conditional
 Bool Property bTaggedSkillSlot04Used Auto Conditional
 ; The skill cost formula being used. 1 = exponential, 0 = linear.
 Bool Property bUseExponentialSkillCost Auto Conditional
+; The XP gain formula being used. 1 = exponential, 0 = linear.
+Bool Property bUseExponentialXPGain Auto Conditional
 ; The type of configurator being used. 1 = spell, 0 = book.
 Int Property iConfiguratorType Auto Conditional
 ; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
@@ -53,12 +55,12 @@ Int Property iTaggedSkillSlot03 Auto Conditional
 Int Property iTaggedSkillSlot04 Auto Conditional
 Bool[] Property bXPActivityState Auto
 {Affects whether or not the XP activity will be tracked and give XP or not.}
-Float[] Property fSkillModifier Auto
-{The list of skill modifiers that affect the XP cost per skill level.}
+Float[] Property fSkillMultiplier Auto
+{The list of skill multipliers that affect the XP cost per skill level.}
 Float[] Property fTaggedSkillsPriority Auto
 {The list of priorities for player-tagged skills for automatic XP spending.}
-Float[] Property fXPModifier Auto
-{The list of XP modifiers that affect the XP given per stat progression.}
+Float[] Property fXPMultiplier Auto
+{The list of XP multipliers that affect the XP given per stat progression.}
 Int[] Property iModCompatibility Auto
 {The list that handles the state of mod compatability and support.}
 Int[] Property iSkillXP Auto
@@ -96,7 +98,7 @@ Event OnTrackedStatsEvent(String sStatName, Int iStatValue)
 		If (sStatName == sStatName[iIndex] && iStatValue > iTrackedStatCount[iIndex])
 			iTrackedStatCount[iIndex] = iStatValue
 			If (checkPlayerStats(DMN_SXPADebug, bXPActivityState, iTrackedStatCount, sStatName))
-				updatePlayerStats(DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, bXPActivityState, fXPModifier, iTrackedStatCount, sStatName, sNotificationMessage)
+				updatePlayerStats(DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, sNotificationMessage)
 			EndIf
 		EndIf
 		iIndex += 1

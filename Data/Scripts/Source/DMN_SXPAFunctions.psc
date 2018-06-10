@@ -67,7 +67,7 @@ Function giveConfiguratorSpell(Spell akConfigurator, Bool bRemoveOnly = False) G
 	EndIf
 EndFunction
 
-Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount, Bool bAuto = False) Global
+Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount, Bool bAuto = False) Global
 	DMN_SXPALog(gDebug, "[Started spendXP Function]")
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
@@ -112,7 +112,7 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 ; Get the player's current level.
 	iPlayerLevel = GetPlayer().GetLevel()
 ; How much actual skill XP will be converted from the generic XP invested.
-	fEffectiveXP = (iAmount * fSkillModifier[iIndex])
+	fEffectiveXP = (iAmount * fSkillMultiplier[iIndex])
 	iEffectiveXP = round(fEffectiveXP)
 ; Adding the actual converted skill XP to the array.
 	iSkillXP[iIndex] = iSkillXP[iIndex] + iEffectiveXP
@@ -210,7 +210,7 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		DMN_SXPALog(gDebug, "Chosen Skill: " + sSkill + ".")
 	If (!bAuto)
 		DMN_SXPALog(gDebug, "Skill Index: " + iIndex + ".")
-		DMN_SXPALog(gDebug, "Skill Modifier: " + fSkillModifier[iIndex] + ".")
+		DMN_SXPALog(gDebug, "Skill Multiplier: " + fSkillMultiplier[iIndex] + ".")
 		DMN_SXPALog(gDebug, "Original Skill Level: " + ((fSkillLevel - iLevelsGained) as Int) + ".")
 		If (iLevelsGained > 0)
 			DMN_SXPALog(gDebug, "New Skill Level: " + (fSkillLevel as Int) + ".")
@@ -249,14 +249,14 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		DMN_SXPALog(gDebug, "Skill XP Cost To Level " + ((fSkillLevel as Int) + 1) + ": " + iSkillCost + " (" + fSkillCost + ")" + ".")
 		DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
 	EndIf
-	DMN_SXPALog(gDebug, "Additional Generic XP Required: " + ((iSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex]) as Int + " (" + ((fSkillCost - iSkillXP[iIndex]) / fSkillModifier[iIndex]) + ")" + ".")
+	DMN_SXPALog(gDebug, "Additional Generic XP Required: " + ((iSkillCost - iSkillXP[iIndex]) / fSkillMultiplier[iIndex]) as Int + " (" + ((fSkillCost - iSkillXP[iIndex]) / fSkillMultiplier[iIndex]) + ")" + ".")
 	DMN_SXPALog(gDebug, "Additional Skill XP Required: " + (iSkillCost - iSkillXP[iIndex]) + " (" + (fSkillCost - iSkillXP[iIndex]) + ")" + ".")
 	fStop = GetCurrentRealTime()
 	DMN_SXPALog(gDebug, "getRandomXPValue() function took " + (fStop - fStart) + " seconds to complete.")
 	DMN_SXPALog(gDebug, "[Ended spendXP Function]\n\n")
 EndFunction
 
-Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillModifier, Float[] fTaggedSkillsPriority, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String[] sTaggedSkills) Global
+Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Float[] fTaggedSkillsPriority, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String[] sTaggedSkills) Global
 	DMN_SXPALog(gDebug, "[Started autoSpendXP Function]")
 	Bool bBlock01
 	Bool bBlock02
@@ -471,16 +471,16 @@ Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariabl
 		DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + iTaggedSkill03XP + "XP.")
 		DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + iTaggedSkill04XP + "XP.\n\n")
 		If (sTaggedSkill01 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
+			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
 		EndIf
 		If (sTaggedSkill02 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
+			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
 		EndIf
 		If (sTaggedSkill03 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
+			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
 		EndIf
 		If (sTaggedSkill04 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillModifier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
+			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
 		EndIf
 		Int iNewXP = gTotalXP.GetValue() as Int
 		DMN_SXPALog(gDebug, "Available Generic XP: " + iCurrentXP + ".")
@@ -490,7 +490,7 @@ Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariabl
 	DMN_SXPALog(gDebug, "[Ended autoSpendXP Function]\n\n")
 EndFunction
 
-Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPModifier, Int iIndex, Bool bSilent = False) Global
+Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, Float[] fXPMultiplier, Int iIndex, Bool bSilent = False) Global
 	Float fStart ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	If (!bSilent)
@@ -500,11 +500,11 @@ Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, Glob
 ; Part 1: Getting a random XP value between the min and max XP variables.
 	Int iMinXP = gMinXP.GetValue() as Int
 	Int iMaxXP = gMaxXP.GetValue() as Int
-	Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
+	Float fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
 	If (!bSilent)
 		DMN_SXPALog(gDebug, "Min XP: " + iMinXP)
 		DMN_SXPALog(gDebug, "Max XP: " + iMaxXP)
-		DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+		DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 	EndIf
 ; Part 2: Getting the total random XP value based on the player level and formula below.
 	Int iPlayerLevel = GetPlayer().GetLevel()
@@ -526,7 +526,7 @@ Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, Glob
 	Return iRandomXPValue
 EndFunction
 
-Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPModifier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
+Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPMultiplier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	Int iCurrentXP = gXP.GetValue() as Int
@@ -548,7 +548,7 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 		Int iRandomXP
 		While (i < iUpdateCount)
 			Float fRunStart = GetCurrentRealTime()
-			Int k = getRandomXPValue(gDebug, gMinXP, gMaxXP, fXPModifier, iIndex)
+			Int k = getRandomXPValue(gDebug, gMinXP, gMaxXP, fXPMultiplier, iIndex)
 			iRandomXP += k
 			DMN_SXPALog(gDebug, sStatName[iIndex] + " " + "(" + (i+1) + "/" + iUpdateCount + ")" + " XP: " + k + ".")
 			i += 1
@@ -584,7 +584,7 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 		EndIf
 	Else
 		DMN_SXPALog(gDebug, "Assigning random XP for: " + sStatName[iIndex] + " now.")
-		Int iRandomXP = getRandomXPValue(gDebug, gMinXP, gMaxXP, fXPModifier, iIndex)
+		Int iRandomXP = getRandomXPValue(gDebug, gMinXP, gMaxXP, fXPMultiplier, iIndex)
 		Int iNewXP = iCurrentXP + iRandomXP
 	; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
 		If ((iCurrentXP + iRandomXP) >= 2147483647)
@@ -609,12 +609,12 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 	DMN_SXPALog(gDebug, "[Ended setRandomXPValue Function]\n\n")
 EndFunction
 
-Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName) Global
+Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started rewardExistingXPActivities Function]")
 	Bool bHitXPLimit
-; Part 1: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity modifier.
+; Part 1: Getting a random XP value between the min and max XP variables and multiplying it by the XP activity multiplier.
 	Int iMinXP = gMinXP.GetValue() as Int
 	Int iMaxXP = gMaxXP.GetValue() as Int
 	Float fRandomXPValue
@@ -644,7 +644,7 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 	Int iLoopsRun = 0
 	While (iLoopsRun < 101) ; Run 100 loops to get a time estimate.
 		Float fRunStart = GetCurrentRealTime()
-		fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
+		fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
 		Float fRunStop = GetCurrentRealTime()
 		fFunctionRunDuration = fFunctionRunDuration + (fRunStop - fRunStart)
 		iLoopsRun += 1
@@ -707,24 +707,24 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			;-------------------
 				DMN_SXPALog(gDebug, "Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel + ": " + fActivityCount1Percent + ".")
 				If (iActivityCount1Percent < 1)
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW) + 25.00) / 100 * fRandomXPValue * fActivityCount1Percent ; Squared.
 					fRandomXPValueFull += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount1Percent + "/" + fActivityCount1Percent + ") XP: " + k + ".")
 					k = 0
 				Else
 					While (i < iActivityCount1Percent)
-						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-						DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+						DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 						Float k = ((fPlayerLevelPOW) + 25.00) / 100 * fRandomXPValue ; Squared.
 						fRandomXPValueFull += k
 						DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + (i+1) + "/" + iActivityCount1Percent + ") XP: " + k + ".")
 						k = 0
 						i += 1
 					EndWhile
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW) + 25.00) / 100 * fRandomXPValue * fActivityCount1PercentRemainder ; Squared.
 					fRandomXPValueFull += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount1PercentRemainder + "/" + fActivityCount1PercentRemainder + ") XP: " + k + ".")
@@ -739,24 +739,24 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			;-------------------
 				DMN_SXPALog(gDebug, "Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 2 + ": " + fActivityCount4Percent + ".")
 				If (iActivityCount4Percent < 1)
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW /4) + 25.00) / 100 * fRandomXPValue * fActivityCount4Percent ; 2 Squared.
 					fRandomXPValueHalf += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount4Percent + "/" + fActivityCount4Percent + ") XP: " + k + ".")
 					k = 0
 				Else
 					While (i < iActivityCount4Percent)
-						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-						DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+						DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 						Float k = ((fPlayerLevelPOW / 4) + 25.00) / 100 * fRandomXPValue ; 2 Squared.
 						fRandomXPValueHalf += k
 						DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + (i+1) + "/" + iActivityCount4Percent + ") XP: " + k + ".")
 						k = 0
 						i += 1
 					EndWhile
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 4) + 25.00) / 100 * fRandomXPValue * fActivityCount4PercentRemainder ; 2 Squared.
 					fRandomXPValueHalf += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount4PercentRemainder + "/" + fActivityCount4PercentRemainder + ") XP: " + k + ".")
@@ -771,24 +771,24 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			;--------------------
 				DMN_SXPALog(gDebug, "Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 3 + ": " + fActivityCount5Percent + ".")
 				If (iActivityCount5Percent < 1)
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount5Percent ; 3 Squared.
 					fRandomXPValueThird += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount5Percent + "/" + fActivityCount5Percent + ") XP: " + k + ".")
 					k = 0
 				Else
 					While (i < iActivityCount5Percent)
-						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-						DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+						DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 						Float k = ((fPlayerLevelPOW / 9) + 25.00) / 100 * fRandomXPValue ; 3 Squared.
 						fRandomXPValueThird += k
 						DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + (i+1) + "/" + iActivityCount5Percent + ") XP: " + k + ".")
 						k = 0
 						i += 1
 					EndWhile
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 9) + 25.00) / 100 * fRandomXPValue * fActivityCount5PercentRemainder ; 3 Squared.
 					fRandomXPValueThird += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount5PercentRemainder + "/" + fActivityCount5PercentRemainder + ") XP: " + k + ".")
@@ -803,24 +803,24 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			;---------------------
 				DMN_SXPALog(gDebug, "Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 4 + ": " + fActivityCount10Percent + ".")
 				If (iActivityCount10Percent < 1)
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 16) + 25.00) / 100 * fRandomXPValue * fActivityCount10Percent ; 4 Squared.
 					fRandomXPValueFourth += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount10Percent + "/" + fActivityCount10Percent + ") XP: " + k + ".")
 					k = 0
 				Else
 					While (i < iActivityCount10Percent)
-						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-						DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+						DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 						Float k = ((fPlayerLevelPOW / 16) + 25.00) / 100 * fRandomXPValue ; 4 Squared.
 						fRandomXPValueFourth += k
 						DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + (i+1) + "/" + iActivityCount10Percent + ") XP: " + k + ".")
 						k = 0
 						i += 1
 					EndWhile
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 16) + 25.00) / 100 * fRandomXPValue * fActivityCount10PercentRemainder ; 4 Squared.
 					fRandomXPValueFourth += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount10PercentRemainder + "/" + fActivityCount10PercentRemainder + ") XP: " + k + ".")
@@ -835,24 +835,24 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			;--------------------
 				DMN_SXPALog(gDebug, "Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 5 + ": " + fActivityCount15Percent + ".")
 				If (iActivityCount15Percent < 1)
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 25) + 25.00) / 100 * fRandomXPValue * fActivityCount15Percent ; 5 Squared.
 					fRandomXPValueFifth += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount15Percent + "/" + fActivityCount15Percent + ") XP: " + k + ".")
 					k = 0
 				Else
 					While (i < iActivityCount15Percent)
-						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-						DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+						DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 						Float k = ((fPlayerLevelPOW / 25) + 25.00) / 100 * fRandomXPValue ; 5 Squared.
 						fRandomXPValueFifth += k
 						DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + (i+1) + "/" + iActivityCount15Percent + ") XP: " + k + ".")
 						k = 0
 						i += 1
 					EndWhile
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 25) + 25.00) / 100 * fRandomXPValue * fActivityCount15PercentRemainder ; 5 Squared.
 					fRandomXPValueFifth += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount15PercentRemainder + "/" + fActivityCount15PercentRemainder + ") XP: " + k + ".")
@@ -867,24 +867,24 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			;--------------------
 				DMN_SXPALog(gDebug, "Amount of " + sStatName[iIndex] + " estimated at level " + iPlayerLevel / 6 + ": " + fActivityCount65Percent + ".")
 				If (iActivityCount65Percent < 1)
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 36) + 25.00) / 100 * fRandomXPValue * fActivityCount65Percent ; 6 Squared.
 					fRandomXPValueSixth += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount65Percent + "/" + fActivityCount65Percent + ") XP: " + k + ".")
 					k = 0
 				Else
 					While (i < iActivityCount65Percent)
-						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-						DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+						fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+						DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 						Float k = ((fPlayerLevelPOW / 36) + 25.00) / 100 * fRandomXPValue ; 6 Squared.
 						fRandomXPValueSixth += k
 						DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + (i+1) + "/" + iActivityCount65Percent + ") XP: " + k + ".")
 						k = 0
 						i += 1
 					EndWhile
-					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPModifier[iIndex])
-					DMN_SXPALog(gDebug, "Random XP (Min~Max * Modifier): " + fRandomXPValue)
+					fRandomXPValue = (RandomInt(iMinXP, iMaxXP)) * (fXPMultiplier[iIndex])
+					DMN_SXPALog(gDebug, "Random XP (Min~Max * Multiplier): " + fRandomXPValue)
 					Float k = ((fPlayerLevelPOW / 36) + 25.00) / 100 * fRandomXPValue * fActivityCount65PercentRemainder ; 6 Squared.
 					fRandomXPValueSixth += k
 					DMN_SXPALog(gDebug, sStatName[iIndex] + " (" + fActivityCount65PercentRemainder + "/" + fActivityCount65PercentRemainder + ") XP: " + k + ".")
@@ -975,7 +975,7 @@ Function resetStatValues(GlobalVariable gDebug, Int[] iTrackedStatCount, String[
 	DMN_SXPALog(gDebug, "[Ended resetStatValues Function]\n\n")
 EndFunction
 
-Function updatePlayerStats(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
+Function updatePlayerStats(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUpdateStats = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started updatePlayerStats Function]\n")
@@ -987,11 +987,11 @@ Function updatePlayerStats(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalV
 			If (iStatValue > iTrackedStatCount[iIndex])
 				iTrackedStatCount[iIndex] = iStatValue
 				If (bUpdateStats)
-					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
+					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, iUpdateCount, True)
 				ElseIf (iUpdateCount > 1)
-					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage, iUpdateCount)
+					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, iUpdateCount)
 				Else
-					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPModifier, iIndex, sStatName, sNotificationMessage)
+					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage)
 				EndIf
 				DMN_SXPALog(gDebug, sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n\n")
 			EndIf
@@ -1113,7 +1113,7 @@ Function resetArrayDataInt(GlobalVariable gDebug, Int[] iArray) Global
 	DMN_SXPALog(gDebug, "[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
-Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPModifier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName) Global
+Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started resetSXPAProgress Function]")
@@ -1141,7 +1141,7 @@ Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, Gl
 ; Wipe the total SXPA experience points gained.
 	gXP.SetValue(0)
 ; Update all previously completed XP activities to properly scale and balance to the player level and an average thereof.
-	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPModifier, iTrackedStatCount, sStatName)
+	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName)
 ; Once we've completed the update we can re-enable active monitoring, if it was enabled to begin with.
 	If (bActiveMonitoringEnabled)
 		bActiveMonitoringEnabled = None
@@ -1158,16 +1158,16 @@ Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, Gl
 	DMN_SXPALog(gDebug, "[Ended resetSXPAProgress Function]\n\n")
 EndFunction
 
-Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Book akConfiguratorBook, Float[] fSkillModifier, Float[] fXPModifier, Int iConfiguratorType, Int iPassiveMonitoring, Spell akConfiguratorSpell) Global
+Function setSXPADefaults(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, Bool[] bXPActivityState, Book akConfiguratorBook, Float[] fSkillMultiplier, Float[] fXPMultiplier, Int iConfiguratorType, Int iPassiveMonitoring, Spell akConfiguratorSpell) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started setSXPADefaults Function]\n\n")
-; Set the Skill Modifiers to default values.
-	setSkillModifierDefaults(gDebug, fSkillModifier)
+; Set the Skill Multipliers to default values.
+	setSkillMultiplierDefaults(gDebug, fSkillMultiplier)
 ; Set the XP Activity states to default.
 	setXPActivityStateDefaults(gDebug, bXPActivityState)
-; Set the XP Modifiers to default values.
-	setXPModifierDefaults(gDebug, fXPModifier)
+; Set the XP Multipliers to default values.
+	setXPMultiplierDefaults(gDebug, fXPMultiplier)
 ; Set the minimum XP reward to default.
 	gMinXP.SetValue(250) 
 ; Set the maximum XP reward to default.
@@ -1212,17 +1212,17 @@ Int Function getXPActivityStateForMCM(String sXPActivityName, GlobalVariable gDe
 	Return bState as Int
 EndFunction
 
-Float Function getXPActivityMultiplierForMCM(String sXPActivityName, GlobalVariable gDebug, Float[] fXPModifier, String[] sStatName, Bool bGetDefault = False) Global
+Float Function getXPActivityMultiplierForMCM(String sXPActivityName, GlobalVariable gDebug, Float[] fXPMultiplier, String[] sStatName, Bool bGetDefault = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started getXPActivityMultiplierForMCM Function]")
 	Float fMult
 	Int iIndex = sStatName.Find(sXPActivityName)
 	If (!bGetDefault)
-		fMult = fXPModifier[iIndex]
+		fMult = fXPMultiplier[iIndex]
 		DMN_SXPALog(gDebug, sStatName[iIndex] + " multiplier is set to " + fMult + ".")
 	ElseIf (bGetDefault)
-		fMult = setXPModifierDefaults(gDebug, fXPModifier, False, iIndex, True)
+		fMult = setXPMultiplierDefaults(gDebug, fXPMultiplier, False, iIndex, True)
 		DMN_SXPALog(gDebug, sStatName[iIndex] + " default multiplier is  " + fMult + ".")
 	EndIf
 	fStop = GetCurrentRealTime()
@@ -1247,34 +1247,34 @@ Int Function getXPActivityIndex(String sXPActivityName, String[] sStatName) Glob
 	Return iIndex
 EndFunction
 
-Function setSkillModifierDefaults(GlobalVariable gDebug, Float[] fSkillModifier) Global
-; Resets the default Skill Modifier values.
+Function setSkillMultiplierDefaults(GlobalVariable gDebug, Float[] fSkillMultiplier) Global
+; Resets the default Skill Multiplier values.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog(gDebug, "[Started setSkillModifierDefaults Function]")
-	DMN_SXPALog(gDebug, "Skill Modifier previous values: " + fSkillModifier + ".")
-	fSkillModifier[0] = 1.00 ; Archery
-	fSkillModifier[1] = 1.00 ; Block
-	fSkillModifier[2] = 1.00 ; Heavy Armor
-	fSkillModifier[3] = 1.00 ; One-Handed
-	fSkillModifier[4] = 0.125 ; Smithing
-	fSkillModifier[5] = 1.00 ; Two-Handed
-	fSkillModifier[6] = 1.00 ; Alteration
-	fSkillModifier[7] = 1.00 ; Conjuration
-	fSkillModifier[8] = 1.00 ; Destruction
-	fSkillModifier[9] = 0.50 ; Enchanting
-	fSkillModifier[10] = 1.00 ; Illusion
-	fSkillModifier[11] = 1.00 ; Restoration
-	fSkillModifier[12] = 0.80 ; Alchemy
-	fSkillModifier[13] = 1.00 ; Light Armor
-	fSkillModifier[14] = 0.125 ; Lockpicking
-	fSkillModifier[15] = 0.125 ; Pickpocket
-	fSkillModifier[16] = 0.25 ; Sneak
-	fSkillModifier[17] = 1.00 ; Speech
-	DMN_SXPALog(gDebug, "Skill Modifier new values: " + fSkillModifier + ".")
+	DMN_SXPALog(gDebug, "[Started setSkillMultiplierDefaults Function]")
+	DMN_SXPALog(gDebug, "Skill Multiplier previous values: " + fSkillMultiplier + ".")
+	fSkillMultiplier[0] = 1.00 ; Archery
+	fSkillMultiplier[1] = 1.00 ; Block
+	fSkillMultiplier[2] = 1.00 ; Heavy Armor
+	fSkillMultiplier[3] = 1.00 ; One-Handed
+	fSkillMultiplier[4] = 0.125 ; Smithing
+	fSkillMultiplier[5] = 1.00 ; Two-Handed
+	fSkillMultiplier[6] = 1.00 ; Alteration
+	fSkillMultiplier[7] = 1.00 ; Conjuration
+	fSkillMultiplier[8] = 1.00 ; Destruction
+	fSkillMultiplier[9] = 0.50 ; Enchanting
+	fSkillMultiplier[10] = 1.00 ; Illusion
+	fSkillMultiplier[11] = 1.00 ; Restoration
+	fSkillMultiplier[12] = 0.80 ; Alchemy
+	fSkillMultiplier[13] = 1.00 ; Light Armor
+	fSkillMultiplier[14] = 0.125 ; Lockpicking
+	fSkillMultiplier[15] = 0.125 ; Pickpocket
+	fSkillMultiplier[16] = 0.25 ; Sneak
+	fSkillMultiplier[17] = 1.00 ; Speech
+	DMN_SXPALog(gDebug, "Skill Multiplier new values: " + fSkillMultiplier + ".")
 	fStop = GetCurrentRealTime()
-	DMN_SXPALog(gDebug, "setSkillModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
-	DMN_SXPALog(gDebug, "[Ended setSkillModifierDefaults Function]\n\n")
+	DMN_SXPALog(gDebug, "setSkillMultiplierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended setSkillMultiplierDefaults Function]\n\n")
 EndFunction
 
 Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivityState) Global
@@ -1344,11 +1344,11 @@ Function setXPActivityStateDefaults(GlobalVariable gDebug, Bool[] bXPActivitySta
 	DMN_SXPALog(gDebug, "[Ended setXPActivityStateDefaults Function]\n\n")
 EndFunction
 
-Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier, Bool bSingleUpdate = False, Int iArrayIndex = 0, Bool bGetDefault = False) Global
-; Resets the default XP Modifier values.
+Float Function setXPMultiplierDefaults(GlobalVariable gDebug, Float[] fXPMultiplier, Bool bSingleUpdate = False, Int iArrayIndex = 0, Bool bGetDefault = False) Global
+; Resets the default XP Multiplier values.
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
-	DMN_SXPALog(gDebug, "[Started setXPModifierDefaults Function]")
+	DMN_SXPALog(gDebug, "[Started setXPMultiplierDefaults Function]")
 	Float[] fMult = New Float[55]
 	fMult[0] = 0.60 ; Locations Discovered
 	fMult[1] = 5.00 ; Standing Stones Found
@@ -1406,27 +1406,27 @@ Float Function setXPModifierDefaults(GlobalVariable gDebug, Float[] fXPModifier,
 	fMult[53] = 0.25 ; Barters
 	fMult[54] = 1.00 ; Bribes
 	If (!bSingleUpdate && !bGetDefault)
-		DMN_SXPALog(gDebug, "XP Modifier previous values: " + fXPModifier + ".")
+		DMN_SXPALog(gDebug, "XP Multiplier previous values: " + fXPMultiplier + ".")
 		Int iIndex = 0
 		While (iIndex < fMult.Length)
-			fXPModifier[iIndex] = fMult[iIndex]
+			fXPMultiplier[iIndex] = fMult[iIndex]
 			iIndex += 1
 		EndWhile
-		DMN_SXPALog(gDebug, "XP Modifier new values: " + fXPModifier + ".")
+		DMN_SXPALog(gDebug, "XP Multiplier new values: " + fXPMultiplier + ".")
 		Return 0
 	ElseIf (bSingleUpdate)
 	; If called for a single update, set the value as passed in.
-		DMN_SXPALog(gDebug, "Previous array value: " + fXPModifier[iArrayIndex] + ".")
-		fXPModifier[iArrayIndex] = fMult[iArrayIndex]
-		DMN_SXPALog(gDebug, "Set array value to default: " + fXPModifier[iArrayIndex] + ".")
+		DMN_SXPALog(gDebug, "Previous array value: " + fXPMultiplier[iArrayIndex] + ".")
+		fXPMultiplier[iArrayIndex] = fMult[iArrayIndex]
+		DMN_SXPALog(gDebug, "Set array value to default: " + fXPMultiplier[iArrayIndex] + ".")
 		Return 0
 	ElseIf (bGetDefault)
 		Float fMultDefault = fMult[iArrayIndex]
 		Return fMultDefault
 	EndIf
 	fStop = GetCurrentRealTime()
-	DMN_SXPALog(gDebug, "setXPModifierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
-	DMN_SXPALog(gDebug, "[Ended setXPModifierDefaults Function]\n\n")
+	DMN_SXPALog(gDebug, "setXPMultiplierDefaults() function took " + (fStop - fStart) + " seconds to complete.")
+	DMN_SXPALog(gDebug, "[Ended setXPMultiplierDefaults Function]\n\n")
 EndFunction
 
 String Function prettyPrintXP(Float fXP) Global

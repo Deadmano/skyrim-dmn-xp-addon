@@ -47,12 +47,12 @@ Int Property iTaggedSkillSlot03 Auto Hidden
 Int Property iTaggedSkillSlot04 Auto Hidden
 ; Affects whether or not the XP activity will be tracked and give XP or not.
 Bool[] Property bXPActivityState Auto Hidden
-; The list of skill modifiers that affect the XP cost per skill level.
-Float[] Property fSkillModifier Auto Hidden
+; The list of skill multipliers that affect the XP cost per skill level.
+Float[] Property fSkillMultiplier Auto Hidden
 ; The list of priorities for player-tagged skills for automatic XP spending.
 Float[] Property fTaggedSkillsPriority Auto Hidden
-; The list of XP modifiers that affect the XP given per stat progression.
-Float[] Property fXPModifier Auto Hidden
+; The list of XP multipliers that affect the XP given per stat progression.
+Float[] Property fXPMultiplier Auto Hidden
 ; The list of converted XP values for each stat.
 Int[] Property iModCompatibility Auto Hidden
 ; The list that handles the state of mod compatability and support.
@@ -130,15 +130,15 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: bXPActivityState is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "bXPActivityState array: " + bXPActivityState)
 			EndIf
-			fSkillModifier = New Float[128]
-			fSkillModifier = DMN_SXPAEH.fSkillModifier
-			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fSkillModifier array now...")
-			If (fSkillModifier)
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fSkillModifier.")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + fSkillModifier)
+			fSkillMultiplier = New Float[128]
+			fSkillMultiplier = DMN_SXPAEH.fSkillMultiplier
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fSkillMultiplier array now...")
+			If (fSkillMultiplier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fSkillMultiplier.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillMultiplier array: " + fSkillMultiplier)
 			Else
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillModifier is empty!")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + fSkillModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillMultiplier is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillMultiplier array: " + fSkillMultiplier)
 			EndIf
 			fTaggedSkillsPriority = New Float[128]
 			fTaggedSkillsPriority = DMN_SXPAEH.fTaggedSkillsPriority
@@ -150,15 +150,15 @@ Function copyEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fTaggedSkillsPriority is empty!")
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fTaggedSkillsPriority array: " + fTaggedSkillsPriority)
 			EndIf
-			fXPModifier = New Float[128]
-			fXPModifier = DMN_SXPAEH.fXPModifier
-			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fXPModifier array now...")
-			If (fXPModifier)
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fXPModifier.")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
+			fXPMultiplier = New Float[128]
+			fXPMultiplier = DMN_SXPAEH.fXPMultiplier
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copying fXPMultiplier array now...")
+			If (fXPMultiplier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Copied fXPMultiplier.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPMultiplier array: " + fXPMultiplier)
 			Else
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + fXPModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPMultiplier is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPMultiplier array: " + fXPMultiplier)
 			EndIf
 			iModCompatibility = New Int[128]
 			iModCompatibility = DMN_SXPAEH.iModCompatibility
@@ -294,17 +294,17 @@ Function restoreEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "bXPActivityState array: " + DMN_SXPAEH.bXPActivityState)
 			EndIf
 			iIndex = 0
-			While (iIndex < fSkillModifier.Length)
-				DMN_SXPAEH.fSkillModifier[iIndex] = fSkillModifier[iIndex]
+			While (iIndex < fSkillMultiplier.Length)
+				DMN_SXPAEH.fSkillMultiplier[iIndex] = fSkillMultiplier[iIndex]
 				iIndex += 1
 			EndWhile
-			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fSkillModifier array now...")
-			If (DMN_SXPAEH.fSkillModifier)
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fSkillModifier.")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + DMN_SXPAEH.fSkillModifier)
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fSkillMultiplier array now...")
+			If (DMN_SXPAEH.fSkillMultiplier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fSkillMultiplier.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillMultiplier array: " + DMN_SXPAEH.fSkillMultiplier)
 			Else
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillModifier is empty!")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillModifier array: " + DMN_SXPAEH.fSkillModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fSkillMultiplier is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fSkillMultiplier array: " + DMN_SXPAEH.fSkillMultiplier)
 			EndIf
 			iIndex = 0
 			While (iIndex < fTaggedSkillsPriority.Length)
@@ -320,17 +320,17 @@ Function restoreEventHandlerData()
 				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fTaggedSkillsPriority array: " + DMN_SXPAEH.fTaggedSkillsPriority)
 			EndIf
 			iIndex = 0
-			While (iIndex < fXPModifier.Length)
-				DMN_SXPAEH.fXPModifier[iIndex] = fXPModifier[iIndex]
+			While (iIndex < fXPMultiplier.Length)
+				DMN_SXPAEH.fXPMultiplier[iIndex] = fXPMultiplier[iIndex]
 				iIndex += 1
 			EndWhile
-			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fXPModifier array now...")
-			If (DMN_SXPAEH.fXPModifier)
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fXPModifier.")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
+			DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restoring fXPMultiplier array now...")
+			If (DMN_SXPAEH.fXPMultiplier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Restored fXPMultiplier.")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPMultiplier array: " + DMN_SXPAEH.fXPMultiplier)
 			Else
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPModifier is empty!")
-				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPModifier array: " + DMN_SXPAEH.fXPModifier)
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "WARNING: fXPMultiplier is empty!")
+				DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "fXPMultiplier array: " + DMN_SXPAEH.fXPMultiplier)
 			EndIf
 			iIndex = 0
 			While (iIndex < iModCompatibility.Length)

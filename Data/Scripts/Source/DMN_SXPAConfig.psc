@@ -224,7 +224,7 @@ Function installSXPA()
 	Notification("Skyrim XP Addon: Please do not quit or save the game until this process is complete.")
 	
 ; Check for any existing XP activities the player may have done, and if any are found, reward the player with XP.
-	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 	
 ; Set the default configuration settings.
 	configurationDefaults()
@@ -276,14 +276,14 @@ Function updateSXPA()
 	If (DMN_SXPAiVersionInstalled.GetValue() as Int < ver3ToInteger("2", "0", "0"))
 	; Backup user data then reset the Event Handler quest so the new properties/variables are accessible.
 		DMN_SXPAEHD.updateEventHandlerData()
-	; Correct certain XP modifier values for balancing purposes.
-		DMN_SXPAEH.fXPModifier[0] = 0.60 ; Locations Discovered.
-		DMN_SXPAEH.fXPModifier[1] = 5.00 ; Standing Stones Found.
-		DMN_SXPAEH.fXPModifier[2] = 0.40 ; Nirnroots Found.
-		DMN_SXPAEH.fXPModifier[4] = 0.15 ; Ingredients Harvested.
-		DMN_SXPAEH.fXPModifier[5] = 0.40 ; Wings Plucked.
-		DMN_SXPAEH.fXPModifier[6] = 0.80 ; Persuasions.
-		DMN_SXPAEH.fXPModifier[7] = 0.80 ; Intimidations.
+	; Correct certain XP multiplier values for balancing purposes.
+		DMN_SXPAEH.fXPMultiplier[0] = 0.60 ; Locations Discovered.
+		DMN_SXPAEH.fXPMultiplier[1] = 5.00 ; Standing Stones Found.
+		DMN_SXPAEH.fXPMultiplier[2] = 0.40 ; Nirnroots Found.
+		DMN_SXPAEH.fXPMultiplier[4] = 0.15 ; Ingredients Harvested.
+		DMN_SXPAEH.fXPMultiplier[5] = 0.40 ; Wings Plucked.
+		DMN_SXPAEH.fXPMultiplier[6] = 0.80 ; Persuasions.
+		DMN_SXPAEH.fXPMultiplier[7] = 0.80 ; Intimidations.
 	; 0 = Locations Discovered, 1 = Standing Stones Found, 2 = Nirnroots Found, 3 = Books Read.
 	; 4 = Ingredients Harvested, 5 = Wings Plucked, 6 = Persuasions, 7 = Intimidations.
 	EndIf
@@ -310,15 +310,15 @@ Function updateSXPA()
 	If (DMN_SXPAEH.sStatName)
 		Int iArrayStatName = DMN_SXPAEH.sStatName.Length
 		Int iArraybXPActivityState = DMN_SXPAEH.bXPActivityState.Length
-		Int iArrayfXPModifier = DMN_SXPAEH.fXPModifier.Length
+		Int iArrayfXPMultiplier = DMN_SXPAEH.fXPMultiplier.Length
 		Int iArrayiTrackedStatCount = DMN_SXPAEH.iTrackedStatCount.Length
 		Int iArraysNotificationMessage = DMN_SXPAEH.sNotificationMessage.Length
 		DMN_SXPALog(DMN_SXPADebug, "Stat Name Array Length: " + iArrayStatName + ".")
 		DMN_SXPALog(DMN_SXPADebug, "XP Activity State Array Length: " + iArraybXPActivityState + ".")
-		DMN_SXPALog(DMN_SXPADebug, "XP Modifier Array Length: " + iArrayfXPModifier + ".")
+		DMN_SXPALog(DMN_SXPADebug, "XP Multiplier Array Length: " + iArrayfXPMultiplier + ".")
 		DMN_SXPALog(DMN_SXPADebug, "Tracked Stat Count Array Length: " + iArrayiTrackedStatCount + ".")
 		DMN_SXPALog(DMN_SXPADebug, "Notification Message Array Length: " + iArraysNotificationMessage + ".")
-		If (iArraybXPActivityState < iArrayStatName || iArrayfXPModifier < iArrayStatName || iArrayiTrackedStatCount < iArrayStatName || iArraysNotificationMessage < iArrayStatName)
+		If (iArraybXPActivityState < iArrayStatName || iArrayfXPMultiplier < iArrayStatName || iArrayiTrackedStatCount < iArrayStatName || iArraysNotificationMessage < iArrayStatName)
 			DMN_SXPALog(DMN_SXPADebug, "ERROR: Array lengths DO NOT match!\n\n")
 			MessageBox("Skyrim XP Addon \n\nERROR! The Array lengths DO NOT match, indicating some kind of major fault has occurred! Please report this on the SXPA page.")
 		Else
@@ -328,7 +328,7 @@ Function updateSXPA()
 
 ; Calls a function that checks for existing XP activities and rewards balanced XP taking into account when the player may have started up until their current level.
 ; This is required after the Event Handler quest is reset to uncover and reward the newly added XP activities.
-	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+	rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 
 ;-----------------------------------
 ; END NON-SPECIFIC VERSION UPDATES
@@ -365,8 +365,8 @@ Function updateSXPA()
 		If (iChoice == 0)
 		; [Let's Begin A New Journey Together! (Balanced)]
 			Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
-			resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-			setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
+			resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+			setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 		; Register for XP activity active tracking once more.
 			DMN_SXPAPA.waitForStatChange()
 			Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
@@ -456,6 +456,6 @@ Function postMaintenance()
 	Else
 	; Since XP activity active tracking is disabled, call a manual update.
 	; Update all existing stats and assign random XP values for each of them.
-		updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+		updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 	EndIf
 EndFunction

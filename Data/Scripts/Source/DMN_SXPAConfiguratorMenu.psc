@@ -228,18 +228,18 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 40)
-			Float i01 = getXPActivityMultiplierForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i06 = getXPActivityMultiplierForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i060 = getXPActivityMultiplierForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Mauls", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Necks Bitten", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Days as a Werewolf", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Days as a Vampire", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Locations Discovered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i06 = getXPActivityMultiplierForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i060 = getXPActivityMultiplierForMCM("Dungeons Cleared", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral01.Show(i01, i02, i03, i04, i05, i06)
@@ -422,11 +422,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -436,18 +436,18 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 41)
-			Float i01 = getXPActivityMultiplierForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i06 = getXPActivityMultiplierForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i060 = getXPActivityMultiplierForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Days Passed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Standing Stones Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Chests Looted", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Books Read", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Horses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i06 = getXPActivityMultiplierForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i060 = getXPActivityMultiplierForMCM("Houses Owned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral02.Show(i01, i02, i03, i04, i05, i06)
@@ -630,11 +630,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -644,16 +644,16 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - General 03 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 42)
-			Float i01 = getXPActivityMultiplierForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Stores Invested In", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Barters", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Persuasions", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Bribes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Intimidations", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesGeneral03.Show(i01, i02, i03, i04, i05)
@@ -805,11 +805,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -819,16 +819,16 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Quests 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 43)
-			Float i01 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Misc Objectives Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Main Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Side Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("The Companions Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("College of Winterhold Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests01.Show(i01, i02, i03, i04, i05)
@@ -983,11 +983,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -997,16 +997,16 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Quests 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 44)
-			Float i01 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Thieves' Guild Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("The Dark Brotherhood Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Civil War Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Daedric Quests Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Questlines Completed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesQuests02.Show(i01, i02, i03, i04, i05)
@@ -1158,11 +1158,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -1172,16 +1172,16 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Combat 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 45)
-			Float i01 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("People Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Animals Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Creatures Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Undead Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Daedra Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat01.Show(i01, i02, i03, i04, i05)
@@ -1336,11 +1336,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -1350,14 +1350,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Combat 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 46)
-			Float i01 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Automatons Killed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Weapons Disarmed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Brawls Won", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Bunnies Slaughtered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCombat02.Show(i01, i02, i03, i04)
@@ -1481,11 +1481,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -1495,14 +1495,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Magic menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 47)
-			Float i01 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Dragon Souls Collected", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Words Of Power Learned", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Words Of Power Unlocked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Shouts Mastered", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesMagic.Show(i01, i02, i03, i04)
@@ -1626,11 +1626,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -1640,18 +1640,18 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Crafting 01 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 48)
-			Float i01 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i06 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i060 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Souls Trapped", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Magic Items Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Weapons Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Weapons Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Armor Improved", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i06 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i060 = getXPActivityMultiplierForMCM("Armor Made", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting01.Show(i01, i02, i03, i04, i05, i06)
@@ -1834,11 +1834,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -1848,16 +1848,16 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Crafting 02 menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 49)
-			Float i01 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i05 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i050 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Potions Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Poisons Mixed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Ingredients Harvested", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Nirnroots Found", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i05 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i050 = getXPActivityMultiplierForMCM("Wings Plucked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrafting02.Show(i01, i02, i03, i04, i05)
@@ -2009,11 +2009,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -2023,14 +2023,14 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 	; Show the Multiplier Categories - Activities - Crime menu.
 	; -------------------------------------------------------------
 		ElseIf (iMenu == 50)
-			Float i01 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i010 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i02 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i020 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i03 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i030 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
-			Float i04 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName)
-			Float i040 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.sStatName, True)
+			Float i01 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i010 = getXPActivityMultiplierForMCM("Locks Picked", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i02 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i020 = getXPActivityMultiplierForMCM("Items Pickpocketed", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i03 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i030 = getXPActivityMultiplierForMCM("Jail Escapes", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
+			Float i04 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName)
+			Float i040 = getXPActivityMultiplierForMCM("Items Stolen", DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.sStatName, True)
 			Float fMult
 			Bool bReset
 			iButton = DMN_SXPAConfigMenuXPMultiplierCategoriesCrime.Show(i01, i02, i03, i04)
@@ -2154,11 +2154,11 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (bReset)
-				setXPModifierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPModifier, True, iXPActivityIndex)
+				setXPMultiplierDefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.fXPMultiplier, True, iXPActivityIndex)
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to its default value!")
 			EndIf
 			If (fMult > 0)
-				DMN_SXPAEH.fXPModifier[iXPActivityIndex] = fMult
+				DMN_SXPAEH.fXPMultiplier[iXPActivityIndex] = fMult
 				Notification("Skyrim XP Addon: " + DMN_SXPAEH.sStatName[iXPActivityIndex] + " XP multiplier set to " + fMult + ".")
 				fMult = 0
 			EndIf
@@ -2501,7 +2501,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -2734,7 +2734,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -2967,7 +2967,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				bMenu = False
 			EndIf
 			If (sSkill && iAmount > 0)
-				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
+				spendXP(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, DMN_SXPAEH.bUseExponentialSkillCost, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.sSkillName, sSkill, iAmount)
 				sSkill = ""
 				iAmount = 0
 			EndIf
@@ -3008,7 +3008,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're leaving the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3027,7 +3027,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3062,7 +3062,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				DMN_SXPAEH.iPassiveMonitoring = 0
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Switched to active (always monitoring) tracking.")
@@ -3076,7 +3076,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Turn On Active Tracking]
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Active (always monitoring) tracking has been enabled.")
@@ -3091,7 +3091,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking options menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3157,7 +3157,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 8)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3228,7 +3228,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3296,7 +3296,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3367,7 +3367,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3429,7 +3429,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3491,7 +3491,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3569,7 +3569,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 8)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3638,7 +3638,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3700,7 +3700,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3777,7 +3777,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 8)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3845,7 +3845,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3927,7 +3927,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT disabled!\n\n")
 					EndIf
 				EndIf
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -4003,7 +4003,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			If (iButton == 0)
 			; [Reset SXPA Values To Default]
 				Notification("Skyrim XP Addon: Restoring SXPA default values...")
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA default values have been restored!")
@@ -4011,8 +4011,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 1)
 			; [Reset SXPA Values To Default And Wipe My SXPA Data]
 				Notification("Skyrim XP Addon: Restoring SXPA default values and wiping player's SXPA data...")
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA default values have been restored and SXPA player data wiped!")
@@ -4031,7 +4031,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			If (iButton == 0)
 			; [Wipe My SXPA Data]
 				Notification("Skyrim XP Addon: Wiping player's SXPA data...")
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
 				Notification("Skyrim XP Addon: SXPA player data has been wiped!")
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
@@ -4039,8 +4039,8 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 1)
 			; [Wipe My SXPA Data And Reset SXPA Values To Default]
 				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
-				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillModifier, DMN_SXPAEH.fXPModifier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA player data has been wiped and SXPA default values restored!")
@@ -4897,13 +4897,15 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			If (iButton == 0)
 			; [Switch To Exponential XP System]
 				DMN_SXPAEH.bUseExponentialSkillCost = True
-				If (DMN_SXPAEH.bUseExponentialSkillCost)
+				DMN_SXPAEH.bUseExponentialXPGain = True
+				If (DMN_SXPAEH.bUseExponentialSkillCost && DMN_SXPAEH.bUseExponentialXPGain)
 					Notification("Skyrim XP Addon: Switched XP system type to exponential.")
 				EndIf
 			ElseIf (iButton == 1)
 			; [Switch To Linear XP System]
 				DMN_SXPAEH.bUseExponentialSkillCost = False
-				If (!DMN_SXPAEH.bUseExponentialSkillCost)
+				DMN_SXPAEH.bUseExponentialXPGain = False
+				If (!DMN_SXPAEH.bUseExponentialSkillCost && !DMN_SXPAEH.bUseExponentialXPGain)
 					Notification("Skyrim XP Addon: Switched XP system type to linear.")
 				EndIf
 			ElseIf (iButton == 2)
@@ -4933,9 +4935,17 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 					Notification("Skyrim XP Addon: Changed skill cost to linear.")
 				EndIf
 			ElseIf (iButton == 2)
-			; [Reserved]
+			; [Switch To Exponential XP Gain]
+				DMN_SXPAEH.bUseExponentialXPGain = True
+				If (DMN_SXPAEH.bUseExponentialXPGain)
+					Notification("Skyrim XP Addon: Changed XP gain to exponential.")
+				EndIf
 			ElseIf (iButton == 3)
-			; [Reserved]
+			; [Switch To Linear XP Gain]
+				DMN_SXPAEH.bUseExponentialXPGain = False
+				If (!DMN_SXPAEH.bUseExponentialXPGain)
+					Notification("Skyrim XP Addon: Changed XP gain to linear.")
+				EndIf
 			ElseIf (iButton == 4)
 			; [Return to Configure XP System Type]
 				iMenu = 35
