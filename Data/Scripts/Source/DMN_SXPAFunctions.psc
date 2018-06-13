@@ -67,27 +67,22 @@ Function giveConfiguratorSpell(Spell akConfigurator, Bool bRemoveOnly = False) G
 	EndIf
 EndFunction
 
-Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount, Bool bAuto = False) Global
+Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String sSkill, Int iAmount, Bool bAuto = False) Global
 	DMN_SXPALog(gDebug, "[Started spendXP Function]")
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	Actor kRef = GetPlayer()
 	Bool bLevelUpSkill = False
-	Float fAverageXPValue
-	Float fBaseXPValue
 	Float fEffectiveXP
-	Float fPlayerLevelPOW
 	Float fSkillCost
+	Float fSkillCostBase
+	Float fSkillCostExponent
 	Float fSkillLevel
-	Float fSkillLevelPOW
-	Int iBaseXPValue
 	Int iCount
 	Int iCurrentXP = gTotalXP.GetValue() as Int
 	Int iEffectiveXP
 	Int iIndex
 	Int iLevelsGained
-	Int iMaxXP
-	Int iMinXP
 	Int iNewXP
 	Int iPlayerLevel
 	Int iSkillCost
@@ -123,17 +118,13 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 ; Initial skill cost calculations for the level-up While loop.
 	If (bUseExponentialSkillCost)
 	; Exponential formula.
-		iMinXP = gMinXP.GetValue() as Int
-		iMaxXP = gMaxXP.GetValue() as Int
-		fAverageXPValue = ((iMinXP + iMaxXP) / 2)
-		fBaseXPValue = ((pow(iPlayerLevel as Float, 1.95)) + 25.00) / 100 * fAverageXPValue
-		iBaseXPValue = round(fBaseXPValue)
-		fSkillCost = (pow(fSkillLevel, 1.30)) / ((pow(iPlayerLevel, 1.04)) + 6.50) * iBaseXPValue
+		fSkillCostBase = 1.17
+		fSkillCost = pow(fSkillCostBase, fSkillLevel)
 		iSkillCost = round(fSkillCost)
 	Else
 	; Linear formula.
-		fSkillLevelPOW = pow((fSkillLevel), 1.95)
-		fSkillCost = fSkillLevelPOW + iSkillImproveOffset
+		fSkillCostExponent = 1.95
+		fSkillCost = (pow(fSkillLevel, fSkillCostExponent)) + iSkillImproveOffset
 		iSkillCost = round(fSkillCost)
 	EndIf
 ; Ensure we only run the skill level-up if there is enough skill-specific XP.
@@ -149,27 +140,17 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		If (!bAuto)
 			DMN_SXPALog(gDebug, "Calculating XP Cost For Level: " + (fSkillLevel as Int) + ".")
 		EndIf
-		If (bUseExponentialSkillCost)
-			fSkillLevelPOW = pow(fSkillLevel, 1.30)
-			fPlayerLevelPOW = (pow(iPlayerLevel as Float, 1.04)) + 6.50
-		Else
-			fSkillLevelPOW = pow(fSkillLevel, 1.95)
-		EndIf
 		If (!bAuto)
 			DMN_SXPALog(gDebug, "Skill XP Available: " + iSkillXP[iIndex] + ".")
-			If (bUseExponentialSkillCost)
-				DMN_SXPALog(gDebug, "Skill Level Power Of Value: " + fSkillLevelPOW + ".")
-				DMN_SXPALog(gDebug, "Player Level Power Of Value: " + fPlayerLevelPOW + ".")
-			Else
-				DMN_SXPALog(gDebug, "Skill Level Power Of Value: " + fSkillLevelPOW + ".")
-			EndIf
 		EndIf
 		If (bUseExponentialSkillCost)
 		; Calculate the cost to level up the skill using the exponential formula.
-			fSkillCost = (fSkillLevelPOW) / (fPlayerLevelPOW) * iBaseXPValue
+			fSkillCost = pow(fSkillCostBase, fSkillLevel)
+			DMN_SXPALog(gDebug, "Skill Cost Base: " + fSkillCostBase + ".")
 		Else
 		; Calculate the cost to level up the skill using the linear formula.
-			fSkillCost = fSkillLevelPOW + iSkillImproveOffset
+			fSkillCost = (pow(fSkillLevel, fSkillCostExponent)) + iSkillImproveOffset
+			DMN_SXPALog(gDebug, "Skill Cost Exponent: " + fSkillCostExponent + ".")
 		EndIf
 		If (!bAuto)
 			DMN_SXPALog(gDebug, "Gross Skill Cost As Float: " + fSkillCost + ".")
@@ -218,12 +199,6 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 		EndIf
 		DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel + ".")
 		If (bUseExponentialSkillCost)
-			DMN_SXPALog(gDebug, "Min XP: " + iMinXP)
-			DMN_SXPALog(gDebug, "Max XP: " + iMaxXP)
-			DMN_SXPALog(gDebug, "Average XP (Min~Max): " + (fAverageXPValue as Int) + " (" + fAverageXPValue + ")" + ".")
-			DMN_SXPALog(gDebug, "Base XP: " + iBaseXPValue + " (" + fBaseXPValue + ")" + ".")
-		EndIf
-		If (bUseExponentialSkillCost)
 			DMN_SXPALog(gDebug, "XP System Type: Exponential.")
 		Else
 			DMN_SXPALog(gDebug, "XP System Type: Linear.")
@@ -256,7 +231,7 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gM
 	DMN_SXPALog(gDebug, "[Ended spendXP Function]\n\n")
 EndFunction
 
-Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Float[] fTaggedSkillsPriority, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String[] sTaggedSkills) Global
+Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Float[] fTaggedSkillsPriority, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String[] sTaggedSkills) Global
 	DMN_SXPALog(gDebug, "[Started autoSpendXP Function]")
 	Bool bBlock01
 	Bool bBlock02
@@ -471,16 +446,16 @@ Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariabl
 		DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + iTaggedSkill03XP + "XP.")
 		DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + iTaggedSkill04XP + "XP.\n\n")
 		If (sTaggedSkill01 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
+			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
 		EndIf
 		If (sTaggedSkill02 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
+			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
 		EndIf
 		If (sTaggedSkill03 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
+			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
 		EndIf
 		If (sTaggedSkill04 != "None")
-			spendXP(gDebug, gMinXP, gMaxXP, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
+			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
 		EndIf
 		Int iNewXP = gTotalXP.GetValue() as Int
 		DMN_SXPALog(gDebug, "Available Generic XP: " + iCurrentXP + ".")
