@@ -120,12 +120,12 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseExpone
 	; Exponential formula.
 		fSkillCostBase = 1.17
 		fSkillCost = pow(fSkillCostBase, fSkillLevel)
-		iSkillCost = round(fSkillCost)
+		iSkillCost = ceiling(fSkillCost)
 	Else
 	; Linear formula.
 		fSkillCostExponent = 1.95
 		fSkillCost = (pow(fSkillLevel, fSkillCostExponent)) + iSkillImproveOffset
-		iSkillCost = round(fSkillCost)
+		iSkillCost = ceiling(fSkillCost)
 	EndIf
 ; Ensure we only run the skill level-up if there is enough skill-specific XP.
 	If (iSkillXP[iIndex] >= iSkillCost)
@@ -155,7 +155,7 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseExpone
 		If (!bAuto)
 			DMN_SXPALog(gDebug, "Gross Skill Cost As Float: " + fSkillCost + ".")
 		EndIf
-		iSkillCost = round(fSkillCost)
+		iSkillCost = ceiling(fSkillCost)
 		If (!bAuto)
 			DMN_SXPALog(gDebug, "Rounded Skill Cost As Int: " + iSkillCost + ".")
 		EndIf
