@@ -3008,7 +3008,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're leaving the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3027,7 +3027,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3062,7 +3062,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				DMN_SXPAEH.iPassiveMonitoring = 0
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, DMN_SXPAEH.bUseExponentialXPGain, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Switched to active (always monitoring) tracking.")
@@ -3076,7 +3076,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Turn On Active Tracking]
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, True)
+				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, DMN_SXPAEH.bUseExponentialXPGain, True)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Active (always monitoring) tracking has been enabled.")
@@ -3091,7 +3091,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking options menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3157,7 +3157,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 8)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3228,7 +3228,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3296,7 +3296,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3367,7 +3367,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 7)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3429,7 +3429,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3491,7 +3491,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3569,7 +3569,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 8)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3638,7 +3638,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3700,7 +3700,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3777,7 +3777,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 8)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3845,7 +3845,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 6)
 			; Since we're exiting the tracking activities menu, let's check for any XP activities the player may have
 			; chosen to enable, and if any are found, set random XP values for them as existing XP activities.
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -3927,7 +3927,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 						DMN_SXPALog(DMN_SXPAEH.DMN_SXPADebug, "Configurator: WARNING: XP activity active tracking was NOT disabled!\n\n")
 					EndIf
 				EndIf
-				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; We'll also go ahead and re-enable active monitoring if it was enabled to begin with.
 				If (bActiveMonitoringEnabled)
 					bActiveMonitoringEnabled = None
@@ -4012,7 +4012,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Reset SXPA Values To Default And Wipe My SXPA Data]
 				Notification("Skyrim XP Addon: Restoring SXPA default values and wiping player's SXPA data...")
 				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
 				Notification("Skyrim XP Addon: SXPA default values have been restored and SXPA player data wiped!")
@@ -4031,7 +4031,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			If (iButton == 0)
 			; [Wipe My SXPA Data]
 				Notification("Skyrim XP Addon: Wiping player's SXPA data...")
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 				Notification("Skyrim XP Addon: SXPA player data has been wiped!")
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
@@ -4039,7 +4039,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 1)
 			; [Wipe My SXPA Data And Reset SXPA Values To Default]
 				Notification("Skyrim XP Addon: Wiping player's SXPA data and restoring SXPA default values...")
-				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName)
+				resetSXPAProgress(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iSkillXP, DMN_SXPAEH.iSkillXPSpent, DMN_SXPAEH.iSkillXPSpentEffective, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sSkillName, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain)
 				setSXPADefaults(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAActiveMonitoring, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.bXPActivityState, DMN_SXPAConfiguratorBook, DMN_SXPAEH.fSkillMultiplier, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iConfiguratorType, DMN_SXPAEH.iPassiveMonitoring, DMN_SXPAConfiguratorSpell)
 			; Register for XP activity active tracking once more.
 				DMN_SXPAPA.waitForStatChange()
