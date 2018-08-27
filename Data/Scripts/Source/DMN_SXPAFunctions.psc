@@ -231,8 +231,9 @@ Function spendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseExpone
 	DMN_SXPALog(gDebug, "[Ended spendXP Function]\n\n")
 EndFunction
 
-Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Float[] fSkillMultiplier, Float[] fTaggedSkillsPriority, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String[] sTaggedSkills) Global
+Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gAutoSpendXPBusy, GlobalVariable gTotalXP, Bool bUseExponentialSkillCost, Int iReserveXP, Float[] fSkillMultiplier, Float[] fTaggedSkillsPriority, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, String[] sSkillName, String[] sTaggedSkills) Global
 	DMN_SXPALog(gDebug, "[Started autoSpendXP Function]")
+	Bool bAutoSpendXPBusy
 	Bool bBlock01
 	Bool bBlock02
 	Bool bBlock03
@@ -273,194 +274,230 @@ Function autoSpendXP(GlobalVariable gDebug, GlobalVariable gTotalXP, Bool bUseEx
 	String sTaggedSkill02 = sTaggedSkills[1]
 	String sTaggedSkill03 = sTaggedSkills[2]
 	String sTaggedSkill04 = sTaggedSkills[3]
-	While (iIndex < iNumSkillSlots)
-	; Check if there is an empty skill slot at the current index.
-		If (sTaggedSkills[iIndex] == "")
-		; If there is, we do nothing.
-			DMN_SXPALog(gDebug, "Skill slot " + (iIndex + 1) + " is empty.")
-		Else
-		; If there isn't, figure out the tagged skill priority and
-		; increment the tagged skills counter by 1.
-			If (fTaggedSkillsPriority[iIndex] == 0.60)
-				sPriority = "high"
-			ElseIf (fTaggedSkillsPriority[iIndex] == 0.30)
-				sPriority = "medium"
-			ElseIf (fTaggedSkillsPriority[iIndex] == 0.10)
-				sPriority = "low"
-			EndIf
-			DMN_SXPALog(gDebug, "Skill slot " + (iIndex + 1) + " is tagged with " + sTaggedSkills[iIndex] + " (" + sPriority + " priority).")
-			iNumTaggedSkills += 1
-		EndIf
-		iIndex += 1
-	EndWhile
-	If (iNumTaggedSkills == 0)
-		DMN_SXPALog(gDebug, "No skills have been tagged, skipping function run.")
-	ElseIf (iCurrentXP == 0)
-		DMN_SXPALog(gDebug, "No generic XP to spend, skipping function run.")
-	ElseIf ((iCurrentXP / iNumTaggedSkills) < 1)
-		DMN_SXPALog(gDebug, "Not enough generic XP to spend, skipping function run.")
-	ElseIf (iNumTaggedSkills > 0)
-		DMN_SXPALog(gDebug, "Number Of Tagged Skills: " + iNumTaggedSkills + ".")
-		DMN_SXPALog(gDebug, "Number Of Free Skill Slots: " + (iNumSkillSlots - iNumTaggedSkills) + ".\n\n")
-		bCanSpendXP = True
-		fTaggedSkillsPercentage += fTaggedSkillsPriority[0]
-		fTaggedSkillsPercentage += fTaggedSkillsPriority[1]
-		fTaggedSkillsPercentage += fTaggedSkillsPriority[2]
-		fTaggedSkillsPercentage += fTaggedSkillsPriority[3]
-		iSkillsCanSplit = iNumTaggedSkills
-		DMN_SXPALog(gDebug, "Total Priority Percentages: ~" + (round(fTaggedSkillsPercentage * 100)) + "% (" + (fTaggedSkillsPercentage * 100) + ").")
-		While (bCanSpendXP)
-		; Check if the fTaggedSkillsPercentage variable is less than 1.00 (100% XP) and
-		; if it is, calculate the remaining percentage , divide it by the amount of tagged
-		; skills and add that value to the fTaggedSkillsPercentageRemainderSplit variable.
-			If (fTaggedSkillsPercentage < 1.00)
-				fTaggedSkillsPercentageRemainder = 1.00 - fTaggedSkillsPercentage
-				fTaggedSkillsPercentageRemainderSplit = fTaggedSkillsPercentageRemainder / iNumTaggedSkills
-				DMN_SXPALog(gDebug, "Percentage Under 100%: ~" + (round(fTaggedSkillsPercentageRemainder * 100)) + "% (" + (fTaggedSkillsPercentageRemainder * 100) + ").")
-			ElseIf (fTaggedSkillsPercentage > 1.00)
-				fTaggedSkillsPercentageRemainder = fTaggedSkillsPercentage - 1.00
-				fTaggedSkillsPercentageRemainderSplit = fTaggedSkillsPercentageRemainder / iNumTaggedSkills
-				DMN_SXPALog(gDebug, "Percentage Over 100%: ~" + (round(fTaggedSkillsPercentageRemainder * 100)) + "% (" + (fTaggedSkillsPercentageRemainder * 100) + ").")
+	bAutoSpendXPBusy = gAutoSpendXPBusy.GetValue() as Int
+	If (bAutoSpendXPBusy)
+		DMN_SXPALog(gDebug, "Function was called, but we are still busy completing the last request. Skipping this request until the previous request has completed...")
+	Else
+	; Lock the function to ensure no extra instances are run.
+		gAutoSpendXPBusy.SetValue(1)
+		While (iIndex < iNumSkillSlots)
+		; Check if there is an empty skill slot at the current index.
+			If (sTaggedSkills[iIndex] == "")
+			; If there is, we do nothing.
+				DMN_SXPALog(gDebug, "Skill slot " + (iIndex + 1) + " is empty.")
 			Else
-				DMN_SXPALog(gDebug, "Remaining Percentage: ~" + (round(fTaggedSkillsPercentageRemainder * 100)) + "% (" + (fTaggedSkillsPercentageRemainder * 100) + ").")
-			EndIf
-			fPercentageRemaining = fTaggedSkillsPercentageRemainder
-			fPercentageRemainingSplit = fTaggedSkillsPercentageRemainderSplit
-			bCanSplitSkill01 = False
-			bCanSplitSkill02 = False
-			bCanSplitSkill03 = False
-			bCanSplitSkill04 = False
-		; Check if the tagged skill slot is empty, and if it is we do nothing.
-			If (sTaggedSkill01 == "" || sTaggedSkill01 == "None")
-				fTaggedSkill01XP = 0
-				sTaggedSkill01 = "None"
-			Else
-		; If it isn't, figure out if we need to add or subtract from the total percentage amount
-		; and then calculate the XP to be spent on the tagged skill based on its priority.
-				If (fTaggedSkillsPercentage < 1.00)
-					fTaggedSkill01Percentage += fTaggedSkillsPercentageRemainderSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-				ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill01Percentage)
-					fTaggedSkill01Percentage -= fPercentageRemainingSplit
-					fTaggedSkillsPercentage -= fPercentageRemainingSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-					bCanSplitSkill01 = True
+			; If there isn't, figure out the tagged skill priority and
+			; increment the tagged skills counter by 1.
+				If (fTaggedSkillsPriority[iIndex] == 0.60)
+					sPriority = "high"
+				ElseIf (fTaggedSkillsPriority[iIndex] == 0.30)
+					sPriority = "medium"
+				ElseIf (fTaggedSkillsPriority[iIndex] == 0.10)
+					sPriority = "low"
 				EndIf
-				fTaggedSkill01XP = iCurrentXP * fTaggedSkill01Percentage
+				DMN_SXPALog(gDebug, "Skill slot " + (iIndex + 1) + " is tagged with " + sTaggedSkills[iIndex] + " (" + sPriority + " priority).")
+				iNumTaggedSkills += 1
 			EndIf
-			If (sTaggedSkill02 == "" || sTaggedSkill02 == "None")
-				fTaggedSkill02XP = 0
-				sTaggedSkill02 = "None"
-			Else
-				If (fTaggedSkillsPercentage < 1.00)
-					fTaggedSkill02Percentage += fTaggedSkillsPercentageRemainderSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-				ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill02Percentage)
-					fTaggedSkill02Percentage -= fPercentageRemainingSplit
-					fTaggedSkillsPercentage -= fPercentageRemainingSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-					bCanSplitSkill02 = True
-				EndIf
-				fTaggedSkill02XP = iCurrentXP * fTaggedSkill02Percentage
-			EndIf
-			If (sTaggedSkill03 == "" || sTaggedSkill03 == "None")
-				fTaggedSkill03XP = 0
-				sTaggedSkill03 = "None"
-			Else
-				If (fTaggedSkillsPercentage < 1.00)
-					fTaggedSkill03Percentage += fTaggedSkillsPercentageRemainderSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-				ElseIf (fTaggedSkillsPercentage > 1.00) && fPercentageRemainingSplit < fTaggedSkill03Percentage
-					fTaggedSkill03Percentage -= fPercentageRemainingSplit
-					fTaggedSkillsPercentage -= fPercentageRemainingSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-					bCanSplitSkill03 = True
-				EndIf
-				fTaggedSkill03XP = iCurrentXP * fTaggedSkill03Percentage
-			EndIf
-			If (sTaggedSkill04 == "" || sTaggedSkill04 == "None")
-				fTaggedSkill04XP = 0
-				sTaggedSkill04 = "None"
-			Else
-				If (fTaggedSkillsPercentage < 1.00)
-					fTaggedSkill04Percentage += fTaggedSkillsPercentageRemainderSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-				ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill04Percentage)
-					fTaggedSkill04Percentage -= fPercentageRemainingSplit
-					fTaggedSkillsPercentage -= fPercentageRemainingSplit
-					fPercentageRemaining -= fPercentageRemainingSplit
-					bCanSplitSkill04 = True
-				EndIf
-				fTaggedSkill04XP = iCurrentXP * fTaggedSkill04Percentage
-			EndIf
-			If (!bCanSplitSkill01 && !bBlock01)
-				iSkillsCanSplit -= 1
-				bBlock01 = True
-			EndIf		
-			If (!bCanSplitSkill02 && !bBlock02)
-				iSkillsCanSplit -= 1
-				bBlock02 = True
-			EndIf
-			If (!bCanSplitSkill03 && !bBlock03)
-				iSkillsCanSplit -= 1
-				bBlock03 = True
-			EndIf
-			If (!bCanSplitSkill04 && !bBlock04)
-				iSkillsCanSplit -= 1
-				bBlock04 = True
-			EndIf
-			If (fTaggedSkillsPercentage > 1.00)
-				DMN_SXPALog(gDebug, "Split Percentage: ~-" + (round(fPercentageRemainingSplit * 100)) + "% (-" + (fPercentageRemainingSplit * 100) + ") x" + iNumTaggedSkills + ".\n\n")
-			ElseIf (fTaggedSkillsPercentage < 1.00)
-				DMN_SXPALog(gDebug, "Split Percentage: ~+" + (round(fTaggedSkillsPercentageRemainderSplit * 100)) + "% (+" + (fTaggedSkillsPercentageRemainderSplit * 100) + ") x" + iNumTaggedSkills + ".\n\n")
-			Else
-				DMN_SXPALog(gDebug, "Split Percentage: ~" + (round(fTaggedSkillsPercentageRemainderSplit * 100)) + "% (" + (fTaggedSkillsPercentageRemainderSplit * 100) + ") x" + iNumTaggedSkills + ".\n\n")
-			EndIf
-			If (iSkillsCanSplit < iNumTaggedSkills)
-				fPercentageRemainingSplit = fPercentageRemaining / iSkillsCanSplit
-			EndIf
-		; Once there is no more XP priority percentage over/under to allocate
-		; to tagged skills we can exit the loop and spend XP on the skills.
-			If (fPercentageRemaining <= 0)
-				bCanSpendXP = False
-			EndIf
+			iIndex += 1
 		EndWhile
-	; Round down the XP we will spend on tagged skills to avoid negative integers.
-		iTaggedSkill01XP = Floor(fTaggedSkill01XP)
-		iTaggedSkill02XP = Floor(fTaggedSkill02XP)
-		iTaggedSkill03XP = Floor(fTaggedSkill03XP)
-		iTaggedSkill04XP = Floor(fTaggedSkill04XP)
-		DMN_SXPALog(gDebug, "Tagged Skills:")
-		DMN_SXPALog(gDebug, "01 - " + sTaggedSkill01 + " (~" + round(fTaggedSkill01Percentage * 100) + "% | " + (fTaggedSkill01Percentage * 100) + ").")
-		DMN_SXPALog(gDebug, "02 - " + sTaggedSkill02 + " (~" + round(fTaggedSkill02Percentage * 100) + "% | " + (fTaggedSkill02Percentage * 100) + ").")
-		DMN_SXPALog(gDebug, "03 - " + sTaggedSkill03 + " (~" + round(fTaggedSkill03Percentage * 100) + "% | " + (fTaggedSkill03Percentage * 100) + ").")
-		DMN_SXPALog(gDebug, "04 - " + sTaggedSkill04 + " (~" + round(fTaggedSkill04Percentage * 100) + "% | " + (fTaggedSkill04Percentage * 100) + ").\n\n")
-		DMN_SXPALog(gDebug, "Generic XP Invested (Float):")
-		DMN_SXPALog(gDebug, sTaggedSkill01 + ": " + fTaggedSkill01XP + "XP.")
-		DMN_SXPALog(gDebug, sTaggedSkill02 + ": " + fTaggedSkill02XP + "XP.")
-		DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + fTaggedSkill03XP + "XP.")
-		DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + fTaggedSkill04XP + "XP.\n\n")
-		DMN_SXPALog(gDebug, "Generic XP Invested (Int):")
-		DMN_SXPALog(gDebug, sTaggedSkill01 + ": " + iTaggedSkill01XP + "XP.")
-		DMN_SXPALog(gDebug, sTaggedSkill02 + ": " + iTaggedSkill02XP + "XP.")
-		DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + iTaggedSkill03XP + "XP.")
-		DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + iTaggedSkill04XP + "XP.\n\n")
-		If (sTaggedSkill01 != "None")
-			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
+		If (iNumTaggedSkills == 0)
+			DMN_SXPALog(gDebug, "No skills have been tagged, skipping function run.")
+			gAutoSpendXPBusy.SetValue(0)
+		ElseIf (iCurrentXP == 0)
+			DMN_SXPALog(gDebug, "No generic XP to spend, skipping function run.")
+			gAutoSpendXPBusy.SetValue(0)
+		ElseIf ((iCurrentXP / iNumTaggedSkills) < 1)
+			DMN_SXPALog(gDebug, "Not enough generic XP to spend, skipping function run.")
+			gAutoSpendXPBusy.SetValue(0)
+		ElseIf ((iReserveXP >= iCurrentXP) || (((iCurrentXP - iReserveXP) / iNumTaggedSkills) < 1))
+			DMN_SXPALog(gDebug, "Not enough generic XP to spend due to reserved XP, skipping function run.")
+			gAutoSpendXPBusy.SetValue(0)
+		ElseIf (iNumTaggedSkills > 0)
+			gAutoSpendXPBusy.SetValue(1)
+			DMN_SXPALog(gDebug, "Number Of Tagged Skills: " + iNumTaggedSkills + ".")
+			DMN_SXPALog(gDebug, "Number Of Free Skill Slots: " + (iNumSkillSlots - iNumTaggedSkills) + ".\n\n")
+			bCanSpendXP = True
+			fTaggedSkillsPercentage += fTaggedSkillsPriority[0]
+			fTaggedSkillsPercentage += fTaggedSkillsPriority[1]
+			fTaggedSkillsPercentage += fTaggedSkillsPriority[2]
+			fTaggedSkillsPercentage += fTaggedSkillsPriority[3]
+			iSkillsCanSplit = iNumTaggedSkills
+			DMN_SXPALog(gDebug, "Total Priority Percentages: ~" + (round(fTaggedSkillsPercentage * 100)) + "% (" + (fTaggedSkillsPercentage * 100) + ").")
+			While (bCanSpendXP)
+			; Check if the fTaggedSkillsPercentage variable is less than 1.00 (100% XP) and
+			; if it is, calculate the remaining percentage , divide it by the amount of tagged
+			; skills and add that value to the fTaggedSkillsPercentageRemainderSplit variable.
+				If (fTaggedSkillsPercentage < 1.00)
+					fTaggedSkillsPercentageRemainder = 1.00 - fTaggedSkillsPercentage
+					fTaggedSkillsPercentageRemainderSplit = fTaggedSkillsPercentageRemainder / iNumTaggedSkills
+					DMN_SXPALog(gDebug, "Percentage Under 100%: ~" + (round(fTaggedSkillsPercentageRemainder * 100)) + "% (" + (fTaggedSkillsPercentageRemainder * 100) + ").")
+				ElseIf (fTaggedSkillsPercentage > 1.00)
+					fTaggedSkillsPercentageRemainder = fTaggedSkillsPercentage - 1.00
+					fTaggedSkillsPercentageRemainderSplit = fTaggedSkillsPercentageRemainder / iNumTaggedSkills
+					DMN_SXPALog(gDebug, "Percentage Over 100%: ~" + (round(fTaggedSkillsPercentageRemainder * 100)) + "% (" + (fTaggedSkillsPercentageRemainder * 100) + ").")
+				Else
+					DMN_SXPALog(gDebug, "Remaining Percentage: ~" + (round(fTaggedSkillsPercentageRemainder * 100)) + "% (" + (fTaggedSkillsPercentageRemainder * 100) + ").")
+				EndIf
+				fPercentageRemaining = fTaggedSkillsPercentageRemainder
+				fPercentageRemainingSplit = fTaggedSkillsPercentageRemainderSplit
+				bCanSplitSkill01 = False
+				bCanSplitSkill02 = False
+				bCanSplitSkill03 = False
+				bCanSplitSkill04 = False
+			; Check if the tagged skill slot is empty, and if it is we do nothing.
+				If (sTaggedSkill01 == "" || sTaggedSkill01 == "None")
+					fTaggedSkill01XP = 0
+					sTaggedSkill01 = "None"
+				Else
+			; If it isn't, figure out if we need to add or subtract from the total percentage amount
+			; and then calculate the XP to be spent on the tagged skill based on its priority.
+					If (fTaggedSkillsPercentage < 1.00)
+						fTaggedSkill01Percentage += fTaggedSkillsPercentageRemainderSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+					ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill01Percentage)
+						fTaggedSkill01Percentage -= fPercentageRemainingSplit
+						fTaggedSkillsPercentage -= fPercentageRemainingSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+						bCanSplitSkill01 = True
+					EndIf
+					fTaggedSkill01XP = (iCurrentXP - iReserveXP) * fTaggedSkill01Percentage
+				EndIf
+				If (sTaggedSkill02 == "" || sTaggedSkill02 == "None")
+					fTaggedSkill02XP = 0
+					sTaggedSkill02 = "None"
+				Else
+					If (fTaggedSkillsPercentage < 1.00)
+						fTaggedSkill02Percentage += fTaggedSkillsPercentageRemainderSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+					ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill02Percentage)
+						fTaggedSkill02Percentage -= fPercentageRemainingSplit
+						fTaggedSkillsPercentage -= fPercentageRemainingSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+						bCanSplitSkill02 = True
+					EndIf
+					fTaggedSkill02XP = (iCurrentXP - iReserveXP) * fTaggedSkill02Percentage
+				EndIf
+				If (sTaggedSkill03 == "" || sTaggedSkill03 == "None")
+					fTaggedSkill03XP = 0
+					sTaggedSkill03 = "None"
+				Else
+					If (fTaggedSkillsPercentage < 1.00)
+						fTaggedSkill03Percentage += fTaggedSkillsPercentageRemainderSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+					ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill03Percentage)
+						fTaggedSkill03Percentage -= fPercentageRemainingSplit
+						fTaggedSkillsPercentage -= fPercentageRemainingSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+						bCanSplitSkill03 = True
+					EndIf
+					fTaggedSkill03XP = (iCurrentXP - iReserveXP) * fTaggedSkill03Percentage
+				EndIf
+				If (sTaggedSkill04 == "" || sTaggedSkill04 == "None")
+					fTaggedSkill04XP = 0
+					sTaggedSkill04 = "None"
+				Else
+					If (fTaggedSkillsPercentage < 1.00)
+						fTaggedSkill04Percentage += fTaggedSkillsPercentageRemainderSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+					ElseIf (fTaggedSkillsPercentage > 1.00 && fPercentageRemainingSplit < fTaggedSkill04Percentage)
+						fTaggedSkill04Percentage -= fPercentageRemainingSplit
+						fTaggedSkillsPercentage -= fPercentageRemainingSplit
+						fPercentageRemaining -= fPercentageRemainingSplit
+						bCanSplitSkill04 = True
+					EndIf
+					fTaggedSkill04XP = (iCurrentXP - iReserveXP) * fTaggedSkill04Percentage
+				EndIf
+				If (!bCanSplitSkill01 && !bBlock01)
+					iSkillsCanSplit -= 1
+					bBlock01 = True
+				EndIf		
+				If (!bCanSplitSkill02 && !bBlock02)
+					iSkillsCanSplit -= 1
+					bBlock02 = True
+				EndIf
+				If (!bCanSplitSkill03 && !bBlock03)
+					iSkillsCanSplit -= 1
+					bBlock03 = True
+				EndIf
+				If (!bCanSplitSkill04 && !bBlock04)
+					iSkillsCanSplit -= 1
+					bBlock04 = True
+				EndIf
+				If (fTaggedSkillsPercentage > 1.00)
+					DMN_SXPALog(gDebug, "Split Percentage: ~-" + (round(fPercentageRemainingSplit * 100)) + "% (-" + (fPercentageRemainingSplit * 100) + ") x" + iNumTaggedSkills + ".\n\n")
+				ElseIf (fTaggedSkillsPercentage < 1.00)
+					DMN_SXPALog(gDebug, "Split Percentage: ~+" + (round(fTaggedSkillsPercentageRemainderSplit * 100)) + "% (+" + (fTaggedSkillsPercentageRemainderSplit * 100) + ") x" + iNumTaggedSkills + ".\n\n")
+				Else
+					DMN_SXPALog(gDebug, "Split Percentage: ~" + (round(fTaggedSkillsPercentageRemainderSplit * 100)) + "% (" + (fTaggedSkillsPercentageRemainderSplit * 100) + ") x" + iNumTaggedSkills + ".\n\n")
+				EndIf
+				If (iSkillsCanSplit < iNumTaggedSkills)
+					fPercentageRemainingSplit = fPercentageRemaining / iSkillsCanSplit
+				EndIf
+			; Once there is no more XP priority percentage over/under to allocate
+			; to tagged skills we can exit the loop and spend XP on the skills.
+				If (fPercentageRemaining <= 0)
+					bCanSpendXP = False
+				EndIf
+			EndWhile
+		; Round down the XP we will spend on tagged skills to avoid negative integers.
+		; If the resulting XP after automatic spending is less than the
+		; reserved XP, we then set the amount of XP to be spent to 0.
+			iTaggedSkill01XP = Floor(fTaggedSkill01XP)
+			If !((iCurrentXP - iTaggedSkill01XP) >= iReserveXP)
+				fTaggedSkill01XP = 0
+				iTaggedSkill01XP = 0
+			EndIf
+			iTaggedSkill02XP = Floor(fTaggedSkill02XP)
+			If !((iCurrentXP - iTaggedSkill02XP) >= iReserveXP)
+				fTaggedSkill02XP = 0
+				iTaggedSkill02XP = 0
+			EndIf
+			iTaggedSkill03XP = Floor(fTaggedSkill03XP)
+			If !((iCurrentXP - iTaggedSkill03XP) >= iReserveXP)
+				fTaggedSkill03XP = 0
+				iTaggedSkill03XP = 0
+			EndIf
+			iTaggedSkill04XP = Floor(fTaggedSkill04XP)
+			If !((iCurrentXP - iTaggedSkill04XP) >= iReserveXP)
+				fTaggedSkill04XP = 0
+				iTaggedSkill04XP = 0
+			EndIf
+			DMN_SXPALog(gDebug, "Tagged Skills:")
+			DMN_SXPALog(gDebug, "01 - " + sTaggedSkill01 + " (~" + round(fTaggedSkill01Percentage * 100) + "% | " + (fTaggedSkill01Percentage * 100) + ").")
+			DMN_SXPALog(gDebug, "02 - " + sTaggedSkill02 + " (~" + round(fTaggedSkill02Percentage * 100) + "% | " + (fTaggedSkill02Percentage * 100) + ").")
+			DMN_SXPALog(gDebug, "03 - " + sTaggedSkill03 + " (~" + round(fTaggedSkill03Percentage * 100) + "% | " + (fTaggedSkill03Percentage * 100) + ").")
+			DMN_SXPALog(gDebug, "04 - " + sTaggedSkill04 + " (~" + round(fTaggedSkill04Percentage * 100) + "% | " + (fTaggedSkill04Percentage * 100) + ").\n\n")
+			DMN_SXPALog(gDebug, "Generic XP Invested (Float):")
+			DMN_SXPALog(gDebug, sTaggedSkill01 + ": " + fTaggedSkill01XP + "XP.")
+			DMN_SXPALog(gDebug, sTaggedSkill02 + ": " + fTaggedSkill02XP + "XP.")
+			DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + fTaggedSkill03XP + "XP.")
+			DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + fTaggedSkill04XP + "XP.\n\n")
+			DMN_SXPALog(gDebug, "Generic XP Invested (Int):")
+			DMN_SXPALog(gDebug, sTaggedSkill01 + ": " + iTaggedSkill01XP + "XP.")
+			DMN_SXPALog(gDebug, sTaggedSkill02 + ": " + iTaggedSkill02XP + "XP.")
+			DMN_SXPALog(gDebug, sTaggedSkill03 + ": " + iTaggedSkill03XP + "XP.")
+			DMN_SXPALog(gDebug, sTaggedSkill04 + ": " + iTaggedSkill04XP + "XP.\n\n")
+			If (sTaggedSkill01 != "None" && iTaggedSkill01XP > 0)
+				spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill01, iTaggedSkill01XP, True)
+			EndIf
+			If (sTaggedSkill02 != "None" && iTaggedSkill02XP > 0)
+				spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
+			EndIf
+			If (sTaggedSkill03 != "None" && iTaggedSkill03XP > 0)
+				spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
+			EndIf
+			If (sTaggedSkill04 != "None" && iTaggedSkill04XP > 0)
+				spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
+			EndIf
+			Int iNewXP = gTotalXP.GetValue() as Int
+			DMN_SXPALog(gDebug, "Available Generic XP: " + iCurrentXP + ".")
+			DMN_SXPALog(gDebug, "Remaining Generic XP: " + iNewXP + ".")
+			DMN_SXPALog(gDebug, "Generic XP Reserved: " + iReserveXP + ".")
+			DMN_SXPALog(gDebug, "Generic XP Spent: " + (iCurrentXP - iNewXP) + ".")
+		; Once we have completed the above tasks, we can
+		; free up the function to be called once more.
+			gAutoSpendXPBusy.SetValue(0)
 		EndIf
-		If (sTaggedSkill02 != "None")
-			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill02, iTaggedSkill02XP, True)
-		EndIf
-		If (sTaggedSkill03 != "None")
-			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill03, iTaggedSkill03XP, True)
-		EndIf
-		If (sTaggedSkill04 != "None")
-			spendXP(gDebug, gTotalXP, bUseExponentialSkillCost, fSkillMultiplier, iSkillXP, iSkillXPSpent, iSkillXPSpentEffective, sSkillName, sTaggedSkill04, iTaggedSkill04XP, True)
-		EndIf
-		Int iNewXP = gTotalXP.GetValue() as Int
-		DMN_SXPALog(gDebug, "Available Generic XP: " + iCurrentXP + ".")
-		DMN_SXPALog(gDebug, "Remaining Generic XP: " + iNewXP + ".")
-		DMN_SXPALog(gDebug, "Generic XP Spent: " + (iCurrentXP - iNewXP) + ".")
 	EndIf
 	DMN_SXPALog(gDebug, "[Ended autoSpendXP Function]\n\n")
 EndFunction

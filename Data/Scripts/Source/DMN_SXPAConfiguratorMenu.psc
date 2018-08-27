@@ -51,6 +51,7 @@ Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests01 Auto
 Message Property DMN_SXPAConfigMenuTrackingActivityCategoriesQuests02 Auto
 Message Property DMN_SXPAConfigMenuXP Auto
 Message Property DMN_SXPAConfigMenuXPAutomaticSpending Auto
+Message Property DMN_SXPAConfigMenuXPAutomaticSpendingReserveXP Auto
 Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkills Auto
 Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices01 Auto
 Message Property DMN_SXPAConfigMenuXPAutomaticSpendingTaggedSkillsChoices02 Auto
@@ -4072,9 +4073,12 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Tagged Skills]
 				iMenu = 30
 			ElseIf (iButton == 3)
+			; [Reserve XP]
+				iMenu = 37
+			ElseIf (iButton == 4)
 			; [Return to XP Settings]
 				iMenu = 2
-			ElseIf (iButton == 4)
+			ElseIf (iButton == 5)
 			; [X]
 				bMenu = False
 			EndIf
@@ -4952,6 +4956,73 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			ElseIf (iButton == 5)
 			; [X]
 				bMenu = False
+			EndIf
+	; Show the Configure Automatic XP Spending - Reserve XP menu.
+	; ----------------------------------------------------
+		ElseIf (iMenu == 37)
+			Int i = DMN_SXPAExperiencePoints.GetValue() as Int
+			Int i10 = (i * 0.10) as Int
+			Int i25 = (i * 0.25) as Int
+			Int i50 = (i * 0.50) as Int
+			Int i75 = (i * 0.75) as Int
+			iButton = DMN_SXPAConfigMenuXPAutomaticSpendingReserveXP.Show(i, i10, i25, i50, i75)
+			If (iButton == 0)
+			; [0 (off)]
+				DMN_SXPAEH.iReserveXP = 0
+				If (DMN_SXPAEH.iReserveXP == 0)
+					Notification("Skyrim XP Addon: Set XP reserve amount to 0 (off).")
+				EndIf
+			ElseIf (iButton == 1)
+			; [1,000]
+				DMN_SXPAEH.iReserveXP = 1000
+				If (DMN_SXPAEH.iReserveXP == 1000)
+					Notification("Skyrim XP Addon: Set XP reserve amount to 1,000.")
+				EndIf
+			ElseIf (iButton == 2)
+			; [10,000]
+				DMN_SXPAEH.iReserveXP = 10000
+				If (DMN_SXPAEH.iReserveXP == 10000)
+					Notification("Skyrim XP Addon: Set XP reserve amount to 10,000.")
+				EndIf
+			ElseIf (iButton == 3)
+			; [50,000]
+				DMN_SXPAEH.iReserveXP = 50000
+				If (DMN_SXPAEH.iReserveXP == 50000)
+					Notification("Skyrim XP Addon: Set XP reserve amount to 50,000.")
+				EndIf
+			ElseIf (iButton == 4)
+			; [100,000]
+				DMN_SXPAEH.iReserveXP = 100000
+				If (DMN_SXPAEH.iReserveXP == 100000)
+					Notification("Skyrim XP Addon: Set XP reserve amount to 100,000.")
+				EndIf
+			ElseIf (iButton == 5)
+			; [10%]
+				DMN_SXPAEH.iReserveXP = i10
+				If (DMN_SXPAEH.iReserveXP == i10)
+					Notification("Skyrim XP Addon: Set XP reserve amount to " + i10 + ".")
+				EndIf
+			ElseIf (iButton == 6)
+			; [25%]
+				DMN_SXPAEH.iReserveXP = i25
+				If (DMN_SXPAEH.iReserveXP == i25)
+					Notification("Skyrim XP Addon: Set XP reserve amount to " + i25 + ".")
+				EndIf
+			ElseIf (iButton == 7)
+			; [50%]
+				DMN_SXPAEH.iReserveXP = i50
+				If (DMN_SXPAEH.iReserveXP == i50)
+					Notification("Skyrim XP Addon: Set XP reserve amount to " + i50 + ".")
+				EndIf
+			ElseIf (iButton == 8)
+			; [75%]
+				DMN_SXPAEH.iReserveXP = i75
+				If (DMN_SXPAEH.iReserveXP == i75)
+					Notification("Skyrim XP Addon: Set XP reserve amount to " + i75 + ".")
+				EndIf
+			ElseIf (iButton == 9)
+			; [Return to Configure Automatic XP Spending]
+				iMenu = 29
 			EndIf
 		EndIf
 	EndWhile

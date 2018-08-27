@@ -43,6 +43,8 @@ Bool Property bTaggedSkillSlot04Used Auto Conditional
 Bool Property bUseExponentialSkillCost Auto Conditional
 ; The XP gain formula being used. 1 = exponential, 0 = linear.
 Bool Property bUseExponentialXPGain Auto Conditional
+; The amount of XP to reserve in the case of auto-spending XP.
+Int Property iReserveXP Auto
 ; The type of configurator being used. 1 = spell, 0 = book.
 Int Property iConfiguratorType Auto Conditional
 ; When on, monitoring becomes passive (event based). 1 = on, 0 = off.
