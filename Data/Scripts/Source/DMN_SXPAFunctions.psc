@@ -729,10 +729,15 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 					DMN_SXPALog(gDebug, "Beginning update for: " + sStatName[iIndex] + " (x" + iUpdateCount + ") now.")
 					DMN_SXPALog(gDebug, "Min XP: " + iMinXP + ".")
 					DMN_SXPALog(gDebug, "Max XP: " + iMaxXP + ".")
-					DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel + ".")
 					DMN_SXPALog(gDebug, "Random XP (Min~Max): " + fRandomXP + ".")
-					DMN_SXPALog(gDebug, "XP Gain Base: " + fXPGainBase + ".")
-					DMN_SXPALog(gDebug, "XP Gain Exponent: " + fXPGainExponent + ".")
+					DMN_SXPALog(gDebug, "Player Level: " + iPlayerLevel + ".")
+					If (bUseExponentialXPGain)
+						DMN_SXPALog(gDebug, "XP System Type: Exponential.")
+						DMN_SXPALog(gDebug, "XP Gain Base: " + fXPGainBase + ".")
+					Else
+						DMN_SXPALog(gDebug, "XP System Type: Linear.")
+						DMN_SXPALog(gDebug, "XP Gain Exponent: " + fXPGainExponent + ".")
+					EndIf
 					DMN_SXPALog(gDebug, "XP Multiplier: " + fXPMultiplier[iIndex] + ".")
 				; Part 5: Estimating the amount of times the XP activity was performed at previous levels.
 					Float fActivityCount1Percent = iUpdateCount * 0.01 ; Example Input: 250 = 250 * 0.01 = 2.5. 1%.
