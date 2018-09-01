@@ -643,7 +643,7 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 	DMN_SXPALog(gDebug, "[Ended setRandomXPValue Function]\n\n")
 EndFunction
 
-Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, Bool bUseExponentialXPGain) Global
+Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, Bool bUseExponentialXPGain, Message mMessage) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started rewardExistingXPActivities Function]")
@@ -655,9 +655,12 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 ; Part 2: Getting the player level.
 	Int iPlayerLevel = GetPlayer().GetLevel()
 ; Part 3: Estimating how long the entire function should take to run, to inform the player.
+	Int iCurrentXP
 	Int iIndex = 0
+	Int iStartXP
 	Int iTotalUpdateCount
 	Int iTotalXPAllocated
+	iStartXP = gXP.GetValue() as Int
 	While (iIndex < sStatName.Length)
 		If (bXPActivityState[iIndex])
 			Int iStatValue = QueryStat(sStatName[iIndex])
@@ -714,7 +717,7 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			Float fXPGainExponent = 1.60
 			Float k
 			Int i = 0
-			Int iCurrentXP = gXP.GetValue() as Int
+			iCurrentXP = gXP.GetValue() as Int
 			fRandomXP = RandomInt(iMinXP, iMaxXP)
 			fExponentialXPGainFormula = (pow(fXPGainBase, iPlayerLevel) + fRandomXP) * fXPMultiplier[iIndex]
 			fLinearXPGainFormula = pow(iPlayerLevel, fXPGainExponent) * fXPMultiplier[iIndex] + fRandomXP
@@ -992,12 +995,10 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 						iRandomXPValue = 0
 						iUpdateCount = 0
 						DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+						DMN_SXPALog(gDebug, "WARNING: Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
 				; If no integer overflow is detected we can go ahead and add the random XP value.
 					ElseIf ((iCurrentXP + iRandomXPValue) < 2147483647)
-						DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
-						gXP.SetValue(iNewXP)
-						DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXPValue + ".")
-						DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+						DMN_SXPALog(gDebug, "XP To Assign: " + iRandomXPValue + ".")
 						If (iUpdateCount > 1)
 							debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
 						Else
@@ -1026,11 +1027,31 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			EndIf
 			iIndex += 1
 		EndWhile
-	; Show a notification that combines all previously earned XP and activity count totals and displays it to the player.
-		If (iTotalXPAllocated > 0 && iTotalUpdateCount > 1)
-			Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity events.")
-		ElseIf (iTotalXPAllocated > 0 && iTotalUpdateCount > 0)
-			Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity event.")
+		If (iTotalXPAllocated > 0)
+			Int iButton = mMessage.Show(iTotalXPAllocated)
+			Int iNewXP = iCurrentXP + iTotalXPAllocated
+			If (iButton == 0)
+			; [Accept XP]
+				If (iNewXP < 2147483647)
+					DMN_SXPALog(gDebug, "Previous XP: " + iStartXP + ".")
+					gXP.SetValue(iNewXP)
+					DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+					DMN_SXPALog(gDebug, "XP Assigned: " + (iNewXP - iStartXP) + ".\n\n")
+				Else
+					gXP.SetValue(2147483647)
+				EndIf
+		; Show a notification that combines all previously earned XP and activity count totals and displays it to the player.
+			If (iTotalUpdateCount > 1)
+				Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity events.")
+			ElseIf (iTotalUpdateCount > 0)
+				Notification("Skyrim XP Addon: Gained " + iTotalXPAllocated + " XP across " + iTotalUpdateCount + " tracked activity event.")
+			EndIf
+			ElseIf (iButton == 1)
+			; [Discard XP]
+				Notification("Skyrim XP Addon: No XP will be rewarded for existing XP activities that were enabled.")
+				DMN_SXPALog(gDebug, "Total XP To Be Assigned: " + (iNewXP - iStartXP) + ".")
+				DMN_SXPALog(gDebug, "The user chose to not accept the XP reward. Skipping XP assignment...\n\n")
+			EndIf
 		EndIf
 	; Show a message box to the player informing them that they have reached the generic XP limit.
 		If (bHitXPLimit)
@@ -1199,7 +1220,7 @@ Function resetArrayDataInt(GlobalVariable gDebug, Int[] iArray) Global
 	DMN_SXPALog(gDebug, "[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
-Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName, Bool bUseExponentialXPGain) Global
+Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName, Bool bUseExponentialXPGain, Message mMessage) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started resetSXPAProgress Function]")
@@ -1227,7 +1248,7 @@ Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, Gl
 ; Wipe the total SXPA experience points gained.
 	gXP.SetValue(0)
 ; Update all previously completed XP activities to properly scale and balance to the player level and an average thereof.
-	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, bUseExponentialXPGain)
+	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, bUseExponentialXPGain, mMessage)
 ; Once we've completed the update we can re-enable active monitoring, if it was enabled to begin with.
 	If (bActiveMonitoringEnabled)
 		bActiveMonitoringEnabled = None

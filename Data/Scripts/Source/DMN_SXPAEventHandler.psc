@@ -55,6 +55,8 @@ Int Property iTaggedSkillSlot01 Auto Conditional
 Int Property iTaggedSkillSlot02 Auto Conditional
 Int Property iTaggedSkillSlot03 Auto Conditional
 Int Property iTaggedSkillSlot04 Auto Conditional
+; The message shown to the player to decide on existing XP rewards.
+Message Property DMN_SXPAMessageConfirmRewardXP Auto
 Bool[] Property bXPActivityState Auto
 {Affects whether or not the XP activity will be tracked and give XP or not.}
 Float[] Property fSkillMultiplier Auto
