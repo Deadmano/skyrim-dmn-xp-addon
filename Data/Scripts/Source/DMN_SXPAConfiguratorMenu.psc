@@ -3063,7 +3063,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 				DMN_SXPAEH.iPassiveMonitoring = 0
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, DMN_SXPAEH.bUseExponentialXPGain, True)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain, DMN_SXPAEH.DMN_SXPAMessageConfirmRewardXP)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Switched to active (always monitoring) tracking.")
@@ -3077,7 +3077,7 @@ Function configureMod(Bool bMenu = True, Int iButton = 0, Int iMenu = 0)
 			; [Turn On Active Tracking]
 				DMN_SXPAActiveMonitoring.SetValue(1 as Int)
 			; Update all existing tracked stats.
-				updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, DMN_SXPAEH.bUseExponentialXPGain, True)
+				rewardExistingXPActivities(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.bUseExponentialXPGain, DMN_SXPAEH.DMN_SXPAMessageConfirmRewardXP)
 				Wait(3.0)
 				DMN_SXPAPA.waitForStatChange() ; Start the custom stat monitoring function.
 				Notification("Skyrim XP Addon: Active (always monitoring) tracking has been enabled.")
