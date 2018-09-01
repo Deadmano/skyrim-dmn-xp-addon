@@ -560,7 +560,7 @@ Int Function getRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, Glob
 	Return iRandomXPGain
 EndFunction
 
-Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPMultiplier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Bool bUseExponentialXPGain, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
+Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Float[] fXPMultiplier, Int iIndex, String[] sStatName, String[] sNotificationMessage, Bool bUseExponentialXPGain, Int iXPLimit, Int iUpdateCount = 0, Bool bIsUpdate = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	Int iCurrentXP = gXP.GetValue() as Int
@@ -595,12 +595,39 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 			EndIf
 		EndWhile
 		Int iNewXP = iCurrentXP + iRandomXP
+	; Check if the XP is somehow in the negative, and if it is, reset it.
+		If (iCurrentXP < 0)
+			DMN_SXPALog(gDebug, "WARNING: Negative XP integer value detected! Experience points will be reset to rectify this.")
+			debugNotification(gDebug, "Skyrim XP Addon DEBUG: Negetive XP integer value detected! Experience points will be reset to rectify this.")
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			gXP.SetValue(0)
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
 	; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
-		If ((iCurrentXP + iRandomXP) >= 2147483647)
-			MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
-			DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+		ElseIf (iCurrentXP >= iXPLimit)
+			iNewXP = iXPLimit
+			If (iCurrentXP > 0)
+				MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
+			EndIf
+			DMN_SXPALog(gDebug, "WARNING: Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			DMN_SXPALog(gDebug, "WARNING: The current experience points exceed the XP limit. Resetting experience points to the XP limit.")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+	; Check if the XP that will be added will cause an integer overflow, and if so, only add XP to the XP limit.
+		ElseIf ((iCurrentXP + iRandomXP) >= iXPLimit)
+			iNewXP = iCurrentXP + (iXPLimit - iCurrentXP)
+			DMN_SXPALog(gDebug, "WARNING: Assigning all of the earned XP will cause an overflow. Assigning XP to the XP limit instead!")
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog(gDebug, "XP Assigned: " + (iNewXP - iCurrentXP) + ".")
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+			Notification(sNotificationMessage[iIndex] + " +" + (iNewXP - iCurrentXP) + "XP!")
 	; If no integer overflow is detected we can go ahead and add the random XP value.
-		ElseIf ((iCurrentXP + iRandomXP) < 2147483647)
+		ElseIf ((iCurrentXP + iRandomXP) < iXPLimit)
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
 			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
 			gXP.SetValue(iNewXP)
 			DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXP + ".")
@@ -620,12 +647,39 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 		DMN_SXPALog(gDebug, "Assigning random XP for: " + sStatName[iIndex] + " now.")
 		Int iRandomXP = getRandomXPValue(gDebug, gMinXP, gMaxXP, fXPMultiplier, iIndex, bUseExponentialXPGain)
 		Int iNewXP = iCurrentXP + iRandomXP
+	; Check if the XP is somehow in the negative, and if it is, reset it.
+		If (iCurrentXP < 0)
+			DMN_SXPALog(gDebug, "WARNING: Negative XP integer value detected! Experience points will be reset to rectify this.")
+			debugNotification(gDebug, "Skyrim XP Addon DEBUG: Negetive XP integer value detected! Experience points will be reset to rectify this.")
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			gXP.SetValue(0)
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
 	; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
-		If ((iCurrentXP + iRandomXP) >= 2147483647)
-			MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
-			DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+		ElseIf (iCurrentXP >= iXPLimit)
+			iNewXP = iXPLimit
+			If (iCurrentXP > 0)
+				MessageBox("Skyrim XP Addon\n\nYou have hit the generic XP limit, and as such, no more generic XP will be rewarded until you spend some of your generic XP.")
+			EndIf
+			DMN_SXPALog(gDebug, "WARNING: Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			DMN_SXPALog(gDebug, "WARNING: The current experience points exceed the XP limit. Resetting experience points to the XP limit.")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+	; Check if the XP that will be added will cause an integer overflow, and if so, only add XP to the XP limit.
+		ElseIf ((iCurrentXP + iRandomXP) >= iXPLimit)
+			iNewXP = iCurrentXP + (iXPLimit - iCurrentXP)
+			DMN_SXPALog(gDebug, "WARNING: Assigning all of the earned XP will cause an overflow. Assigning XP to the XP limit instead!")
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+			gXP.SetValue(iNewXP)
+			DMN_SXPALog(gDebug, "XP Assigned: " + (iNewXP - iCurrentXP) + ".")
+			DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+			Notification(sNotificationMessage[iIndex] + " +" + (iNewXP - iCurrentXP) + "XP!")
 	; If no integer overflow is detected we can go ahead and add the random XP value.
-		ElseIf ((iCurrentXP + iRandomXP) < 2147483647)
+		ElseIf ((iCurrentXP + iRandomXP) < iXPLimit)
+			DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
 			DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
 			gXP.SetValue(iNewXP)
 			DMN_SXPALog(gDebug, "XP Assigned: " + iRandomXP + ".")
@@ -643,7 +697,7 @@ Function setRandomXPValue(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVa
 	DMN_SXPALog(gDebug, "[Ended setRandomXPValue Function]\n\n")
 EndFunction
 
-Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, Bool bUseExponentialXPGain, Message mMessage) Global
+Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, Bool bUseExponentialXPGain, Int iXPLimit, Message mMessage) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started rewardExistingXPActivities Function]")
@@ -994,15 +1048,38 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 					DMN_SXPALog(gDebug, "Total amount of XP gained for " + sStatName[iIndex] + ":" + " " + iRandomXPValue + ".")
 				; Part 8: Adding the total amount of XP earned for the XP activity to the total experience points.
 					Int iNewXP = iCurrentXP + iRandomXPValue
+				; Check if the XP is somehow in the negative, and if it is, reset it.
+					If (iCurrentXP < 0)
+						DMN_SXPALog(gDebug, "WARNING: Negative XP integer value detected! Experience points will be reset to rectify this.")
+						debugNotification(gDebug, "Skyrim XP Addon DEBUG: Negetive XP integer value detected! Experience points will be reset to rectify this.")
+						DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+						DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+						gXP.SetValue(0)
+						iStartXP = 0
+						DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
 				; Check if the XP that will be added will cause an integer overflow, and if so, do nothing.
-					If ((iCurrentXP + iRandomXPValue) >= 2147483647)
-						bHitXPLimit = True
+					ElseIf (iCurrentXP >= iXPLimit)
+						iNewXP = iXPLimit
+						If (iCurrentXP > 0)
+							bHitXPLimit = True
+						EndIf
 						iRandomXPValue = 0
 						iUpdateCount = 0
-						DMN_SXPALog(gDebug, "Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
 						DMN_SXPALog(gDebug, "WARNING: Assigning the earned XP will cause an overflow. Skipping XP assignment instead!")
+						DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+						DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+						DMN_SXPALog(gDebug, "WARNING: The current experience points exceed the XP limit. Resetting experience points to the XP limit.")
+						gXP.SetValue(iNewXP)
+						DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+				; Check if the XP that will be added will cause an integer overflow, and if so, only add XP to the XP limit.
+					ElseIf ((iCurrentXP + iRandomXPValue) >= iXPLimit)
+						iRandomXPValue = iXPLimit - iCurrentXP
+						DMN_SXPALog(gDebug, "WARNING: Assigning all of the earned XP will cause an overflow. Assigning XP to the XP limit instead!")
+						DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+						DMN_SXPALog(gDebug, "Previous XP: " + iCurrentXP + ".")
+						DMN_SXPALog(gDebug, "XP To Assign: " + iRandomXPValue + ".")
 				; If no integer overflow is detected we can go ahead and add the random XP value.
-					ElseIf ((iCurrentXP + iRandomXPValue) < 2147483647)
+					ElseIf ((iCurrentXP + iRandomXPValue) < iXPLimit)
 						DMN_SXPALog(gDebug, "XP To Assign: " + iRandomXPValue + ".")
 						If (iUpdateCount > 1)
 							debugNotification(gDebug, "Skyrim XP Addon DEBUG: Previously detected \"" + sStatName[iIndex] + "\" (x" + iUpdateCount + "). +" + iRandomXPValue + "XP combined!")
@@ -1037,13 +1114,16 @@ Function rewardExistingXPActivities(GlobalVariable gDebug, GlobalVariable gMinXP
 			Int iNewXP = iCurrentXP + iTotalXPAllocated
 			If (iButton == 0)
 			; [Accept XP]
-				If (iNewXP < 2147483647)
+				If (iNewXP < iXPLimit)
+					DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
 					DMN_SXPALog(gDebug, "Previous XP: " + iStartXP + ".")
 					gXP.SetValue(iNewXP)
 					DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
 					DMN_SXPALog(gDebug, "XP Assigned: " + (iNewXP - iStartXP) + ".\n\n")
-				Else
-					gXP.SetValue(2147483647)
+				ElseIf (iNewXP == iXPLimit)
+					DMN_SXPALog(gDebug, "XP Limit: " + iXPLimit + ".")
+					DMN_SXPALog(gDebug, "Current XP: " + gXP.GetValue() as Int + ".")
+					DMN_SXPALog(gDebug, "XP Assigned: " + (iNewXP - iStartXP) + ".\n\n")
 				EndIf
 		; Show a notification that combines all previously earned XP and activity count totals and displays it to the player.
 			If (iTotalUpdateCount > 1)
@@ -1087,7 +1167,7 @@ Function resetStatValues(GlobalVariable gDebug, Int[] iTrackedStatCount, String[
 	DMN_SXPALog(gDebug, "[Ended resetStatValues Function]\n\n")
 EndFunction
 
-Function updatePlayerStats(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUseExponentialXPGain, Bool bUpdateStats = False) Global
+Function updatePlayerStats(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iTrackedStatCount, String[] sStatName, String[] sNotificationMessage, Bool bUseExponentialXPGain, Int iXPLimit, Bool bUpdateStats = False) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started updatePlayerStats Function]\n")
@@ -1099,11 +1179,11 @@ Function updatePlayerStats(GlobalVariable gDebug, GlobalVariable gMinXP, GlobalV
 			If (iStatValue > iTrackedStatCount[iIndex])
 				iTrackedStatCount[iIndex] = iStatValue
 				If (bUpdateStats)
-					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, bUseExponentialXPGain, iUpdateCount, True)
+					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, bUseExponentialXPGain, iXPLimit, iUpdateCount, True)
 				ElseIf (iUpdateCount > 1)
-					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, bUseExponentialXPGain, iUpdateCount)
+					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, bUseExponentialXPGain, iXPLimit, iUpdateCount)
 				Else
-					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, bUseExponentialXPGain)
+					setRandomXPValue(gDebug, gMinXP, gMaxXP, gXP, fXPMultiplier, iIndex, sStatName, sNotificationMessage, bUseExponentialXPGain, iXPLimit)
 				EndIf
 				DMN_SXPALog(gDebug, sStatName[iIndex] + " was not part of the OnTrackedStatsEvent Event!\n\n")
 			EndIf
@@ -1225,7 +1305,7 @@ Function resetArrayDataInt(GlobalVariable gDebug, Int[] iArray) Global
 	DMN_SXPALog(gDebug, "[Ended resetArrayDataInt Function]\n\n")
 EndFunction
 
-Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName, Bool bUseExponentialXPGain, Message mMessage) Global
+Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, GlobalVariable gMinXP, GlobalVariable gMaxXP, GlobalVariable gXP, Bool[] bXPActivityState, Float[] fXPMultiplier, Int[] iSkillXP, Int[] iSkillXPSpent, Int[] iSkillXPSpentEffective, Int[] iTrackedStatCount, String[] sSkillName, String[] sStatName, Bool bUseExponentialXPGain, Int iXPLimit, Message mMessage) Global
 	Float fStart = GetCurrentRealTime() ; Log the time the function started running.
 	Float fStop ; Log the time the function stopped running.
 	DMN_SXPALog(gDebug, "[Started resetSXPAProgress Function]")
@@ -1253,7 +1333,7 @@ Function resetSXPAProgress(GlobalVariable gDebug, GlobalVariable gMonitoring, Gl
 ; Wipe the total SXPA experience points gained.
 	gXP.SetValue(0)
 ; Update all previously completed XP activities to properly scale and balance to the player level and an average thereof.
-	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, bUseExponentialXPGain, mMessage)
+	rewardExistingXPActivities(gDebug, gMinXP, gMaxXP, gXP, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, bUseExponentialXPGain, iXPLimit, mMessage)
 ; Once we've completed the update we can re-enable active monitoring, if it was enabled to begin with.
 	If (bActiveMonitoringEnabled)
 		bActiveMonitoringEnabled = None

@@ -56,7 +56,7 @@ Event OnUpdate()
 ; If a SXPA tracked player stat was changed,
 ; then update the SXPA values and reward XP.
 		If (checkPlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName))
-			updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, DMN_SXPAEH.bUseExponentialXPGain)
+			updatePlayerStats(DMN_SXPAEH.DMN_SXPADebug, DMN_SXPAEH.DMN_SXPAExperienceMin, DMN_SXPAEH.DMN_SXPAExperienceMax, DMN_SXPAEH.DMN_SXPAExperiencePoints, DMN_SXPAEH.bXPActivityState, DMN_SXPAEH.fXPMultiplier, DMN_SXPAEH.iTrackedStatCount, DMN_SXPAEH.sStatName, DMN_SXPAEH.sNotificationMessage, DMN_SXPAEH.bUseExponentialXPGain, DMN_SXPAEH.iXPLimit)
 		EndIf
 		RegisterForSingleUpdate(1.0)
 	EndIf

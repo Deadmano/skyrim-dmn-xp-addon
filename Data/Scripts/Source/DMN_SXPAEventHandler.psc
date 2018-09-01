@@ -55,6 +55,9 @@ Int Property iTaggedSkillSlot01 Auto Conditional
 Int Property iTaggedSkillSlot02 Auto Conditional
 Int Property iTaggedSkillSlot03 Auto Conditional
 Int Property iTaggedSkillSlot04 Auto Conditional
+; The maximum amount of experience points that can be stored.
+; Set to 2,000,000,000 (2 billion). To prevent integer overflow.
+Int Property iXPLimit = 2000000000 AutoReadOnly
 ; The message shown to the player to decide on existing XP rewards.
 Message Property DMN_SXPAMessageConfirmRewardXP Auto
 Bool[] Property bXPActivityState Auto
@@ -102,7 +105,7 @@ Event OnTrackedStatsEvent(String sStatName, Int iStatValue)
 		If (sStatName == sStatName[iIndex] && iStatValue > iTrackedStatCount[iIndex])
 			iTrackedStatCount[iIndex] = iStatValue
 			If (checkPlayerStats(DMN_SXPADebug, bXPActivityState, iTrackedStatCount, sStatName))
-				updatePlayerStats(DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, sNotificationMessage, bUseExponentialXPGain)
+				updatePlayerStats(DMN_SXPADebug, DMN_SXPAExperienceMin, DMN_SXPAExperienceMax, DMN_SXPAExperiencePoints, bXPActivityState, fXPMultiplier, iTrackedStatCount, sStatName, sNotificationMessage, bUseExponentialXPGain, iXPLimit)
 			EndIf
 		EndIf
 		iIndex += 1
