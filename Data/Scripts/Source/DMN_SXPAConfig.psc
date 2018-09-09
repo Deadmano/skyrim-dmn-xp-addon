@@ -112,18 +112,19 @@ Event OnInit()
 EndEvent
 
 Function preMaintenance()
-	Int debugState = DMN_SXPADebug.GetValue() as Int
-	If (debugState == 1)
+	Int iDebugState = DMN_SXPADebug.GetValue() as Int
+	If (iDebugState == 1)
 	; If debugging is enabled, switch to debug mode.
 		debugMode()
 	EndIf
 	If (!bSuppressDebugState)
-		If (debugState == 1)
+		If (iDebugState == 1)
 			Int iChoice = DMN_SXPAMessageDebugEnabled.Show()
 			If (iChoice == 0)
 			; [Disable Debugging]
 				DMN_SXPADebug.SetValue(0)
-				If (debugState == 0)
+				iDebugState = DMN_SXPADebug.GetValue() as Int
+				If (iDebugState == 0)
 					Notification("Skyrim XP Addon: Successfully disabled debugging mode.")
 				Else
 					Notification("Skyrim XP Addon: Could not disable debugging mode.")
